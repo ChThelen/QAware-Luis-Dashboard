@@ -1,0 +1,51 @@
+<div class="clr-row">
+    <div class="clr-col">
+        <div>
+            <h5>Insert Records into DataBase:</h5>
+            <form clrForm>
+                <clr-input-container>
+                    <label>Name</label>
+                    <input clrInput type="text" [(ngModel)]="addBookName" name="name"/>
+                </clr-input-container>
+                <clr-input-container>
+                    <label>Author</label>
+                    <input clrInput type="text" [(ngModel)]="addBookAuthor" name="author"/>
+                </clr-input-container>
+                <clr-input-container>
+                    <label>Page Count</label>
+                    <input clrInput type="number" [(ngModel)]="addBookPages" name="pages"/>
+                </clr-input-container>
+                <clr-input-container>
+                    <label>ISBN</label>
+                    <input clrInput type="text" [(ngModel)]="addBookIsbn" name="isbn"/>
+                </clr-input-container>
+                <p></p>
+                <button class="btn btn-primary" id="submit" type="submit" [disabled]="!(addBookName && addBookAuthor && addBookPages && addBookIsbn)" (click)="insertBook()">add Book</button>
+            </form>
+            <p></p>
+        </div>
+    </div>
+
+
+    <div class="clr-col">
+        <ul *ngIf="books.length">
+            <li id="tableHead"> 
+                <span>Name</span>
+                <span>Author</span>
+                <span>Pages</span>
+                <span>ISBN</span>
+                <span></span>
+            </li>
+            <li *ngFor="let book of books; let index = i" id="tableRow"> 
+                <span>{{book.name}}</span>
+                <span>{{book.author}}</span>
+                <span>{{book.pages}}</span>
+                <span>{{book.isbn}}</span>
+                <button class="btn btn-icon" id="delete" (click)="deleteBook(book.id)"> 
+                    <clr-icon shape="trash"></clr-icon>
+                </button>
+            </li>
+        </ul>
+    </div>
+    
+</div>

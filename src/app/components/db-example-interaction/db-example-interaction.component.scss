@@ -1,0 +1,30 @@
+#tableRow{
+    display: grid;
+    grid-template-columns: 10em 10em 8em 8em 3em;
+    column-gap: 0.2em;
+    align-items: center;
+}
+
+#tableHead{
+    display: grid;
+    grid-template-columns: 10em 10em 8em 8em 3em;
+    column-gap: 0.2em;
+    align-items: center;
+
+    span{
+        font-weight: bold;
+    }
+}
+
+#delete{
+    height: 3em;
+    padding: 0px;
+}
+
+ul{
+    margin-top: 2em;
+}
+
+.clr-row{
+    margin-top: 2em;
+}

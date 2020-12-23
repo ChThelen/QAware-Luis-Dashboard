@@ -1,0 +1,23 @@
+<div class="clr-row">
+    <div class="clr-col-sm-12 clr-col-md-8">
+      <p id="p"> Welcome! Angular App is running. </p>
+    </div>
+    <div class="clr-col-sm-12 clr-col-md-4">
+      <button class="btn" (click)="showExampleNotification()">Notification</button>
+      <button class="btn" (click)="showExampleModal()">Modal</button>
+    </div>
+    <p></p>
+</div>
+
+<clr-modal [(clrModalOpen)]="openModal" [clrModalSize]="'md'">
+    <h3 class="modal-title">This is a Modal</h3>
+    <div class="modal-body">
+      <p>
+        Your Text here.
+      </p>
+      </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="openModal = false">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="openModal = false">Ok</button>
+    </div>
+  </clr-modal>

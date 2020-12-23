@@ -1,0 +1,9 @@
+<clr-alert [clrAlertType]="'notification.type'" [clrAlertSizeSmall]="false"> 
+    <clr-alert-item>
+        <span class="alert-text">{{displayMsg}}</span>
+        <div class="alert-actions" *ngIf="notification.detail && notification.detail.length > 0">
+          <a (click)="toggleErrorNotificationDetail()" class="alert-action">{{actionButtonLabel}}</a>
+        </div>
+        <!-- <a *ngIf="notification.link" [routerLink]="notification.link.routerLink" (click)="onClose()">{{notification.link.title}}</a>-->
+    </clr-alert-item>
+</clr-alert>

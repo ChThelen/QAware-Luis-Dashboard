@@ -1,0 +1,39 @@
+
+<div class="main-container">
+  <header class="header-6">
+    <div class="branding">
+      <span class="title">PROJ Template</span>
+    </div>
+    <div class="header-nav">
+        <a href="javascript://" class="active nav-link nav-text">Link 1</a>
+        <a href="javascript://" class="nav-link nav-text">Link 2</a>
+    </div>
+    <!-- If you wish to have an action button on the top-right
+      <div class="header-actions">
+        <a href="javascript://" class="nav-link nav-icon" aria-label="settings">
+            <clr-icon shape="cog"></clr-icon>
+        </a>
+    </div>
+    -->
+</header>
+  <div class="content-container">
+      <div class="content-area">
+        <db-notification-banner *ngIf="shouldDisplayNotification" [notification]="notification">
+        </db-notification-banner>
+
+        <!-- 
+          app-example is a simple hello world component to demonstrate notification.service
+          and notification-banner.component in action 
+        -->
+        <app-example></app-example>
+          
+        <!-- example component to demonstrate database interaction -->
+        <app-db-example-interaction id="db-example"></app-db-example-interaction>
+
+        
+      </div>
+  </div>
+</div>
+
+
+<router-outlet></router-outlet>
