@@ -1,39 +1,40 @@
-
-<div class="main-container">
-  <header class="header-6">
+<clr-main-container class="main-container">
+  <clr-header class="header header-4">
     <div class="branding">
-      <span class="title">PROJ Template</span>
+      <a class="nav-link" routerLink="/dashboard">
+        <clr-icon shape="talk-bubbles" class="is-inverse is-solid" size="22"></clr-icon>
+        <span class="title">QAware Luis</span>
+      </a>
     </div>
-    <div class="header-nav">
-        <a href="javascript://" class="active nav-link nav-text">Link 1</a>
-        <a href="javascript://" class="nav-link nav-text">Link 2</a>
-    </div>
-    <!-- If you wish to have an action button on the top-right
-      <div class="header-actions">
-        <a href="javascript://" class="nav-link nav-icon" aria-label="settings">
+    <div class="header-actions">
+      <clr-dropdown>
+        <button class="nav-icon" clrDropdownTrigger aria-label="toggle settings menu">
             <clr-icon shape="cog"></clr-icon>
-        </a>
+            <clr-icon shape="caret down"></clr-icon>
+        </button>
+        <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+            <a href="..." clrDropdownItem>About</a>
+            <a href="..." clrDropdownItem>Preferences</a>
+        </clr-dropdown-menu>
+    </clr-dropdown>
     </div>
-    -->
-</header>
+  </clr-header>
+  <nav class="subnav">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/dashboard" routerLinkActive = "active">Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/manage" routerLinkActive = "active">Management</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/training" routerLinkActive = "active">Training</a>
+      </li>
+    </ul>
+  </nav>
   <div class="content-container">
-      <div class="content-area">
-        <db-notification-banner *ngIf="shouldDisplayNotification" [notification]="notification">
-        </db-notification-banner>
-
-        <!-- 
-          app-example is a simple hello world component to demonstrate notification.service
-          and notification-banner.component in action 
-        -->
-        <app-example></app-example>
-          
-        <!-- example component to demonstrate database interaction -->
-        <app-db-example-interaction id="db-example"></app-db-example-interaction>
-
-        
-      </div>
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
   </div>
-</div>
-
-
-<router-outlet></router-outlet>
+</clr-main-container>

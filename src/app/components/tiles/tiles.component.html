@@ -1,0 +1,30 @@
+<div *ngIf="apps.length; else showInfo" class="clr-row">
+    <div *ngFor="let app of apps; let index = i" class="clr-col-2">
+        <a class="card clickable" routerLink="{{'/manage/' + app.appId }}" routerLinkActive = "actice">
+            <div class="card-block">
+                <h3 class="card-title">{{app.appName}}</h3>
+                <div class="card-text">
+                    {{app.description}}
+                </div>
+            </div>
+            <div class="card-footer">
+                <span class="label label-light-blue p7" style="margin-top: .3em;">ID: {{app.appId}}</span>
+                <span class="label label-purple p7" style="margin-top: .3em;">Version: {{app.version}}</span>
+            </div>
+        </a>
+    </div>
+</div>
+<ng-template #showInfo>
+    <div class="alert alert-info" role="alert">
+        <div class="alert-items">
+            <div class="alert-item static">
+                <div class="alert-icon-wrapper">
+                    <clr-icon class="alert-icon" shape="info-circle"></clr-icon>
+                </div>
+                <span class="alert-text">
+                    Sorry. No Luis apps could be found.
+                </span>
+            </div>
+        </div>
+    </div>
+</ng-template>

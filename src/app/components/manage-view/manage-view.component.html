@@ -1,0 +1,17 @@
+<clr-datagrid>
+    <clr-dg-column>App ID</clr-dg-column>
+    <clr-dg-column>Name</clr-dg-column>
+    <clr-dg-column>Version</clr-dg-column>
+    <clr-dg-column>Dashboard URL</clr-dg-column>
+    <clr-dg-column>Description</clr-dg-column>
+
+    <clr-dg-row *ngFor="let app of apps">
+        <clr-dg-cell>{{app.appId}}</clr-dg-cell>
+        <clr-dg-cell>{{app.appName}}</clr-dg-cell>
+        <clr-dg-cell>{{app.version}}</clr-dg-cell>
+        <clr-dg-cell>{{app.dashboardUrl}}</clr-dg-cell>
+        <clr-dg-cell>{{app.description}}</clr-dg-cell>
+    </clr-dg-row>
+
+    <clr-dg-footer>{{apps.length}} apps</clr-dg-footer>
+</clr-datagrid>
