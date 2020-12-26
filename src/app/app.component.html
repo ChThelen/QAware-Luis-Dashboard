@@ -7,28 +7,22 @@
       </a>
     </div>
     <div class="header-actions">
-      <clr-dropdown>
-        <button class="nav-icon" clrDropdownTrigger aria-label="toggle settings menu">
-            <clr-icon shape="cog"></clr-icon>
-            <clr-icon shape="caret down"></clr-icon>
-        </button>
-        <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
-            <a href="..." clrDropdownItem>About</a>
-            <a href="..." clrDropdownItem>Preferences</a>
-        </clr-dropdown-menu>
-    </clr-dropdown>
+        <a (click)="switchTheme()" class="nav-link nav-icon-text">
+          <clr-icon *ngIf="darkThemeIsActive" class="is-solid" shape="sun" size="24"></clr-icon>
+          <clr-icon *ngIf="!darkThemeIsActive" class="is-solid" shape="moon" size="24"></clr-icon>
+      </a>
     </div>
   </clr-header>
   <nav class="subnav">
     <ul class="nav">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/dashboard" routerLinkActive = "active">Dashboard</a>
+        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/manage" routerLinkActive = "active">Management</a>
+        <a class="nav-link" routerLink="/manage" routerLinkActive="active">Management</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/training" routerLinkActive = "active">Training</a>
+        <a class="nav-link" routerLink="/training" routerLinkActive="active">Training</a>
       </li>
     </ul>
   </nav>
