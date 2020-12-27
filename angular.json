@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "thb2020-frontend": {
+    "QAware-Luis-Dashboard": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/thb2020-frontend",
+            "outputPath": "dist/QAware-Luis-Dashboard",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -30,7 +30,12 @@
             "styles": [
               "node_modules/@clr/icons/clr-icons.min.css",
               "node_modules/@clr/ui/clr-ui.min.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              {
+                "input": "node_modules/@clr/ui/clr-ui-dark.min.css",
+                "bundleName": "dark-theme",
+                "inject": true
+              }
             ],
             "scripts": [
               "node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js",
@@ -72,18 +77,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "thb2020-frontend:build"
+            "browserTarget": "QAware-Luis-Dashboard:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "thb2020-frontend:build:production"
+              "browserTarget": "QAware-Luis-Dashboard:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "thb2020-frontend:build"
+            "browserTarget": "QAware-Luis-Dashboard:build"
           }
         },
         "test": {
@@ -120,18 +125,18 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "thb2020-frontend:serve"
+            "devServerTarget": "QAware-Luis-Dashboard:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "thb2020-frontend:serve:production"
+              "devServerTarget": "QAware-Luis-Dashboard:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "thb2020-frontend",
+  "defaultProject": "QAware-Luis-Dashboard",
   "cli": {
     "analytics": false
   }

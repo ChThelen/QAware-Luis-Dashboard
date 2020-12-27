@@ -1,0 +1,55 @@
+<label class="btn btn-primary">
+  <input type="file" (change)="readCsvFile($event)" accept=".csv" placeholder="Upload CSV"  class="button-input"> Upload CSV
+</label>
+
+<button class="btn btn-outline">Download JSON</button>
+
+<clr-datagrid *ngIf="result.length > 0">
+  <clr-dg-column >ID</clr-dg-column>
+  <clr-dg-column [clrDgField]="'transcript'">Transcript</clr-dg-column>
+  <clr-dg-column [clrDgField]="'category'">Category</clr-dg-column>
+  <clr-dg-column [clrDgField]="'literal'">Literal</clr-dg-column>
+  <clr-dg-column [clrDgField]="'startIndex'">Start_Index</clr-dg-column>
+  <clr-dg-column [clrDgField]="'endIndex'">End_Index</clr-dg-column>
+  <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let utterance of result">
+    <clr-dg-action-overflow>
+      <button class="action-item" (click)="selectedUtterance === utterance ? editUtterance(utterance) : selectedUtterance = utterance;">
+        <clr-icon *ngIf="utterance.id === selectedUtterance?.id" shape="check"></clr-icon>
+        <clr-icon *ngIf="utterance.id !== selectedUtterance?.id" shape="pencil"></clr-icon>
+      </button>
+      <button class="action-item" (click)="deleteUtterance(utterance)">
+        <clr-icon shape="trash"></clr-icon>
+      </button>
+    </clr-dg-action-overflow>
+
+    <ng-container *ngIf="utterance.id === selectedUtterance?.id">
+      <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
+      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.transcript" name="transcript" /></clr-dg-cell>
+      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.category" name="category" /></clr-dg-cell>
+      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.literal" name="literal" /></clr-dg-cell>
+      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.startIndex" name="startIndex" /></clr-dg-cell>
+      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.endIndex" name="endIndex" /></clr-dg-cell>
+      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.intent" name="intent" /></clr-dg-cell>
+    </ng-container>
+    <ng-container *ngIf="utterance.id !== selectedUtterance?.id">
+      <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
+      <clr-dg-cell>{{utterance.transcript}}</clr-dg-cell>
+      <clr-dg-cell>{{utterance.category}}</clr-dg-cell>
+      <clr-dg-cell>{{utterance.literal}}</clr-dg-cell>
+      <clr-dg-cell>{{utterance.startIndex}}</clr-dg-cell>
+      <clr-dg-cell>{{utterance.endIndex}}</clr-dg-cell>
+      <clr-dg-cell>{{utterance.intent}}</clr-dg-cell>
+    </ng-container>
+
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    <clr-dg-pagination #pagination [clrDgPageSize]="10">
+      <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>
+      {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+      of {{pagination.totalItems}} utterances
+    </clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>

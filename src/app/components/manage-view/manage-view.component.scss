@@ -1,0 +1,16 @@
+button.action-item:focus {
+    background-color: transparent;
+}
+
+button.action-item:hover {
+    background-color: hsl(201, 29%, 88%) ;
+}
+
+.color-square {
+    display: inline-block;
+    vertical-align: bottom;
+    height: .7rem;
+    width: .7rem;
+    margin-right: 0.2rem;
+    border-radius: .2rem;
+}

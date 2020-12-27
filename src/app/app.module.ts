@@ -6,18 +6,18 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClarityModule } from '@clr/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NotificationService } from './services/notification.service';
-import { NotificationBannerComponent } from './components/notification-banner/notification-banner.component';
-import { ExampleComponent } from './components/example/example.component';
-import { DbExampleInteractionComponent } from './components/db-example-interaction/db-example-interaction.component';
-import { BookService } from './services/book.service';
+import { TilesComponent } from './components/tiles/tiles.component';
+import { DetailViewComponent } from './components/detail-view/detail-view.component';
+import { ManageViewComponent } from './components/manage-view/manage-view.component';
+import { CsvReaderComponent } from './components/csv-reader/csv-reader.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NotificationBannerComponent,
-    ExampleComponent,
-    DbExampleInteractionComponent
+    TilesComponent,
+    DetailViewComponent,
+    ManageViewComponent,
+    CsvReaderComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +27,7 @@ import { BookService } from './services/book.service';
     FormsModule,
     HttpClientModule
   ],
-  providers: [NotificationService, BookService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
