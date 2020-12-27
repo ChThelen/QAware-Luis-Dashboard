@@ -1,5 +1,5 @@
 <clr-main-container class="main-container">
-  <clr-header class="header header-4">
+  <clr-header class="header header-6">
     <div class="branding">
       <a class="nav-link" routerLink="/dashboard">
         <clr-icon shape="talk-bubbles" class="is-inverse is-solid" size="22"></clr-icon>
@@ -10,7 +10,7 @@
         <a (click)="switchTheme()" class="nav-link nav-icon-text">
           <clr-icon *ngIf="darkThemeIsActive" class="is-solid" shape="sun" size="24"></clr-icon>
           <clr-icon *ngIf="!darkThemeIsActive" class="is-solid" shape="moon" size="24"></clr-icon>
-      </a>
+        </a>
     </div>
   </clr-header>
   <nav class="subnav">
@@ -20,6 +20,9 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" routerLink="/manage" routerLinkActive="active">Management</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/import" routerLinkActive="active">Editor</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" routerLink="/training" routerLinkActive="active">Training</a>
