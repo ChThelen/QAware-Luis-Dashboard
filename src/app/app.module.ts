@@ -10,6 +10,7 @@ import { TilesComponent } from './components/tiles/tiles.component';
 import { DetailViewComponent } from './components/detail-view/detail-view.component';
 import { ManageViewComponent } from './components/manage-view/manage-view.component';
 import { CsvReaderComponent } from './components/csv-reader/csv-reader.component';
+import { NotificationComponent } from './components/notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { CsvReaderComponent } from './components/csv-reader/csv-reader.component
     TilesComponent,
     DetailViewComponent,
     ManageViewComponent,
-    CsvReaderComponent
+    CsvReaderComponent,
+    NotificationComponent
   ],
   imports: [
     BrowserModule,

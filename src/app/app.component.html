@@ -31,6 +31,8 @@
   </nav>
   <div class="content-container">
     <div class="content-area">
+      <app-notification *ngIf="shouldDisplayNotification" [notification]="notification">
+      </app-notification>
       <router-outlet></router-outlet>
     </div>
   </div>

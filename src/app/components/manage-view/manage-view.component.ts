@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
 import {DUMMY_APPS, LuisApp} from '../../models/LuisApp';
 import {ClrWizard} from "@clr/angular";
+import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-manage-view',
@@ -17,7 +18,7 @@ export class ManageViewComponent implements OnInit {
   // DUMMY DATA REMOVE LATER
   apps = DUMMY_APPS;
 
-  constructor() {}
+  constructor(private notificationService: NotificationService) {}
 
   ngOnInit(): void {
   }
@@ -29,6 +30,16 @@ export class ManageViewComponent implements OnInit {
 
   openCreateWizard(){
     this.createWizard = !this.createWizard;
+  }
+
+  showNotification(message: string, messageDetails: string) {
+    this.notificationService.add(
+      new Notification(
+        NotificationType.Info,
+        message,
+        messageDetails
+      )
+    )
   }
 
 }
