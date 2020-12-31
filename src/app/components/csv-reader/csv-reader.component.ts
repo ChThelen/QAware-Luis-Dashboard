@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Utterance, HEADERS } from 'src/app/models/Utterance';
+import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
+
 @Component({
   selector: 'app-csv-reader',
   templateUrl: './csv-reader.component.html',
@@ -13,7 +15,7 @@ export class CsvReaderComponent implements OnInit {
   result: Utterance[] = [];
   delimiter: string = ';';
 
-  constructor() { }
+  constructor(private notificationService: NotificationService) { }
 
   ngOnInit(): void {
   }
@@ -83,6 +85,16 @@ export class CsvReaderComponent implements OnInit {
   }
 
   deleteUtterance(utterance: Utterance){
+  }
+
+  showNotification(message: string, messageDetails: string) {
+    this.notificationService.add(
+      new Notification(
+        NotificationType.Info,
+        message,
+        messageDetails
+      )
+    )
   }
 
 }

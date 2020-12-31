@@ -1,0 +1,8 @@
+<clr-alert [clrAlertType]="'notification.type'" [clrAlertSizeSmall]="false"> 
+    <clr-alert-item>
+        <span class="alert-text">{{displayMsg}}</span>
+        <div class="alert-actions" *ngIf="notification.detail && notification.detail.length > 0">
+          <a (click)="toggleErrorNotificationDetail()" class="alert-action">{{actionButtonLabel}}</a>
+        </div>
+    </clr-alert-item>
+</clr-alert>
