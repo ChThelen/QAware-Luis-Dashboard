@@ -1,55 +1,141 @@
-<label class="btn btn-primary">
-  <input type="file" (change)="readCsvFile($event)" accept=".csv" placeholder="Upload CSV"  class="button-input"> Upload CSV
-</label>
 
-<button class="btn btn-outline">Download JSON</button>
+<div class="button-bar">
 
-<clr-datagrid *ngIf="result.length > 0">
-  <clr-dg-column >ID</clr-dg-column>
-  <clr-dg-column [clrDgField]="'transcript'">Transcript</clr-dg-column>
-  <clr-dg-column [clrDgField]="'category'">Category</clr-dg-column>
-  <clr-dg-column [clrDgField]="'literal'">Literal</clr-dg-column>
-  <clr-dg-column [clrDgField]="'startIndex'">Start_Index</clr-dg-column>
-  <clr-dg-column [clrDgField]="'endIndex'">End_Index</clr-dg-column>
-  <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
-
-  <clr-dg-row *clrDgItems="let utterance of result">
-    <clr-dg-action-overflow>
-      <button class="action-item" (click)="selectedUtterance === utterance ? editUtterance(utterance) : selectedUtterance = utterance;">
-        <clr-icon *ngIf="utterance.id === selectedUtterance?.id" shape="check"></clr-icon>
-        <clr-icon *ngIf="utterance.id !== selectedUtterance?.id" shape="pencil"></clr-icon>
+  <h3 *ngIf="file!=null" >{{fileName}}</h3> 
+  <h3 *ngIf="file==null">No File Choosen</h3> 
+  <span class="spacer"></span>
+ 
+  <div class="btn-group btn-primary">
+    <div [class]="buttonsHiddenStyle">
+      <button class="btn btn-icon dropdown-toggle" [disabled]="file===null" (click)="buttonsHiddenStyle=moreButton()">
+          <clr-icon shape="ellipsis-horizontal"></clr-icon>
       </button>
-      <button class="action-item" (click)="deleteUtterance(utterance)">
-        <clr-icon shape="trash"></clr-icon>
+      <div class="dropdown-menu">
+          <button class="btn" [disabled]="file===null" >Refresh</button>
+          <button class="btn" [disabled]="file===null" *ngIf="!printText" (click)="isJsonFile=false;printText=true;">Text-Datei anzeigen</button>
+          <button class="btn" [disabled]="file===null" *ngIf="printText" (click)="isJsonFile=false;printText=false;">Editor anzeigen</button>
+          <button class="btn" [disabled]="file===null" (click)="modalOpenedforDelimitor=true">Delimiter ändern</button>
+      </div>
+    </div>
+    <button type="button" class="btn btn-icon" [disabled]="file===null" aria-label="home" (click)="modalOpenedforNewLine=true;isJsonFile=false;">
+      <clr-icon shape="plus"></clr-icon>
+    </button>
+    <button class="btn btn-success" [disabled]="file===null" (click)="downloadJson()"><clr-icon shape="download"></clr-icon>Download JSON</button>
+    <button class="btn btn-success" [disabled]="file===null" (click)="downloadCsv()"><clr-icon shape="download"></clr-icon>Download CSV</button>
+    <label class="btn">
+      <input type="file" (change)="readCsvFile($event)" accept=".csv,.json" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> Upload File
+    </label>
+  </div>
+
+</div>
+
+<clr-tabs>
+  <clr-tab>
+      <button clrTabLink id="link1" >CSV</button>
+      <clr-tab-content id="content1" *clrIfActive="!isJsonFile">
+        <clr-datagrid *ngIf="result.length > 0 && !printText && file!=null">
+          <clr-dg-column >ID</clr-dg-column>
+          <clr-dg-column [clrDgField]="'transcript'">Transcript</clr-dg-column>
+          <clr-dg-column [clrDgField]="'category'">Category</clr-dg-column>
+          <clr-dg-column [clrDgField]="'literal'">Literal</clr-dg-column>
+          <clr-dg-column [clrDgField]="'startIndex'">Start_Index</clr-dg-column>
+          <clr-dg-column [clrDgField]="'endIndex'">End_Index</clr-dg-column>
+          <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
+        
+          <clr-dg-row *clrDgItems="let utterance of result">
+            <clr-dg-action-overflow>
+              <button class="action-item" (click)="isJsonFile=false; selectedUtterance === utterance ? editUtterance(utterance) : selectedUtterance = utterance; refreshUtterances(result)">
+                <clr-icon *ngIf="utterance.id === selectedUtterance?.id" shape="check"></clr-icon>
+                <clr-icon *ngIf="utterance.id !== selectedUtterance?.id" shape="pencil"></clr-icon>
+              </button>
+              <button class="action-item" (click)="deleteUtterance(utterance)">
+                <clr-icon shape="trash"></clr-icon>
+              </button>
+            </clr-dg-action-overflow>
+        
+            <ng-container *ngIf="utterance.id === selectedUtterance?.id">
+              <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.transcript" name="transcript" /></clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.category" name="category" /></clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.literal" name="literal" /></clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.startIndex" name="startIndex" /></clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.endIndex" name="endIndex" /></clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.intent" name="intent" /></clr-dg-cell>
+            </ng-container>
+            <ng-container *ngIf="utterance.id !== selectedUtterance?.id">
+              <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
+              <clr-dg-cell>{{utterance.transcript}}</clr-dg-cell>
+              <clr-dg-cell>{{utterance.category}}</clr-dg-cell>
+              <clr-dg-cell>{{utterance.literal}}</clr-dg-cell>
+              <clr-dg-cell>{{utterance.startIndex}}</clr-dg-cell>
+              <clr-dg-cell>{{utterance.endIndex}}</clr-dg-cell>
+              <clr-dg-cell>{{utterance.intent}}</clr-dg-cell>
+            </ng-container>
+        
+          </clr-dg-row>
+        
+          <clr-dg-footer>
+            <clr-dg-pagination #pagination [clrDgPageSize]="10">
+              <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>
+              {{pagination.firstItem + 1}} - {{pagination.lastItem}}
+              of {{pagination.totalItems}} utterances
+            </clr-dg-pagination>
+          </clr-dg-footer>
+        </clr-datagrid>
+        <pre class="clr-row language-html" *ngIf="printText">
+          <code style="text-align: start;" class="clr-col-10 clr-col-lg language-html">{{fileAsCsvString}}</code>
+        </pre>
+      </clr-tab-content>
+  </clr-tab>
+  <clr-tab>
+      <button clrTabLink (click)="convertToJSON(); isJsonFile=true">JSON</button>
+      <clr-tab-content *clrIfActive="isJsonFile">
+        <pre class="clr-row language-html" *ngIf="file!=null">
+          <code style="text-align: start;" class="clr-col-10 clr-col-lg language-html">{{fileAsJson}}</code>
+        </pre>
+      </clr-tab-content>
+  </clr-tab>
+</clr-tabs>
+<clr-modal [(clrModalOpen)]="modalOpenedforNewLine" [clrModalClosable]="false" [clrModalSize]="'xl'">
+  <h3 class="modal-title">New Line </h3>
+  <div class="modal-body">
+    <table class="table">
+          <tr>
+              <td><input placeholder="ID" [(ngModel)]="newLine.id" style="width:70px" clrInput required /></td>
+              <td><input placeholder="Transcript" [(ngModel)]="newLine.transcript" style="width:220px" clrInput required /></td>
+              <td><input placeholder="Category_id" [(ngModel)]="newLine.category" clrInput /></td>
+              <td><input placeholder="Literal" [(ngModel)]="newLine.literal" clrInput /></td>
+              <td><input placeholder="Start_index" [(ngModel)]="newLine.startIndex" style="width:100px" clrInput /></td>
+              <td><input placeholder="End_index" [(ngModel)]="newLine.endIndex" style="width:100px" clrInput  /></td>
+              <td><input placeholder="Intent" [(ngModel)]="newLine.intent" style="width:100px" clrInput  /></td>
+          </tr>
+    </table>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-success" [disabled]="(newLine.id=='' || newLine.transcript=='')" (click)="modalOpenedforNewLine=false; insertUtterance(newLine)">
+          Speichern
       </button>
-    </clr-dg-action-overflow>
+      <button type="button" class="btn btn-primary" (click)="modalOpenedforNewLine=false">
+        Abbrechen
+    </button>
+  </div>
+</clr-modal>
 
-    <ng-container *ngIf="utterance.id === selectedUtterance?.id">
-      <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
-      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.transcript" name="transcript" /></clr-dg-cell>
-      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.category" name="category" /></clr-dg-cell>
-      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.literal" name="literal" /></clr-dg-cell>
-      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.startIndex" name="startIndex" /></clr-dg-cell>
-      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.endIndex" name="endIndex" /></clr-dg-cell>
-      <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.intent" name="intent" /></clr-dg-cell>
-    </ng-container>
-    <ng-container *ngIf="utterance.id !== selectedUtterance?.id">
-      <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
-      <clr-dg-cell>{{utterance.transcript}}</clr-dg-cell>
-      <clr-dg-cell>{{utterance.category}}</clr-dg-cell>
-      <clr-dg-cell>{{utterance.literal}}</clr-dg-cell>
-      <clr-dg-cell>{{utterance.startIndex}}</clr-dg-cell>
-      <clr-dg-cell>{{utterance.endIndex}}</clr-dg-cell>
-      <clr-dg-cell>{{utterance.intent}}</clr-dg-cell>
-    </ng-container>
-
-  </clr-dg-row>
-
-  <clr-dg-footer>
-    <clr-dg-pagination #pagination [clrDgPageSize]="10">
-      <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>
-      {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
-      of {{pagination.totalItems}} utterances
-    </clr-dg-pagination>
-  </clr-dg-footer>
-</clr-datagrid>
+<!--Modal to Change the Delimiter -->
+<clr-modal [(clrModalOpen)]="modalOpenedforDelimitor" [clrModalSize]="'sm'">
+  <h3 class="modal-title">Delimiter Änderung </h3>
+  <div class="modal-body">
+    <clr-select-container>
+      <label>Neuer Delimiter auswählen</label>
+      <select clrSelect (change)="changeDelimiter($event)" name="options" required>
+        <option value=";">Semicolon</option>
+        <option value=",">Comma</option>
+      </select>
+    </clr-select-container>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="modalOpenedforDelimitor = false;">
+      OK
+    </button>
+  </div>
+</clr-modal>
