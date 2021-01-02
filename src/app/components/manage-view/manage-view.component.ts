@@ -34,7 +34,9 @@ export class ManageViewComponent implements OnInit {
   }
 
   deleteApp(appName: string){
-    this.luisAppService.deleteApp(appName);
+    this.luisAppService.deleteApp(appName).subscribe(k=> {
+      this.loadApps()
+    })
   }
 
   loadApps() {
