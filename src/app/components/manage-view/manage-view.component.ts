@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
-import {DUMMY_APPS, LuisApp} from '../../models/LuisApp';
-import {ClrWizard} from "@clr/angular";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { DUMMY_APPS, LuisApp } from '../../models/LuisApp';
+import { ClrWizard } from "@clr/angular";
 import { LuisAppService } from 'src/app/services/luis-app.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { LuisAppService } from 'src/app/services/luis-app.service';
 })
 export class ManageViewComponent implements OnInit {
   @ViewChild("createAppWizard") wizard: ClrWizard;
-  
+
   createWizard: boolean = false;
   deleteModal: boolean = false;
   selectedApp: LuisApp = DUMMY_APPS[0];
@@ -18,33 +18,39 @@ export class ManageViewComponent implements OnInit {
   // DUMMY DATA REMOVE LATER
   apps = [];
 
-  constructor(private luisAppService: LuisAppService) {}
+  constructor(private luisAppService: LuisAppService) { }
 
   ngOnInit(): void {
     this.loadApps();
   }
 
-  openDeleteModal(luisApp: LuisApp){
+  openDeleteModal(luisApp: LuisApp) {
     this.selectedApp = luisApp;
     this.deleteModal = true;
   }
 
-  openCreateWizard(){
+  openCreateWizard() {
     this.createWizard = !this.createWizard;
   }
 
-  deleteApp(appName: string){
-    this.luisAppService.deleteApp(appName).subscribe(k=> {
-      this.loadApps()
-    })
+  deleteApp(appName: string) {
+    this.luisAppService.deleteApp(appName).subscribe(result => {
+      this.loadApps();
+      this.deleteModal = false;
+
+    },
+      err => {
+        //TO:DO Display Notfication
+      }
+    )
   }
 
   loadApps() {
     this.apps = [];
-    this.luisAppService.getApps().subscribe(k => {
-      this.apps = k;
+    this.luisAppService.getApps().subscribe(result => {
+      this.apps = result;
     });
-    
+
     // DUMMY DATA
     // this.apps = DUMMY_APPS;
 
