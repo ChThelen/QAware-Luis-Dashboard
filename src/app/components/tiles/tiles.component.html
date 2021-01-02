@@ -1,6 +1,6 @@
 <div *ngIf="apps.length; else showInfo" class="clr-row">
     <div *ngFor="let app of apps; let index = i" class="clr-col-md-2">
-        <a class="card clickable" routerLink="{{'/manage/' + app.appID }}" routerLinkActive="actice">
+        <a class="card clickable" routerLink="{{'/manage/' + app.name }}" routerLinkActive="actice">
             <div class="card-block">
                 <h3 class="card-title">{{app.name}}</h3>
                 <div class="card-text">

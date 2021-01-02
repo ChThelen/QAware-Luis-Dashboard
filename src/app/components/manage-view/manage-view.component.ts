@@ -14,9 +14,7 @@ export class ManageViewComponent implements OnInit {
 
   createWizard: boolean = false;
   deleteModal: boolean = false;
-  selectedApp: LuisApp = DUMMY_APPS[0];
-
-  // DUMMY DATA REMOVE LATER
+  selectedApp: LuisApp = null;
   apps = [];
 
   constructor(private luisAppService: LuisAppService, private notificationService: NotificationService) {}
@@ -36,9 +34,9 @@ export class ManageViewComponent implements OnInit {
 
   deleteApp(appName: string) {
     this.luisAppService.deleteApp(appName).subscribe(result => {
+      this.selectedApp = null;
       this.loadApps();
       this.deleteModal = false;
-
     },
       err => {
         //TO:DO Display Notfication

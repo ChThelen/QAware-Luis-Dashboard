@@ -12,7 +12,7 @@ import { NotificationType, Notification, NotificationService } from 'src/app/ser
 })
 export class DetailViewComponent implements OnInit {
 
-  luisApp: LuisApp;
+  luisApp: LuisApp = null;
 
   constructor(private route: ActivatedRoute, private luisAppService: LuisAppService, private notificationService: NotificationService) { }
 
@@ -21,15 +21,13 @@ export class DetailViewComponent implements OnInit {
   }
   
   getApp(): void {
-  /* Uncomment when backend service is available
-    const id = this.route.snapshot.paramMap.get('id');
-    this.luisAppService.getApp(id).subscribe(k => {
-      this.luisApp = k;
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.getApps().subscribe(k => {
+      this.luisApp = k.filter((app: LuisApp) => app.name === name);
     });
-  */
 
     //DUMMY DATA REMOVE LATER
-    this.luisApp = DUMMY_APPS[0];
+    //this.luisApp = DUMMY_APPS[0];
 
   }
 

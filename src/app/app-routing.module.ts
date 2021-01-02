@@ -9,7 +9,7 @@ import { CsvReaderComponent } from './components/csv-reader/csv-reader.component
 const routes: Routes = [
   { path: 'dashboard', component: TilesComponent },
   { path: 'manage', component: ManageViewComponent },
-  { path: 'manage/:id', component: DetailViewComponent },
+  { path: 'manage/:name', component: DetailViewComponent },
   { path: 'import', component: CsvReaderComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
 ];
