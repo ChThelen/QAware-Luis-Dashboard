@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
 import {DUMMY_APPS, LuisApp} from '../../models/LuisApp';
 import {ClrWizard} from "@clr/angular";
+import { LuisAppService } from 'src/app/services/luis-app.service';
 
 @Component({
   selector: 'app-manage-view',
@@ -15,11 +16,12 @@ export class ManageViewComponent implements OnInit {
   selectedApp: LuisApp = DUMMY_APPS[0];
 
   // DUMMY DATA REMOVE LATER
-  apps = DUMMY_APPS;
+  apps = [];
 
-  constructor() {}
+  constructor(private luisAppService: LuisAppService) {}
 
   ngOnInit(): void {
+    this.loadApps();
   }
 
   openDeleteModal(luisApp: LuisApp){
@@ -29,6 +31,21 @@ export class ManageViewComponent implements OnInit {
 
   openCreateWizard(){
     this.createWizard = !this.createWizard;
+  }
+
+  deleteApp(appName: string){
+    this.luisAppService.deleteApp(appName);
+  }
+
+  loadApps() {
+    this.apps = [];
+    this.luisAppService.getApps().subscribe(k => {
+      this.apps = k;
+    });
+    
+    // DUMMY DATA
+    // this.apps = DUMMY_APPS;
+
   }
 
 }
