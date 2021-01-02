@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { environment } from '../../environments/runtime-environment';
 import { Observable } from 'rxjs';
 import {LuisApp} from '../models/LuisApp';
@@ -10,22 +10,18 @@ import {LuisApp} from '../models/LuisApp';
 export class LuisAppService {
 
   private baseUrl = environment.backendUrl;
-  private endpoint = "/apps";
-
-  private httpOptions = {
-    headers: new HttpHeaders().set('Content-Type', 'application/json')
-  };
+  private endpoint = "/luis/service";
 
   constructor(private httpClient: HttpClient) { }
 
   public getApps(): Observable<any> {
-    const url = this.baseUrl + this.endpoint;
-    return this.httpClient.get<LuisApp>(url, this.httpOptions);
+    const url = this.baseUrl + this.endpoint + "/getApps";
+    return this.httpClient.get<LuisApp>(url, {headers: new HttpHeaders({"Content-Type": "application/json"})});
   }
 
-  public getApp(luisAppId: string): Observable<any> {
-    const url = this.baseUrl + this.endpoint + `/${luisAppId}`;
-    return this.httpClient.get<LuisApp>(url, this.httpOptions);
+  public deleteApp(appName: string, force: boolean = true): Observable<any> {
+    const url = this.baseUrl + this.endpoint + "/deleteApp";
+    return this.httpClient.delete(url, {params: new HttpParams().set("name", appName).set("force", String(force))});
   }
 
 }

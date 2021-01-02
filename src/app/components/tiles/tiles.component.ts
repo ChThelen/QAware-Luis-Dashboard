@@ -20,15 +20,13 @@ export class TilesComponent implements OnInit {
   }
 
   loadApps() {
-    /* uncomment when backend service is available
     this.apps = [];
     this.luisAppService.getApps().subscribe(k => {
       this.apps = k;
     });
-    */
 
-    // DUMMY DATA REMOVE LATER
-    this.apps = DUMMY_APPS;
+    // DUMMY DATA
+    // this.apps = DUMMY_APPS;
 
   }
 
