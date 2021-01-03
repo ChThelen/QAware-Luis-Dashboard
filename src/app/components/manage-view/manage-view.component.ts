@@ -3,6 +3,7 @@ import { DUMMY_APPS, LuisApp } from '../../models/LuisApp';
 import { ClrWizard } from "@clr/angular";
 import { LuisAppService } from 'src/app/services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
+import { environment } from 'src/environments/runtime-environment';
 
 @Component({
   selector: 'app-manage-view',
@@ -20,7 +21,12 @@ export class ManageViewComponent implements OnInit {
   constructor(private luisAppService: LuisAppService, private notificationService: NotificationService) {}
 
   ngOnInit(): void {
-    this.loadApps();
+    if(environment.production){
+      this.loadApps();
+    } else{
+      this.apps = DUMMY_APPS;
+      this.showNotification("Dashboard is not running in production mode!", "The Dashboard is not running in production mode and will use dummy data for demonstration.");
+    }
   }
 
   openDeleteModal(luisApp: LuisApp) {
@@ -49,16 +55,12 @@ export class ManageViewComponent implements OnInit {
     this.luisAppService.getApps().subscribe(result => {
       this.apps = result;
     });
-
-    // DUMMY DATA
-    // this.apps = DUMMY_APPS;
-
   }
 
   showNotification(message: string, messageDetails: string) {
     this.notificationService.add(
       new Notification(
-        NotificationType.Info,
+        NotificationType.Warning,
         message,
         messageDetails
       )

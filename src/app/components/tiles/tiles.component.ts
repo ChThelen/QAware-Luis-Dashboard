@@ -3,6 +3,7 @@ import { LuisApp } from 'src/app/models/LuisApp';
 import { DUMMY_APPS } from 'src/app/models/LuisApp';
 import { LuisAppService } from 'src/app/services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
+import { environment } from 'src/environments/runtime-environment';
 
 @Component({
   selector: 'app-tiles',
@@ -16,7 +17,12 @@ export class TilesComponent implements OnInit {
   constructor(private luisAppService: LuisAppService, private notificationService: NotificationService) { }
 
   ngOnInit(): void {
-    this.loadApps();
+    if(environment.production){
+      this.loadApps();
+    } else{
+      this.apps = DUMMY_APPS;
+      this.showNotification("Dashboard is not running in production mode!", "The Dashboard is not running in production mode and will use dummy data for demonstration.");
+    }
   }
 
   loadApps() {
@@ -24,16 +30,12 @@ export class TilesComponent implements OnInit {
     this.luisAppService.getApps().subscribe(k => {
       this.apps = k;
     });
-
-    // DUMMY DATA
-    // this.apps = DUMMY_APPS;
-
   }
 
   showNotification(message: string, messageDetails: string) {
     this.notificationService.add(
       new Notification(
-        NotificationType.Info,
+        NotificationType.Warning,
         message,
         messageDetails
       )
