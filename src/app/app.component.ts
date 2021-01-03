@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NotificationService, Notification} from './services/notification.service';
+import { environment } from 'src/environments/runtime-environment';
 
 const darkThemeStyleSheet = document.styleSheets[2];
 
@@ -12,6 +13,7 @@ export class AppComponent implements OnInit {
   
   public notification: Notification | null = null;
   public shouldDisplayNotification = false;
+  public environment = environment;
 
   constructor(private readonly notificationService: NotificationService){}
 

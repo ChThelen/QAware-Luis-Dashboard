@@ -21,7 +21,6 @@ export class TilesComponent implements OnInit {
       this.loadApps();
     } else{
       this.apps = DUMMY_APPS;
-      this.showNotification("Dashboard is not running in production mode!", "The Dashboard is not running in production mode and will use dummy data for demonstration.");
     }
   }
 
@@ -35,7 +34,7 @@ export class TilesComponent implements OnInit {
   showNotification(message: string, messageDetails: string) {
     this.notificationService.add(
       new Notification(
-        NotificationType.Warning,
+        NotificationType.Info,
         message,
         messageDetails
       )
