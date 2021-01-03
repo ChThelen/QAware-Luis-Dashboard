@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Utterance, HEADERS } from 'src/app/models/Utterance';
+import { CsvUtterance, HEADERS } from 'src/app/models/CsvUtterance';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 
 @Component({
@@ -11,8 +11,8 @@ export class CsvReaderComponent implements OnInit {
   @ViewChild('csvReader') csvReader: any;
 
   file: File = null;
-  selectedUtterance: Utterance = null;
-  result: Utterance[] = [];
+  selectedUtterance: CsvUtterance = null;
+  result: CsvUtterance[] = [];
   delimiter: string = ';';
 
   constructor(private notificationService: NotificationService) { }
@@ -46,7 +46,7 @@ export class CsvReaderComponent implements OnInit {
         for (let i = 1; i < dataArray.length; i++) {
           let currentLine = dataArray[i].split(this.delimiter);
           if (currentLine.length == headers.length) {
-            let utterance: Utterance = new Utterance();
+            let utterance: CsvUtterance = new CsvUtterance();
             utterance.id = currentLine[0];
             utterance.transcript = currentLine[1];
             utterance.category = currentLine[2];
@@ -79,12 +79,12 @@ export class CsvReaderComponent implements OnInit {
     this.result = [];
   }
 
-  editUtterance(utterance: Utterance){
+  editUtterance(utterance: CsvUtterance){
     utterance = Object.assign(this.selectedUtterance);
     this.selectedUtterance = null;
   }
 
-  deleteUtterance(utterance: Utterance){
+  deleteUtterance(utterance: CsvUtterance){
   }
 
   showNotification(message: string, messageDetails: string) {
