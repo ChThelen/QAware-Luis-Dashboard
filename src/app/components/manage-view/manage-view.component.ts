@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { DUMMY_APPS, LuisApp } from '../../models/LuisApp';
-import { ClrWizard } from "@clr/angular";
 import { LuisAppService } from 'src/app/services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 import { environment } from 'src/environments/runtime-environment';
@@ -11,9 +10,8 @@ import { environment } from 'src/environments/runtime-environment';
   styleUrls: ['./manage-view.component.scss']
 })
 export class ManageViewComponent implements OnInit {
-  @ViewChild("createAppWizard") wizard: ClrWizard;
 
-  createWizard: boolean = false;
+  showAppCreation: boolean = false;
   deleteModal: boolean = false;
   selectedApp: LuisApp = null;
   apps = [];
@@ -31,10 +29,6 @@ export class ManageViewComponent implements OnInit {
   openDeleteModal(luisApp: LuisApp) {
     this.selectedApp = luisApp;
     this.deleteModal = true;
-  }
-
-  openCreateWizard() {
-    this.createWizard = !this.createWizard;
   }
 
   deleteApp(appName: string) {

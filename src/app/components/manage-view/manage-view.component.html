@@ -1,7 +1,11 @@
-<button type="button" class="btn btn-primary" (click)="openCreateWizard()">
+<button *ngIf="!showAppCreation" type="button" class="btn btn-primary" (click)="showAppCreation=true">
     <clr-icon shape="plus"></clr-icon> New App
 </button>
-<clr-datagrid>
+<button *ngIf="showAppCreation" type="button" class="btn btn-primary" (click)="showAppCreation=false">
+    <clr-icon shape="undo"></clr-icon> Back
+</button>
+<app-csv-reader *ngIf="showAppCreation"></app-csv-reader>
+<clr-datagrid *ngIf="!showAppCreation">
     <clr-dg-column>App ID</clr-dg-column>
     <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
     <clr-dg-column [clrDgField]="'version'">Version</clr-dg-column>
@@ -27,7 +31,7 @@
         <clr-dg-cell>
             <span>
                 <span class="color-square"
-                    [style.backgroundColor]="app.status === 'FAILED' ? 'hsl(9, 95%, 92%)' : app.status === 'PUBLISHED' ? 'hsl(93, 52%, 88%)' : 'hsl(198, 83%, 94%)'"></span>
+                    [style.backgroundColor]="app.status === 'failed' ? 'hsl(9, 95%, 92%)' : app.status === 'published' ? 'hsl(93, 52%, 88%)' : 'hsl(198, 83%, 94%)'"></span>
                 {{app.status}}
             </span>
         </clr-dg-cell>
@@ -42,67 +46,7 @@
     </clr-dg-footer>
 </clr-datagrid>
 
-<clr-wizard #createAppWizard [(clrWizardOpen)]="createWizard" clrWizardSize="lg">
-    <clr-wizard-title>Deploy Luis App</clr-wizard-title>
-
-    <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
-    <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
-    <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-    <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
-
-    <clr-wizard-page>
-        <ng-template clrPageTitle>Basic Information</ng-template>
-        <form class="clr-form">
-            <div class="clr-form-control">
-                <label class="clr-control-label">Name</label>
-                <div class="clr-control-container">
-                    <div class="clr-input-wrapper">
-                        <input type="text" required name="name" placeholder="Example App" class="clr-input" />
-                    </div>
-
-                </div>
-            </div>
-            <div class="clr-form-control">
-                <label class="clr-control-label">Description</label>
-                <div class="clr-control-container">
-                    <div class="clr-input-wrapper">
-                        <input type="text" required name="description" placeholder="This is an Example App."
-                            class="clr-input" />
-                    </div>
-
-                </div>
-            </div>
-            <div class="clr-form-control">
-
-                <label class="clr-control-label">Culture</label>
-                <div class="clr-control-container">
-                    <div class="clr-input-wrapper">
-                        <input type="text" required name="culture" placeholder="en-us" class="clr-input" />
-                    </div>
-
-                </div>
-            </div>
-            <div class="clr-form-control">
-                <label class="clr-control-label">LuisJSON</label>
-                <div class="clr-control-container">
-                    <div class="clr-file-wrapper">
-                        <label for="basic" class="clr-control-label"><span class="btn btn-sm">Select</span></label>
-                        <input type="file" id="basic" placeholder="Enter value here" class="clr-file" accept=".json"/>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </clr-wizard-page>
-
-    <clr-wizard-page>
-        <ng-template clrPageTitle>Customization</ng-template>
-        <form clrForm clrLayout="horizontal">
-        </form>
-    </clr-wizard-page>
-
-</clr-wizard>
-
-<clr-modal *ngIf="selectedApp" [(clrModalOpen)]="deleteModal" [clrModalStaticBackdrop]="true">
+<clr-modal *ngIf="selectedApp && !showAppCreation" [(clrModalOpen)]="deleteModal" [clrModalStaticBackdrop]="true">
     <h3 class="modal-title">Delete App {{selectedApp.name}}</h3>
     <div class="modal-body">
         <div class="alert alert-danger" role="alert">
