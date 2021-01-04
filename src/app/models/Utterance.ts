@@ -6,6 +6,16 @@ export class Utterance {
     startIndex: string;
     endIndex: string;
     intent: string;
+    constructor()
+    {
+      this.id           = "";
+      this.category     = "";
+      this.literal      = "";
+      this.transcript   = "";
+      this.endIndex     = "";
+      this.startIndex   = "";
+      this.intent       = "";
+    }
 }
 
 export const HEADERS: string[] = [
