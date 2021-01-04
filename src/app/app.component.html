@@ -18,6 +18,32 @@
         <span class="title">QAware Luis</span>
       </a>
     </div>
+    <div class="header-nav">
+      <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
+        
+        <span class="nav-text">Dashboard</span>
+      </a>
+    </div>
+    <div class="header-nav">
+      <a class="nav-link" routerLink="/manage" routerLinkActive="active">
+        
+        <span class="nav-text">Management</span>
+      </a>
+    </div>
+    <div class="header-nav">
+      <a class="nav-link" routerLink="/import" routerLinkActive="active">
+        
+        <span class="nav-text">Editor</span>
+      </a>
+    </div>
+    
+    <div class="header-nav">
+      <a class="nav-link" routerLink="/training" routerLinkActive="active">
+        
+        <span class="nav-text">Training</span>
+      </a>
+    </div>
+
     <div class="header-actions">
         <a (click)="switchTheme()" class="nav-link nav-icon-text">
           <clr-icon *ngIf="darkThemeIsActive" class="is-solid" shape="sun" size="24"></clr-icon>
@@ -25,22 +51,7 @@
         </a>
     </div>
   </clr-header>
-  <nav class="subnav">
-    <ul class="nav">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/manage" routerLinkActive="active">Management</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/import" routerLinkActive="active">Editor</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/training" routerLinkActive="active">Training</a>
-      </li>
-    </ul>
-  </nav>
+
   <div class="content-container">
     <div class="content-area">
       <app-notification *ngIf="shouldDisplayNotification" [notification]="notification">
