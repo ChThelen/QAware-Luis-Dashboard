@@ -1,8 +1,10 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LuisApp } from '../../models/LuisApp';
 import { DUMMY_APPS } from '../../models/LuisApp';
 import { LuisAppService } from '../../services/luis-app.service';
+import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
+import { environment } from 'src/environments/runtime-environment';
 
 @Component({
   selector: 'app-detail-view',
@@ -11,25 +13,33 @@ import { LuisAppService } from '../../services/luis-app.service';
 })
 export class DetailViewComponent implements OnInit {
 
-  luisApp: LuisApp;
+  luisApp: LuisApp = null;
 
-  constructor(private route: ActivatedRoute, private luisAppService: LuisAppService) { }
+  constructor(private route: ActivatedRoute, private luisAppService: LuisAppService, private notificationService: NotificationService) { }
 
   ngOnInit(): void {
-    this.getApp();
+    if (environment.production) {
+      this.getApp();
+    } else {
+      this.luisApp = DUMMY_APPS[0];
+    }
   }
-  
+
   getApp(): void {
-  /* Uncomment when backend service is available
-    const id = this.route.snapshot.paramMap.get('id');
-    this.luisAppService.getApp(id).subscribe(k => {
-      this.luisApp = k;
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.getApps().subscribe(k => {
+      this.luisApp = k.filter((app: LuisApp) => app.name === name);
     });
-  */
+  }
 
-    //DUMMY DATA REMOVE LATER
-    this.luisApp = DUMMY_APPS[0];
-
+  showNotification(message: string, messageDetails: string) {
+    this.notificationService.add(
+      new Notification(
+        NotificationType.Info,
+        message,
+        messageDetails
+      )
+    )
   }
 
 }

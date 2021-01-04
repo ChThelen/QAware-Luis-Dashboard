@@ -1,4 +1,16 @@
 <clr-main-container class="main-container">
+  <div *ngIf="!environment.production" class="alert alert-app-level alert-warning" role="alert">
+    <div class="alert-items">
+        <div class="alert-item static">
+            <div class="alert-icon-wrapper">
+                <clr-icon class="alert-icon" shape="exclamation-triangle"></clr-icon>
+            </div>
+            <div class="alert-text">
+                Dashboard is not running in production mode. Dummy data will be used for demonstration.
+            </div>
+        </div>
+    </div>
+</div>
   <clr-header class="header header-6">
     <div class="branding">
       <a class="nav-link" routerLink="/dashboard">
@@ -42,6 +54,8 @@
 
   <div class="content-container">
     <div class="content-area">
+      <app-notification *ngIf="shouldDisplayNotification" [notification]="notification">
+      </app-notification>
       <router-outlet></router-outlet>
     </div>
   </div>

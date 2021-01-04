@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Utterance, HEADERS } from 'src/app/models/Utterance';
+import { CsvUtterance, HEADERS } from 'src/app/models/CsvUtterance';
 import { LuisAppService } from 'src/app/services/luis-app.service';
 @Component({
   selector: 'app-csv-reader',
@@ -13,14 +13,14 @@ export class CsvReaderComponent implements OnInit {
   fileName = "No File Choosen";
   fileAsJson : string = "No File Choosen";
   fileAsCsvString : string = "";
-  selectedUtterance: Utterance = null;
-  result: Utterance[] = [];
+  selectedCsvUtterance: CsvUtterance = null;
+  result: CsvUtterance[] = [];
   delimiter: string = ';';
   modalOpenedforNewLine=false;
   modalOpenedforDelimitor=false;
   printText=true;
   isJsonFile=false;
-  newLine:Utterance = new Utterance();
+  newLine:CsvUtterance = new CsvUtterance();
   buttonsHidden=false;
   buttonsHiddenStyle="btn-group-overflow close";
   constructor(private luisService:LuisAppService) { }
@@ -32,7 +32,7 @@ export class CsvReaderComponent implements OnInit {
     this.buttonsHidden=!this.buttonsHidden;
     return this.buttonsHidden? "btn-group-overflow open" : "btn-group-overflow close";
   }
-  createUtterances() : void
+  createCsvUtterances() : void
   {
     this.result = [];
     let dataArray: string[] = this.fileAsCsvString.split(/\r\n|\n/);
@@ -42,15 +42,15 @@ export class CsvReaderComponent implements OnInit {
       for (let i = 1; i < dataArray.length; i++) {
         let currentLine = dataArray[i].split(this.delimiter);
         if (currentLine.length == headers.length) {
-          let utterance: Utterance = new Utterance();
-          utterance.id = currentLine[0];
-          utterance.transcript = currentLine[1];
-          utterance.category = currentLine[2];
-          utterance.literal = currentLine[3];
-          utterance.startIndex = currentLine[4];
-          utterance.endIndex = currentLine[5];
-          utterance.intent = currentLine[6];
-          this.result.push(utterance);
+          let CsvUtterance: CsvUtterance = new CsvUtterance();
+          CsvUtterance.id = currentLine[0];
+          CsvUtterance.transcript = currentLine[1];
+          CsvUtterance.category = currentLine[2];
+          CsvUtterance.literal = currentLine[3];
+          CsvUtterance.startIndex = currentLine[4];
+          CsvUtterance.endIndex = currentLine[5];
+          CsvUtterance.intent = currentLine[6];
+          this.result.push(CsvUtterance);
         } else {
           console.log('Error occured while reading file on line ' + i + '.');
         }
@@ -81,7 +81,7 @@ export class CsvReaderComponent implements OnInit {
           let data = fileReader.result;
           this.printText=true;
           this.fileAsCsvString = (<string>data);
-          this.createUtterances();
+          this.createCsvUtterances();
           this.convertToJSON();
        }
        fileReader.onerror = () => {
@@ -111,24 +111,24 @@ export class CsvReaderComponent implements OnInit {
     this.result = [];
   }
 
-  editUtterance(utterance: Utterance){
-    utterance = Object.assign(this.selectedUtterance);
-    this.selectedUtterance = null;
+  editCsvUtterance(CsvUtterance: CsvUtterance){
+    CsvUtterance = Object.assign(this.selectedCsvUtterance);
+    this.selectedCsvUtterance = null;
   }
 
-  deleteUtterance(utterance: Utterance):void
+  deleteCsvUtterance(CsvUtterance: CsvUtterance):void
   {
-    let j = this.result.indexOf(utterance);
+    let j = this.result.indexOf(CsvUtterance);
     if(j > -1)
     {
         this.result.splice(j,1);        
     } 
   }
-  insertUtterance(utterance: Utterance):void
+  insertCsvUtterance(CsvUtterance: CsvUtterance):void
   {
-    this.result.push(utterance);
+    this.result.push(CsvUtterance);
     this.isJsonFile = false;
-    this.newLine = new Utterance();
+    this.newLine = new CsvUtterance();
   }
   changeDelimiter(event: any):void
   {
@@ -148,7 +148,7 @@ export class CsvReaderComponent implements OnInit {
   */
 downloadCsv() :void
 {
-    this.fileAsCsvString = this.refreshUtterances(this.result);
+    this.fileAsCsvString = this.refreshCsvUtterances(this.result);
     this.convertToCSV();
     var hiddenElement = document.createElement('a');
     hiddenElement.href = 'data:text/csv;charset=UTF-8,' + encodeURIComponent(this.fileAsCsvString);
@@ -162,7 +162,7 @@ downloadCsv() :void
   */
  downloadJson() :void
  {
-     this.fileAsCsvString = this.refreshUtterances(this.result);
+     this.fileAsCsvString = this.refreshCsvUtterances(this.result);
      this.convertToJSON();
      var hiddenElement = document.createElement('a');
      hiddenElement.href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(this.fileAsJson);
@@ -170,19 +170,19 @@ downloadCsv() :void
      hiddenElement.download = (this.fileName.endsWith(".csv"))? this.fileName.substring(0, this.fileName.length-3)+"json": this.fileName.substring(0, this.fileName.length-4)+"json";
      hiddenElement.click();
  }
-  refreshUtterances( utterances: Utterance[]):string
+  refreshCsvUtterances( CsvUtterances: CsvUtterance[]):string
   {
       let entriesArray = [];
-      for (let i = 0; i < utterances.length; i++) 
+      for (let i = 0; i < CsvUtterances.length; i++) 
       {  
          let entries = [];
-          entries[0] = utterances[i].id;
-          entries[1] = utterances[i].transcript;
-          entries[2] = utterances[i].category;
-          entries[3] = utterances[i].literal;
-          entries[4] = utterances[i].startIndex;
-          entries[5] = utterances[i].endIndex;
-          entries[6] = utterances[i].intent;
+          entries[0] = CsvUtterances[i].id;
+          entries[1] = CsvUtterances[i].transcript;
+          entries[2] = CsvUtterances[i].category;
+          entries[3] = CsvUtterances[i].literal;
+          entries[4] = CsvUtterances[i].startIndex;
+          entries[5] = CsvUtterances[i].endIndex;
+          entries[6] = CsvUtterances[i].intent;
           
           entriesArray.push(entries.join(this.delimiter).replace(/-/gi,""));
       }  
@@ -195,7 +195,7 @@ downloadCsv() :void
     if(this.file!=null)
     {
       this.luisService.convertJsonToCSV(this.fileAsJson)
-      .toPromise().then(data=>{this.fileAsCsvString = data ; this.createUtterances();});
+      .toPromise().then(data=>{this.fileAsCsvString = data ; this.createCsvUtterances();});
     }
   }
   convertToJSON():void
@@ -233,7 +233,7 @@ downloadCsv() :void
   }
   cancelInsert()
   {
-    this.newLine = new Utterance();
+    this.newLine = new CsvUtterance();
   }
 
 
@@ -242,6 +242,5 @@ downloadCsv() :void
 function arrayEquals(a, b) {
   return Array.isArray(a) &&
     Array.isArray(b) &&
-    a.length === b.length 
-//  && a.every((val, index) => val === b[index]); // '#' != 'number' => error
+    a.length === b.length && a.every((val, index) => val === b[index]);
 }
