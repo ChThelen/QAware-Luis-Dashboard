@@ -27,7 +27,7 @@ export class LuisAppService {
   }
   public convertCsvToJson(csv:string,name:string):Observable<string> 
   {   
-      return this.httpClient.post<string>(this.baseUrl+"/luis/convert/convertToJSON?name="+name, csv, {headers: new HttpHeaders({"Content-Type": "application/json"})});  
+      return this.httpClient.post<string>(this.baseUrl+"/luis/convert/convertToJSON", csv, {headers: new HttpHeaders({"Content-Type": "application/json"}), params: {"name": name}});  
   }
   public convertJsonToCSV(json:string):Observable<string> 
   {   

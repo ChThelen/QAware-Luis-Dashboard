@@ -23,6 +23,7 @@ export class CsvReaderComponent implements OnInit {
   newLine:CsvUtterance = new CsvUtterance();
   buttonsHidden=false;
   buttonsHiddenStyle="btn-group-overflow close";
+
   constructor(private luisService:LuisAppService) { }
 
   ngOnInit(): void {
@@ -42,15 +43,15 @@ export class CsvReaderComponent implements OnInit {
       for (let i = 1; i < dataArray.length; i++) {
         let currentLine = dataArray[i].split(this.delimiter);
         if (currentLine.length == headers.length) {
-          let CsvUtterance: CsvUtterance = new CsvUtterance();
-          CsvUtterance.id = currentLine[0];
-          CsvUtterance.transcript = currentLine[1];
-          CsvUtterance.category = currentLine[2];
-          CsvUtterance.literal = currentLine[3];
-          CsvUtterance.startIndex = currentLine[4];
-          CsvUtterance.endIndex = currentLine[5];
-          CsvUtterance.intent = currentLine[6];
-          this.result.push(CsvUtterance);
+          let csvUtterance: CsvUtterance = new CsvUtterance();
+          csvUtterance.id = currentLine[0];
+          csvUtterance.transcript = currentLine[1];
+          csvUtterance.category = currentLine[2];
+          csvUtterance.literal = currentLine[3];
+          csvUtterance.startIndex = currentLine[4];
+          csvUtterance.endIndex = currentLine[5];
+          csvUtterance.intent = currentLine[6];
+          this.result.push(csvUtterance);
         } else {
           console.log('Error occured while reading file on line ' + i + '.');
         }
@@ -111,22 +112,22 @@ export class CsvReaderComponent implements OnInit {
     this.result = [];
   }
 
-  editCsvUtterance(CsvUtterance: CsvUtterance){
-    CsvUtterance = Object.assign(this.selectedCsvUtterance);
+  editCsvUtterance(csvUtterance: CsvUtterance){
+    csvUtterance = Object.assign(this.selectedCsvUtterance);
     this.selectedCsvUtterance = null;
   }
 
-  deleteCsvUtterance(CsvUtterance: CsvUtterance):void
+  deleteCsvUtterance(csvUtterance: CsvUtterance):void
   {
-    let j = this.result.indexOf(CsvUtterance);
+    let j = this.result.indexOf(csvUtterance);
     if(j > -1)
     {
         this.result.splice(j,1);        
     } 
   }
-  insertCsvUtterance(CsvUtterance: CsvUtterance):void
+  insertCsvUtterance(csvUtterance: CsvUtterance):void
   {
-    this.result.push(CsvUtterance);
+    this.result.push(csvUtterance);
     this.isJsonFile = false;
     this.newLine = new CsvUtterance();
   }
@@ -170,19 +171,19 @@ downloadCsv() :void
      hiddenElement.download = (this.fileName.endsWith(".csv"))? this.fileName.substring(0, this.fileName.length-3)+"json": this.fileName.substring(0, this.fileName.length-4)+"json";
      hiddenElement.click();
  }
-  refreshCsvUtterances( CsvUtterances: CsvUtterance[]):string
+  refreshCsvUtterances( csvUtterance: CsvUtterance[]):string
   {
       let entriesArray = [];
-      for (let i = 0; i < CsvUtterances.length; i++) 
+      for (let i = 0; i < csvUtterance.length; i++) 
       {  
          let entries = [];
-          entries[0] = CsvUtterances[i].id;
-          entries[1] = CsvUtterances[i].transcript;
-          entries[2] = CsvUtterances[i].category;
-          entries[3] = CsvUtterances[i].literal;
-          entries[4] = CsvUtterances[i].startIndex;
-          entries[5] = CsvUtterances[i].endIndex;
-          entries[6] = CsvUtterances[i].intent;
+          entries[0] = csvUtterance[i].id;
+          entries[1] = csvUtterance[i].transcript;
+          entries[2] = csvUtterance[i].category;
+          entries[3] = csvUtterance[i].literal;
+          entries[4] = csvUtterance[i].startIndex;
+          entries[5] = csvUtterance[i].endIndex;
+          entries[6] = csvUtterance[i].intent;
           
           entriesArray.push(entries.join(this.delimiter).replace(/-/gi,""));
       }  
@@ -242,5 +243,6 @@ downloadCsv() :void
 function arrayEquals(a, b) {
   return Array.isArray(a) &&
     Array.isArray(b) &&
-    a.length === b.length && a.every((val, index) => val === b[index]);
+    a.length === b.length && 
+    a.every((val, index) => val === b[index]);
 }

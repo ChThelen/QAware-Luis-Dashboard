@@ -6,6 +6,17 @@ export class CsvUtterance {
     startIndex: string;
     endIndex: string;
     intent: string;
+
+    constructor(){
+        this.id = "";
+        this.transcript = "";
+        this.category = "";
+        this.literal = "";
+        this.startIndex = "";
+        this.endIndex = "";
+        this.intent = "";
+    }
+
 }
 
 export const HEADERS: string[] = [

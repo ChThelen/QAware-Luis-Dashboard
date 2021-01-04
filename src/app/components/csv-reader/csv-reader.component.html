@@ -42,42 +42,42 @@
           <clr-dg-column [clrDgField]="'endIndex'">End_Index</clr-dg-column>
           <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
         
-          <clr-dg-row *clrDgItems="let utterance of result">
+          <clr-dg-row *clrDgItems="let CsvUtterance of result">
             <clr-dg-action-overflow>
-              <button class="action-item" (click)="isJsonFile=false; selectedUtterance === utterance ? editUtterance(utterance) : selectedUtterance = utterance; refreshUtterances(result)">
-                <clr-icon *ngIf="utterance.id === selectedUtterance?.id" shape="check"></clr-icon>
-                <clr-icon *ngIf="utterance.id !== selectedUtterance?.id" shape="pencil"></clr-icon>
+              <button class="action-item" (click)="isJsonFile=false; selectedCsvUtterance === CsvUtterance ? editCsvUtterance(CsvUtterance) : selectedCsvUtterance = CsvUtterance; refreshCsvUtterances(result)">
+                <clr-icon *ngIf="CsvUtterance.id === selectedCsvUtterance?.id" shape="check"></clr-icon>
+                <clr-icon *ngIf="CsvUtterance.id !== selectedCsvUtterance?.id" shape="pencil"></clr-icon>
               </button>
-              <button class="action-item" (click)="deleteUtterance(utterance)">
+              <button class="action-item" (click)="deleteCsvUtterance(CsvUtterance)">
                 <clr-icon shape="trash"></clr-icon>
               </button>
             </clr-dg-action-overflow>
         
-            <ng-container *ngIf="utterance.id === selectedUtterance?.id">
-              <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
-              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.transcript" name="transcript" /></clr-dg-cell>
-              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.category" name="category" /></clr-dg-cell>
-              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.literal" name="literal" /></clr-dg-cell>
-              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.startIndex" name="startIndex" /></clr-dg-cell>
-              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.endIndex" name="endIndex" /></clr-dg-cell>
-              <clr-dg-cell><input clrInput [(ngModel)]="selectedUtterance.intent" name="intent" /></clr-dg-cell>
+            <ng-container *ngIf="CsvUtterance.id === selectedCsvUtterance?.id">
+              <clr-dg-cell>{{CsvUtterance.id}}</clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedCsvUtterance.transcript" name="transcript" /></clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedCsvUtterance.category" name="category" /></clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedCsvUtterance.literal" name="literal" /></clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedCsvUtterance.startIndex" name="startIndex" /></clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedCsvUtterance.endIndex" name="endIndex" /></clr-dg-cell>
+              <clr-dg-cell><input clrInput [(ngModel)]="selectedCsvUtterance.intent" name="intent" /></clr-dg-cell>
             </ng-container>
-            <ng-container *ngIf="utterance.id !== selectedUtterance?.id">
-              <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
-              <clr-dg-cell>{{utterance.transcript}}</clr-dg-cell>
-              <clr-dg-cell>{{utterance.category}}</clr-dg-cell>
-              <clr-dg-cell>{{utterance.literal}}</clr-dg-cell>
-              <clr-dg-cell>{{utterance.startIndex}}</clr-dg-cell>
-              <clr-dg-cell>{{utterance.endIndex}}</clr-dg-cell>
-              <clr-dg-cell>{{utterance.intent}}</clr-dg-cell>
+            <ng-container *ngIf="CsvUtterance.id !== selectedCsvUtterance?.id">
+              <clr-dg-cell>{{CsvUtterance.id}}</clr-dg-cell>
+              <clr-dg-cell>{{CsvUtterance.transcript}}</clr-dg-cell>
+              <clr-dg-cell>{{CsvUtterance.category}}</clr-dg-cell>
+              <clr-dg-cell>{{CsvUtterance.literal}}</clr-dg-cell>
+              <clr-dg-cell>{{CsvUtterance.startIndex}}</clr-dg-cell>
+              <clr-dg-cell>{{CsvUtterance.endIndex}}</clr-dg-cell>
+              <clr-dg-cell>{{CsvUtterance.intent}}</clr-dg-cell>
             </ng-container>
         
           </clr-dg-row>
         
           <clr-dg-footer>
             <clr-dg-pagination #pagination [clrDgPageSize]="10">
-              <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>
-              {{pagination.firstItem + 1}} - {{pagination.lastItem}} of {{pagination.totalItems}} utterances
+              <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">CsvUtterances per page</clr-dg-page-size>
+              {{pagination.firstItem + 1}} - {{pagination.lastItem}} of {{pagination.totalItems}} CsvUtterances
             </clr-dg-pagination>
           </clr-dg-footer>
         </clr-datagrid>
@@ -123,7 +123,7 @@
     </table>
   </div>
   <div class="modal-footer">
-      <button type="button" class="btn btn-success" [disabled]="(newLine.id=='' || newLine.transcript=='')" (click)="modalOpenedforNewLine=false; insertUtterance(newLine)">
+      <button type="button" class="btn btn-success" [disabled]="(newLine.id=='' || newLine.transcript=='')" (click)="modalOpenedforNewLine=false; insertCsvUtterance(newLine)">
           Speichern
       </button>
       <button type="button" class="btn btn-primary" (click)="modalOpenedforNewLine=false;cancelInsert()">
