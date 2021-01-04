@@ -1,27 +1,27 @@
 
 <div class="button-bar">
 
-  <h3 *ngIf="file!=null" >{{fileName}}</h3> 
-  <h3 *ngIf="file==null">No File Choosen</h3> 
+  <h3 *ngIf="file" >{{fileName}}</h3> 
+  <h3 *ngIf="!file">No File Choosen</h3> 
   <span class="spacer"></span>
  
   <div class="btn-group btn-primary">
     <div [class]="buttonsHiddenStyle">
-      <button class="btn btn-icon dropdown-toggle" [disabled]="file===null" (click)="buttonsHiddenStyle=moreButton()">
-          <clr-icon shape="ellipsis-horizontal"></clr-icon>
+      <button class="btn btn-icon dropdown-toggle" [disabled]="!file" (click)="buttonsHiddenStyle=moreButton()">
+          <clr-icon size="24" shape="ellipsis-horizontal"></clr-icon>
       </button>
-      <div class="dropdown-menu">
-          <button class="btn" [disabled]="file===null" >Refresh</button>
-          <button class="btn" [disabled]="file===null" *ngIf="!printText" (click)="isJsonFile=false;printText=true;">Text-Datei anzeigen</button>
-          <button class="btn" [disabled]="file===null" *ngIf="printText" (click)="isJsonFile=false;printText=false;">Editor anzeigen</button>
-          <button class="btn" [disabled]="file===null" (click)="modalOpenedforDelimitor=true">Delimiter ändern</button>
+      <div class="dropdown-menu top-left">
+          <button class="btn" [disabled]="!file"  (click)="buttonsHiddenStyle=moreButton();resetFile()" >Clean</button>
+          <button class="btn" [disabled]="!file" *ngIf="printText" (click)="isJsonFile=false;printText=false;buttonsHiddenStyle=moreButton()">Text-Datei anzeigen</button>
+          <button class="btn" [disabled]="!file" *ngIf="!printText" (click)="isJsonFile=false;printText=true;buttonsHiddenStyle=moreButton()">Editor anzeigen</button>
+          <button class="btn" [disabled]="!file" (click)="modalOpenedforDelimitor=true;buttonsHiddenStyle=moreButton()">Delimiter ändern</button>
       </div>
     </div>
-    <button type="button" class="btn btn-icon" [disabled]="file===null" aria-label="home" (click)="modalOpenedforNewLine=true;isJsonFile=false;">
-      <clr-icon shape="plus"></clr-icon>
+    <button type="button" class="btn btn-icon" [disabled]="!file" aria-label="home" (click)="modalOpenedforNewLine=true;isJsonFile=false;printText=true">
+      <clr-icon size="24" shape="plus" class="white is-solid"></clr-icon>
     </button>
-    <button class="btn btn-success" [disabled]="file===null" (click)="downloadJson()"><clr-icon shape="download"></clr-icon>Download JSON</button>
-    <button class="btn btn-success" [disabled]="file===null" (click)="downloadCsv()"><clr-icon shape="download"></clr-icon>Download CSV</button>
+    <button class="btn btn-success" [disabled]="!file" (click)="downloadJson()"><clr-icon shape="download"></clr-icon>Download JSON</button>
+    <button class="btn btn-success" [disabled]="!file" (click)="downloadCsv()"><clr-icon shape="download"></clr-icon>Download CSV</button>
     <label class="btn">
       <input type="file" (change)="readCsvFile($event)" accept=".csv,.json" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> Upload File
     </label>
@@ -33,7 +33,7 @@
   <clr-tab>
       <button clrTabLink id="link1" >CSV</button>
       <clr-tab-content id="content1" *clrIfActive="!isJsonFile">
-        <clr-datagrid *ngIf="result.length > 0 && !printText && file!=null">
+        <clr-datagrid *ngIf="result.length > 0 && printText && file">
           <clr-dg-column >ID</clr-dg-column>
           <clr-dg-column [clrDgField]="'transcript'">Transcript</clr-dg-column>
           <clr-dg-column [clrDgField]="'category'">Category</clr-dg-column>
@@ -77,12 +77,11 @@
           <clr-dg-footer>
             <clr-dg-pagination #pagination [clrDgPageSize]="10">
               <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>
-              {{pagination.firstItem + 1}} - {{pagination.lastItem}}
-              of {{pagination.totalItems}} utterances
+              {{pagination.firstItem + 1}} - {{pagination.lastItem}} of {{pagination.totalItems}} utterances
             </clr-dg-pagination>
           </clr-dg-footer>
         </clr-datagrid>
-        <pre class="clr-row language-html" *ngIf="printText">
+        <pre class="clr-row language-html pre" *ngIf="!printText">
           <code style="text-align: start;" class="clr-col-10 clr-col-lg language-html">{{fileAsCsvString}}</code>
         </pre>
       </clr-tab-content>
@@ -90,9 +89,21 @@
   <clr-tab>
       <button clrTabLink (click)="convertToJSON(); isJsonFile=true">JSON</button>
       <clr-tab-content *clrIfActive="isJsonFile">
-        <pre class="clr-row language-html" *ngIf="file!=null">
-          <code style="text-align: start;" class="clr-col-10 clr-col-lg language-html">{{fileAsJson}}</code>
-        </pre>
+        
+        <div class="clr-row" *ngIf="file">
+          <div class="clr-col-lg-7 clr-col-12 ">
+            <div class="card language-html">
+              <pre style="border: none;"><code>{{fileAsJson}}</code></pre>
+            </div>
+          </div>
+          <div class="clr-col-lg-5 clr-col-12">
+            <!-- Here Component to deploy JSON On LUIS-->
+          
+          </div>
+            
+            
+        </div>
+        
       </clr-tab-content>
   </clr-tab>
 </clr-tabs>
@@ -105,8 +116,8 @@
               <td><input placeholder="Transcript" [(ngModel)]="newLine.transcript" style="width:220px" clrInput required /></td>
               <td><input placeholder="Category_id" [(ngModel)]="newLine.category" clrInput /></td>
               <td><input placeholder="Literal" [(ngModel)]="newLine.literal" clrInput /></td>
-              <td><input placeholder="Start_index" [(ngModel)]="newLine.startIndex" style="width:100px" clrInput /></td>
-              <td><input placeholder="End_index" [(ngModel)]="newLine.endIndex" style="width:100px" clrInput  /></td>
+              <td><input placeholder="Start_index" [value]="getFirstIndexOf(newLine.literal,newLine.transcript)" disabled ="newLine.startIndex" style="width:100px" clrInput /></td>
+              <td><input placeholder="End_index" [value]="getLastIndexOf(newLine.literal,newLine.transcript)" disabled [(ngModel)]="newLine.endIndex" style="width:100px" clrInput  /></td>
               <td><input placeholder="Intent" [(ngModel)]="newLine.intent" style="width:100px" clrInput  /></td>
           </tr>
     </table>
@@ -115,7 +126,7 @@
       <button type="button" class="btn btn-success" [disabled]="(newLine.id=='' || newLine.transcript=='')" (click)="modalOpenedforNewLine=false; insertUtterance(newLine)">
           Speichern
       </button>
-      <button type="button" class="btn btn-primary" (click)="modalOpenedforNewLine=false">
+      <button type="button" class="btn btn-primary" (click)="modalOpenedforNewLine=false;cancelInsert()">
         Abbrechen
     </button>
   </div>

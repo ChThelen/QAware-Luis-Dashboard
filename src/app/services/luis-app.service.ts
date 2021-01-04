@@ -29,14 +29,14 @@ export class LuisAppService {
     const url = this.baseUrl + this.endpoint + `/${luisAppId}`;
     return this.httpClient.get<LuisApp>(url, this.httpOptions);
   }
-  public convertCsvToJson(csv:string):Observable<string> 
+  public convertCsvToJson(csv:string,name:string):Observable<string> 
   {   
-      return this.httpClient.post<string>(this.baseUrl+"/luis/convert/convertToJSONString", csv, {headers: new HttpHeaders({"Content-Type": "application/json"})});  
+      return this.httpClient.post<string>(this.baseUrl+"/luis/convert/convertToJSON?name="+name, csv, {headers: new HttpHeaders({"Content-Type": "application/json"})});  
   }
   public convertJsonToCSV(json:string):Observable<string> 
   {   
     const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
-      return this.httpClient.post<string>(this.baseUrl+"/luis/convert/convertToCSVString", json, {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});    
+      return this.httpClient.post<string>(this.baseUrl+"/luis/convert/convertToCSV", json, {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});    
   }
 
 }

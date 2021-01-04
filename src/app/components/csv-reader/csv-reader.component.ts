@@ -18,7 +18,7 @@ export class CsvReaderComponent implements OnInit {
   delimiter: string = ';';
   modalOpenedforNewLine=false;
   modalOpenedforDelimitor=false;
-  printText=false;
+  printText=true;
   isJsonFile=false;
   newLine:Utterance = new Utterance();
   buttonsHidden=false;
@@ -116,7 +116,7 @@ export class CsvReaderComponent implements OnInit {
     this.selectedUtterance = null;
   }
 
-  deleteUtterance(utterance: Utterance)
+  deleteUtterance(utterance: Utterance):void
   {
     let j = this.result.indexOf(utterance);
     if(j > -1)
@@ -124,13 +124,13 @@ export class CsvReaderComponent implements OnInit {
         this.result.splice(j,1);        
     } 
   }
-  insertUtterance(utterance: Utterance)
+  insertUtterance(utterance: Utterance):void
   {
     this.result.push(utterance);
     this.isJsonFile = false;
     this.newLine = new Utterance();
   }
-  changeDelimiter(event: any)
+  changeDelimiter(event: any):void
   {
       let delimiter = event.target.value;
       if(this.delimiter.trim() != delimiter.trim())
@@ -140,14 +140,13 @@ export class CsvReaderComponent implements OnInit {
             this.fileAsCsvString =  this.fileAsCsvString.split(this.delimiter).join(delimiter).trim(); // Replace all characters          
             this.delimiter = delimiter; 
           }
-          console.log(this.fileAsCsvString)
       }
   }
   /**
   * download currently csv file
   * 
   */
-downloadCsv() 
+downloadCsv() :void
 {
     this.fileAsCsvString = this.refreshUtterances(this.result);
     this.convertToCSV();
@@ -161,7 +160,7 @@ downloadCsv()
   * download currently json file
   * 
   */
- downloadJson() 
+ downloadJson() :void
  {
      this.fileAsCsvString = this.refreshUtterances(this.result);
      this.convertToJSON();
@@ -191,17 +190,50 @@ downloadCsv()
       this.fileAsCsvString = entriesArray.join('\n');
       return entriesArray.join('\n');
   }
-  convertToCSV()
+  convertToCSV():void
   {
-    this.luisService.convertJsonToCSV(this.fileAsJson)
-    .toPromise().then(data=>{this.fileAsCsvString = data ; this.createUtterances();});
-   
+    if(this.file!=null)
+    {
+      this.luisService.convertJsonToCSV(this.fileAsJson)
+      .toPromise().then(data=>{this.fileAsCsvString = data ; this.createUtterances();});
+    }
   }
-  convertToJSON()
+  convertToJSON():void
   { 
-
-      this.luisService.convertCsvToJson(this.fileAsCsvString)
+    if(this.file!=null)
+    {
+      this.luisService.convertCsvToJson(this.fileAsCsvString,this.fileName)
       .toPromise().then(data=>{this.fileAsJson = JSON.stringify(data, null,5);});
+    }
+  }
+  getFirstIndexOf(literal:string, transcript:string):string
+  {
+    let firstIndex = -1;
+    if(literal != "" && transcript != "")
+    {
+      firstIndex = transcript.trim().indexOf(literal.trim());
+    }
+    this.newLine.startIndex = firstIndex == -1? "" : ""+firstIndex;
+    return firstIndex == -1? "" : ""+firstIndex; 
+  }
+  getLastIndexOf(literal:string, transcript:string):string
+  {
+    if(this.getFirstIndexOf(literal.trim(),transcript) != "")
+    {
+      let firstIndex = transcript.trim().indexOf(literal.trim());
+      let lastIndex  = firstIndex+literal.length;
+      this.newLine.endIndex = lastIndex +"";
+      return lastIndex + "";
+    }
+    else
+    {
+      this.newLine.endIndex = "";
+      return "";
+    }
+  }
+  cancelInsert()
+  {
+    this.newLine = new Utterance();
   }
 
 
@@ -211,5 +243,5 @@ function arrayEquals(a, b) {
   return Array.isArray(a) &&
     Array.isArray(b) &&
     a.length === b.length 
-    //&& a.every((val, index) => val === b[index]); // # != number => error
+//  && a.every((val, index) => val === b[index]); // '#' != 'number' => error
 }
