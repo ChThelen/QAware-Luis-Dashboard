@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: 'dashboard', component: TilesComponent },
   { path: 'manage', component: ManageViewComponent },
   { path: 'manage/:name', component: DetailViewComponent },
-  { path: 'import', component: CsvReaderComponent },
+  { path: 'editor', component: CsvReaderComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
 ];
 
