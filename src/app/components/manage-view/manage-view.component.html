@@ -1,11 +1,14 @@
-<button *ngIf="!showAppCreation" type="button" class="btn btn-primary" (click)="showAppCreation=true">
+<label class="btn btn-primary">
+    <input type="file" accept=".json" placeholder="Upload LuisJSON"  class="button-input">
     <clr-icon shape="plus"></clr-icon> New App
-</button>
-<button *ngIf="showAppCreation" type="button" class="btn btn-primary" (click)="showAppCreation=false">
-    <clr-icon shape="undo"></clr-icon> Back
-</button>
-<app-csv-reader *ngIf="showAppCreation"></app-csv-reader>
-<clr-datagrid *ngIf="!showAppCreation">
+</label>
+<clr-tooltip>
+    <clr-icon clrTooltipTrigger shape="info-circle" size="24" aria-label="Uniq tooltip 3"></clr-icon>
+    <clr-tooltip-content clrPosition="bottom-right" clrSize="md" *clrIfOpen>
+        <span>Only files in LuisJSON format are accepted. For using CSV files please use the editor.</span>
+    </clr-tooltip-content>
+</clr-tooltip>
+<clr-datagrid>
     <clr-dg-column>App ID</clr-dg-column>
     <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
     <clr-dg-column [clrDgField]="'version'">Version</clr-dg-column>
@@ -46,7 +49,7 @@
     </clr-dg-footer>
 </clr-datagrid>
 
-<clr-modal *ngIf="selectedApp && !showAppCreation" [(clrModalOpen)]="deleteModal" [clrModalStaticBackdrop]="true">
+<clr-modal *ngIf="selectedApp" [(clrModalOpen)]="deleteModal" [clrModalStaticBackdrop]="true">
     <h3 class="modal-title">Delete App {{selectedApp.name}}</h3>
     <div class="modal-body">
         <div class="alert alert-danger" role="alert">
