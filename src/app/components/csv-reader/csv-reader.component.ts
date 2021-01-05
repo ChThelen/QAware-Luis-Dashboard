@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CsvUtterance, HEADERS } from 'src/app/models/CsvUtterance';
 import { LuisAppService } from 'src/app/services/luis-app.service';
+import { NotificationService, NotificationType, Notification } from 'src/app/services/notification.service';
+
 @Component({
   selector: 'app-csv-reader',
   templateUrl: './csv-reader.component.html',
@@ -24,7 +26,7 @@ export class CsvReaderComponent implements OnInit {
   buttonsHidden=false;
   buttonsHiddenStyle="btn-group-overflow close";
 
-  constructor(private luisService:LuisAppService) { }
+  constructor(private luisService:LuisAppService, private notificationService: NotificationService) { }
 
   ngOnInit(): void {
   }
@@ -53,11 +55,11 @@ export class CsvReaderComponent implements OnInit {
           csvUtterance.intent = currentLine[6];
           this.result.push(csvUtterance);
         } else {
-          console.log('Error occured while reading file on line ' + i + '.');
+          this.showNotification('Failed to read CSV-File!', 'Error occured while reading file on line ' + i + '.');
         }
       }
     } else {
-      console.log('Error occured while reading file. Found different Headers!');
+      this.showNotification('Failed to read CSV-File! Please check headers and try again.', 'Error occured while reading file. Found different Headers!');
       this.resetFile();
     }
   }
@@ -70,7 +72,7 @@ export class CsvReaderComponent implements OnInit {
     if (!((this.file.name.endsWith(".csv"))||(this.file.name.endsWith('.json')) ))
     {
       this.file = null;
-      console.log('Error occured while reading file. Please import valid .csv or .json file!');
+      this.showNotification('Failed to read File! Please check file type and try again.', 'Error occured while reading file. Found different file type!');
     }
     else
     {
@@ -86,7 +88,7 @@ export class CsvReaderComponent implements OnInit {
           this.convertToJSON();
        }
        fileReader.onerror = () => {
-         console.log('Error occured while reading file!');
+         this.showNotification('Failed to read CSV-File!', '');
          this.resetFile();
        };
       }
@@ -99,7 +101,7 @@ export class CsvReaderComponent implements OnInit {
           this.convertToCSV();          
         }
         fileReader.onerror = () => {
-          console.log('Error occured while reading file!');
+          this.showNotification('Failed to read JSON-File!', '');
           this.resetFile();
         };
       }
@@ -237,6 +239,15 @@ downloadCsv() :void
     this.newLine = new CsvUtterance();
   }
 
+  showNotification(message: string, messageDetails: string) {
+    this.notificationService.add(
+      new Notification(
+        NotificationType.Danger,
+        message,
+        messageDetails
+      )
+    )
+  }
 
 }
 

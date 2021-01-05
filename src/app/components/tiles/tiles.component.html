@@ -1,5 +1,5 @@
-<div *ngIf="apps.length; else showInfo" class="clr-row">
-    <div *ngFor="let app of apps; let index = i" class="clr-col-md-2">
+<div *ngIf="apps.length; else showInfo" class="clr-row clr-align-items-start clr-justify-content-start">
+    <div *ngFor="let app of apps; let index = i" class="clr-col-auto" style="max-width: min-content;">
         <a class="card clickable" routerLink="{{'/manage/' + app.name }}" routerLinkActive="actice">
             <div class="card-block">
                 <h3 class="card-title">{{app.name}}</h3>
@@ -8,12 +8,12 @@
                 </div>
             </div>
             <div class="card-footer">
-                <span class="label label-light-blue p7" style="margin-top: .3em;">ID: {{app.appID}}</span>
-                <span class="label label-purple p7" style="margin-top: .3em;">Version: {{app.version}}</span>
+                <span class="label label-light-blue p7" style="margin-top: .4em;">ID: {{app.appID}}</span>
+                <span class="label label-purple p7" style="margin-top: .4em;">Version: {{app.version}}</span>
                 <span class="label label-success p7" [ngClass]="{
                     'label-info': app.status === 'deployed',
                     'label-success': app.status === 'published',
-                    'label-danger': app.status === 'failed' }" style="margin-top: .3em;">Status: {{app.status}}</span>
+                    'label-danger': app.status === 'failed' }" style="margin-top: .4em;">Status: {{app.status}}</span>
             </div>
         </a>
     </div>

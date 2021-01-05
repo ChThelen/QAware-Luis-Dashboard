@@ -15,7 +15,7 @@ export class LuisApp {
 
 export const DUMMY_APPS: LuisApp[] = [
   {
-    appID: "8d90ß256lknsa620213",
+    appID: "e646d8fd-201a-4688-b86a-f90ba098d91f",
     name: "App 1",
     version: "1.0",
     dashboardUrl: "https://eu.luis.ai",
@@ -23,23 +23,23 @@ export const DUMMY_APPS: LuisApp[] = [
     status: LuisAppState.deployed
   },
   {
-    appID: "addsa234sdfkzlj54kl6",
+    appID: "e646d8fd-201a-4688-b86a-f90ba098d91f",
     name: "App 2",
-    version: "2.0",
+    version: "1.0",
     dashboardUrl: "https://eu.luis.ai",
     description: "This is an Example App for Luis.",
     status: LuisAppState.published
   },
   {
-    appID: "8237jhlsdf0ß0302bhj",
+    appID: "e646d8fd-201a-4688-b86a-f90ba098d91f",
     name: "App 3",
-    version: "3.0",
+    version: "1.0",
     dashboardUrl: "https://eu.luis.ai",
     description: "This is an Example App for Luis.",
     status: LuisAppState.published
   },
   {
-    appID: "8237jhlsdasdjh22bhj",
+    appID: "e646d8fd-201a-4688-b86a-f90ba098d91f",
     name: "App 4",
     version: "1.0",
     dashboardUrl: "https://eu.luis.ai",
