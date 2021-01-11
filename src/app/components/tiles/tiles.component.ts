@@ -14,6 +14,8 @@ export class TilesComponent implements OnInit {
 
   apps: Array<LuisApp> = [];
 
+  gridViewIsActive: boolean = true;
+
   constructor(private luisAppService: LuisAppService, private notificationService: NotificationService) { }
 
   ngOnInit(): void {

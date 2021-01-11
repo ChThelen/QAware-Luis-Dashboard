@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   constructor(private readonly notificationService: NotificationService){}
 
   darkThemeIsActive = false;
-
+  
   ngOnInit(): void {
     darkThemeStyleSheet.disabled = !this.darkThemeIsActive;
 

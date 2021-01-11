@@ -1,13 +1,66 @@
-<div class="clr-row">
-    <div class="clr-col-3">
-        <h2>{{luisApp.name}}</h2>
-        <h3 style="margin-top: 0; color: hsl(198, 0%, 70%);">
-            <span>ID:</span> {{luisApp.appID}}
-        </h3>
-        <div><span class="p4">Version: </span>{{luisApp.version}}</div>
-        <div><span class="p4">Dashbord-URL: </span>{{luisApp.dashboardUrl}}</div>
-        <div><span class="p4">Description: </span>{{luisApp.description}}</div>
-        <button class="btn btn-primary p4">Edit</button>
-        <button class="btn p4" routerLink="/manage">Back</button>    
+<div class="clr-row clr-align-items-start clr-justify-content-start">
+    <div class="clr-col clr-col-auto">
+        <div class="card">
+            <div class="card-header">
+                Details
+            </div>
+            <div class="card-block">
+                <div class="card-title">
+                    <h2 style="margin-top: 0rem;">{{luisApp.name}}</h2>
+                    <h3 style="margin-top: 0; color: hsl(198, 0%, 70%);">
+                        <span>ID:</span> {{luisApp.appID}}
+                    </h3>
+                </div>
+                <div class="card-text">
+                    <div><span class="p4">Version: </span>{{luisApp.version}}</div>
+                    <div><span class="p4">Dashbord-URL: </span>{{luisApp.dashboardUrl}}</div>
+                    <div><span class="p4">Description: </span>{{luisApp.description}}</div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-sm btn-link">Edit</button>
+                <button class="btn btn-sm btn-link">Delete</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                JSON
+            </div>
+            <div class="card-block">
+                <div class="card-text">
+                    <pre style="margin-top: 0; overflow-x: scroll;max-height: 270px; border-color: transparent;">
+                        <code class="language-json">
+                            {{luisApp.appJson | json}}
+                        </code>
+                    </pre>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-sm btn-link">View more</button>
+                <button class="btn btn-sm btn-link">Download</button>
+            </div>
+        </div>
     </div>
+    <div class="clr-col clr-col-auto">
+        <div class="card">
+            <div class="card-header">
+                Test Results
+            </div>
+            <div class="card-block">
+                <div class="card-text">
+                    <clr-datagrid>
+                        <clr-dg-column>Version</clr-dg-column>
+                        <clr-dg-column>Date</clr-dg-column>
+                        <clr-dg-column>Intent</clr-dg-column>
+                        <clr-dg-column>Average</clr-dg-column>
+                        <clr-dg-column>Difference</clr-dg-column>
+                    </clr-datagrid>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-sm btn-link">Train</button>
+            </div>
+        </div>
+    </div>
+
 </div>
