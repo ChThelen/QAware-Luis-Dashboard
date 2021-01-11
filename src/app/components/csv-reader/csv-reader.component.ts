@@ -235,6 +235,11 @@ downloadCsv() :void
   {
     this.newLine = new Utterance();
   }
+  /**Observe the changes on the deploy-json-component */
+  jsonStringChanged(json :string)
+  {
+    this.fileAsJson = json;
+  }
 
 
 }

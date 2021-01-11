@@ -38,5 +38,31 @@ export class LuisAppService {
     const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
       return this.httpClient.post<string>(this.baseUrl+"/luis/convert/convertToCSV", json, {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});    
   }
+  /**
+   * 
+   * @param json 
+   * @returns App Id
+   */
+  public createApp(json:string)
+  {
+    return this.httpClient.post<string>(this.baseUrl+"/luis/service/createApp", json, {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});
+  }
+   /**
+     * Starts the training for an Luis app and waits for it to end
+     * @param name name of the app
+     * @return 0 if successful, 1 else
+     */
+  public train(name:string)
+  {
+    return this.httpClient.post<number>(this.baseUrl+"/luis/service/train", name, {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});
+  }
+  public publish(name:string,staging:boolean)
+  {
+    return this.httpClient.post<number>(this.baseUrl+"/luis/service/publish?staging="+staging, name, {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});
+  }
+  public getPublishSettings(name:string)
+  {
+    return this.httpClient.post<string>(this.baseUrl+"/luis/service/getPublishSettings", name, {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});
+  }
 
 }

@@ -1,0 +1,137 @@
+<div class="card">
+  <div class="card-header">
+    <h3 style="text-align: center;">JSON APP DEPLOYER </h3>
+  </div>
+  <div class=" card-block container">
+    <clr-timeline clrLayout="vertical" >
+      <clr-timeline-step [clrState]="timelineStyle.step0.state">
+        <clr-timeline-step-header>Step 0</clr-timeline-step-header>
+        <clr-timeline-step-title>Json uploaded</clr-timeline-step-title>
+        <clr-timeline-step-description>The Json file is ready to be deployed on Luis</clr-timeline-step-description>
+      </clr-timeline-step>
+      <clr-timeline-step class="gemini-ignore" [clrState]="timelineStyle.step1.state">
+        <clr-timeline-step-header>Step 1</clr-timeline-step-header>
+        <clr-timeline-step-title>Create new app on Luis</clr-timeline-step-title>
+        <clr-timeline-step-description>
+          <span class="label label-success" *ngIf="luis.app.created == 0">App Id : 12b656dc-7391-498d-b332-c667cf21c415</span>
+          <br>
+          <div *ngIf="luis.app.created != 0">
+            <input clrInput placeholder="Name" name="input" [(ngModel)]="luis.app.name" />
+            <br>
+            <textarea placeholder="Description" [(ngModel)]="luis.app.description" class="clr-textarea"></textarea>
+            <br>
+          </div>
+          <br>
+          <button class="btn btn-sm btn-primary" (click)="editNameAndDescription(luis.app.name,luis.app.description);jsonStringValueChanged();createApp()">Create App</button>
+        </clr-timeline-step-description>
+      </clr-timeline-step>
+      <clr-timeline-step [clrState]="timelineStyle.step2.state">
+        <clr-timeline-step-header>Step 2</clr-timeline-step-header>
+        <clr-timeline-step-title>Train your App</clr-timeline-step-title>
+        <clr-timeline-step-description>
+          
+          <div>
+            <span class="label label-danger" *ngIf="luis.app.created === 1">Status: NOT CREATED</span>
+            <span class="label label-warning" *ngIf="luis.app.created === 0 && luis.app.trained === 1">Status: CREATED</span>
+            <span class="label label-success" *ngIf="luis.app.trained === 0">Status: DEPLOYED</span>
+          </div>
+          <br>
+          <br>
+          <button class="btn btn-sm btn-primary" (click)="train()" [disabled]="luis.app.created!=0">Train</button>
+        </clr-timeline-step-description>
+      </clr-timeline-step>
+      
+      <clr-timeline-step [clrState]="timelineStyle.step3.state">
+        <clr-timeline-step-header>Step 3</clr-timeline-step-header>
+        <clr-timeline-step-title>Publish your App</clr-timeline-step-title>
+        <clr-timeline-step-description>
+          <clr-radio-container clrInline>
+            <clr-radio-wrapper>
+              <input type="radio" clrRadio name="options" required [(ngModel)]="luis.app.staging" />
+              <label>Staging</label>
+            </clr-radio-wrapper>
+            <clr-radio-wrapper>
+              <input type="radio" clrRadio name="options" required [(ngModel)]="luis.app.production" />
+              <label>Production</label>
+            </clr-radio-wrapper>
+            <clr-control-helper>Staging if the app is supposed to be published as staging or production</clr-control-helper>
+            <clr-control-error>This field is required!</clr-control-error>
+          </clr-radio-container>
+          <br>
+          <div class="btn-group btn-outline-primary btn-sm">
+            <button class="btn btn-primary" (click)="publish()" [disabled]="luis.app.created!=0" >Publish</button>
+            <button class="btn" (click)="settingModalOpened = true" [disabled]="luis.app.created!=0">Settings</button>
+          </div>
+         
+        </clr-timeline-step-description>
+      </clr-timeline-step>
+      <clr-timeline-step [clrState]="timelineStyle.step4.state">
+        <clr-timeline-step-header>Step 4</clr-timeline-step-header>
+        <clr-timeline-step-title><button class="btn btn-sm" (click)="settingModalOpened = true" [disabled]="luis.app.created!=0">Assets</button></clr-timeline-step-title>
+        <clr-timeline-step-description>
+        </clr-timeline-step-description>
+      </clr-timeline-step>
+    </clr-timeline>
+  </div>
+</div>
+<!--
+<div class="card">
+  <div class="card-header">
+      Status
+  </div>
+  <div class="card-block">
+      <div class="card-media-block">
+          <img src="..." class="card-media-image">
+          <div class="card-media-description">
+              <span class="card-media-title">
+                  Project A
+              </span>
+              <span class="card-media-text">
+                  Owner: John Doe
+              </span>
+          </div>
+      </div>
+      <div class="card-text">
+          ...
+      </div>
+  </div>
+  <div class="card-footer">
+      <button class="btn btn-sm btn-link">Action</button>
+  </div>
+</div>
+<div class="card">
+<div class="card-header">
+    Header
+</div>
+<div class="card-block">
+    <div class="card-media-block">
+        <img src="..." class="card-media-image">
+        <div class="card-media-description">
+            <span class="card-media-title">
+                Project A
+            </span>
+            <span class="card-media-text">
+                Owner: John Doe
+            </span>
+        </div>
+    </div>
+    <div class="card-text">
+        ...
+    </div>
+</div>
+<div class="card-footer">
+    <button class="btn btn-sm btn-link">Action</button>
+</div>
+</div> -->
+
+<clr-modal [(clrModalOpen)]="settingModalOpened" [clrModalClosable]="true">
+  <h3 class="modal-title">Published Settings</h3>
+  <div class="modal-body">
+      <p>Clicking on the backdrop doesn't do anything.</p>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="settingModalOpened = false">
+          Close
+      </button>
+  </div>
+</clr-modal>
