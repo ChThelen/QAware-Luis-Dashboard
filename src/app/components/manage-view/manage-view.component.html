@@ -8,7 +8,7 @@
 
     <clr-dg-row *clrDgItems="let app of apps">
         <clr-dg-action-overflow>
-            <button class="action-item" routerLink="{{'/manage/' + app.appID }}">
+            <button class="action-item" routerLink="{{'/apps/' + app.name }}">
                 <clr-icon shape="pencil"></clr-icon>
             </button>
             <button class="action-item" (click)="openDeleteModal(app)">

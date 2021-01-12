@@ -1,17 +1,7 @@
-<div class="btn-group btn-link">
-    <button class="btn btn-icon" (click)="gridViewIsActive=!gridViewIsActive">
-        <clr-icon *ngIf="!gridViewIsActive" class="is-solid" shape="grid-view" size="24"></clr-icon>
-        <clr-icon *ngIf="gridViewIsActive" class="is-solid" shape="view-list" size="24"></clr-icon>
-    </button>
-    <button class = "btn btn-icon">
-        <clr-icon shape="plus"></clr-icon>
-    </button>
-</div>
-
-<div *ngIf="gridViewIsActive">
+<div>
     <div *ngIf="apps.length; else showInfo" class="clr-row clr-align-items-start clr-justify-content-start">
         <div *ngFor="let app of apps; let index = i" class="clr-col-auto" style="max-width: min-content;">
-            <a class="card clickable" routerLink="{{'/manage/' + app.name }}" routerLinkActive="actice">
+            <a class="card clickable" routerLink="{{'/apps/' + app.name }}" routerLinkActive="actice">
                 <div class="card-block">
                     <h3 class="card-title">{{app.name}}</h3>
                     <div class="card-text">
@@ -44,4 +34,3 @@
         </div>
     </ng-template>
 </div>
-<app-manage-view *ngIf="!gridViewIsActive"></app-manage-view>

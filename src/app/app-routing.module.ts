@@ -1,15 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { TilesComponent } from './components/tiles/tiles.component';
 import { DetailViewComponent } from './components/detail-view/detail-view.component';
-import { ManageViewComponent } from './components/manage-view/manage-view.component';
 import { CsvReaderComponent } from './components/csv-reader/csv-reader.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 
 const routes: Routes = [
-  { path: 'dashboard', component: TilesComponent },
-  { path: 'manage', component: ManageViewComponent },
-  { path: 'manage/:name', component: DetailViewComponent },
+  { path: 'dashboard', component: DashboardComponent },
+  { path: 'apps/:name', component: DetailViewComponent },
   { path: 'editor', component: CsvReaderComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
 ];

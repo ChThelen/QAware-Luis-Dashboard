@@ -11,6 +11,7 @@ import { DetailViewComponent } from './components/detail-view/detail-view.compon
 import { ManageViewComponent } from './components/manage-view/manage-view.component';
 import { CsvReaderComponent } from './components/csv-reader/csv-reader.component';
 import { NotificationComponent } from './components/notification/notification.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { NotificationComponent } from './components/notification/notification.co
     DetailViewComponent,
     ManageViewComponent,
     CsvReaderComponent,
-    NotificationComponent
+    NotificationComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
