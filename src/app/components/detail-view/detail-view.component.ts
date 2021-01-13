@@ -5,7 +5,8 @@ import { DUMMY_APPS } from '../../models/LuisApp';
 import { LuisAppService } from '../../services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 import { environment } from 'src/environments/runtime-environment';
-import { Location } from '@angular/common';
+import { Location} from '@angular/common';
+import { LuisAppStats } from 'src/app/models/LuisAppStats';
 
 @Component({
   selector: 'app-detail-view',
@@ -15,13 +16,16 @@ import { Location } from '@angular/common';
 export class DetailViewComponent implements OnInit {
 
   luisApp: LuisApp = null;
+  luisAppStats: LuisAppStats[] = null;
   deleteModal: boolean = false;
+  jsonModal: boolean = false;
 
   constructor(private location: Location, private route: ActivatedRoute, private luisAppService: LuisAppService, private notificationService: NotificationService) { }
 
   ngOnInit(): void {
     if (environment.production) {
       this.getApp();
+      this.getAppStats();
     } else {
       this.luisApp = DUMMY_APPS[0];
     }
@@ -30,7 +34,15 @@ export class DetailViewComponent implements OnInit {
   getApp(): void {
     const name = this.route.snapshot.paramMap.get('name');
     this.luisAppService.getApps().subscribe(k => {
-      this.luisApp = k.filter((app: LuisApp) => app.name === name);
+      this.luisApp = k.filter((app: LuisApp) => app.name === name)[0];
+      this.luisApp.appJson = this.luisApp.appJson == null ? JSON.parse("{}") : this.luisApp.appJson;
+    });
+  }
+
+  getAppStats(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.getAppStats(name).subscribe(k => {
+      this.luisAppStats = k;
     });
   }
 

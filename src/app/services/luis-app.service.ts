@@ -3,8 +3,8 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { environment } from '../../environments/runtime-environment';
 import { Observable } from 'rxjs';
 import {LuisApp} from '../models/LuisApp';
- 
-import {catchError} from "rxjs/internal/operators"
+import {LuisAppStats} from '../models/LuisAppStats';
+
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +16,16 @@ export class LuisAppService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public getApps(): Observable<any> {
+  public getApps(): Observable<Array<LuisApp>> {
     const url = this.baseUrl + this.endpoint + "/getApps";
-    return this.httpClient.get<LuisApp>(url, {headers: new HttpHeaders({"Content-Type": "application/json"})});
+    return this.httpClient.get<Array<LuisApp>>(url);
   }
 
+  public getAppStats(appName: string): Observable<Array<LuisAppStats>> {
+    const url = this.baseUrl + this.endpoint + "/getAppStats";
+    return this.httpClient.get<Array<LuisAppStats>>(url, {params: new HttpParams().set("name", appName)});
+  }
+  
   public deleteApp(appName: string, force: boolean = true): Observable<any> {
     const url = this.baseUrl + this.endpoint + "/deleteApp";
     return this.httpClient.delete(url, {params: new HttpParams().set("name", appName).set("force", String(force))});

@@ -23,7 +23,10 @@
     "@clr/core": "^4.0.8",
     "@clr/icons": "4.0.5",
     "@clr/ui": "4.0.5",
+    "@types/prismjs": "^1.9.0",
     "@webcomponents/webcomponentsjs": "^2.0.0",
+    "ngx-highlightjs": "^4.1.3",
+    "prismjs": "^1.9.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"

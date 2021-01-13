@@ -1,4 +1,4 @@
-<div class="clr-row clr-align-items-start clr-justify-content-start">
+<div *ngIf="luisApp" class="clr-row clr-align-items-start clr-justify-content-start">
     <div class="clr-col clr-col-auto">
         <div class="card">
             <div class="card-header">
@@ -13,7 +13,7 @@
                 </div>
                 <div class="card-text">
                     <div><span class="p4">Version: </span>{{luisApp.version}}</div>
-                    <div><span class="p4">Dashbord-URL: </span>{{luisApp.dashboardUrl}}</div>
+                    <div><span class="p4">Dashbord-URL: </span><a href="{{luisApp.dashboardUrl}}">{{luisApp.dashboardUrl}}</a></div>
                     <div><span class="p4">Description: </span>{{luisApp.description}}</div>
                 </div>
             </div>
@@ -27,19 +27,14 @@
             </div>
             <div class="card-block">
                 <div class="card-text">
-                    <pre style="margin-top: 0; overflow-x: scroll;max-height: 270px; border-color: transparent;">
-                        <code class="language-json">
-                            {{luisApp.appJson | json}}
-                        </code>
-                    </pre>
+                    <pre style="overflow-x: scroll;max-height: 270px;"><code [highlight]="luisApp.appJson | json"></code></pre>
                 </div>
             </div>
             <div class="card-footer">
+                <button class="btn btn-sm btn-link" (click)="jsonModal=true">View More</button>
                 <button class="btn btn-sm btn-link" (click)="donwloadJsonFile()">Download</button>
             </div>
         </div>
-    </div>
-    <div class="clr-col clr-col-auto">
         <div class="card">
             <div class="card-header">
                 Test Results
@@ -47,11 +42,20 @@
             <div class="card-block">
                 <div class="card-text">
                     <clr-datagrid>
-                        <clr-dg-column>Version</clr-dg-column>
-                        <clr-dg-column>Date</clr-dg-column>
-                        <clr-dg-column>Intent</clr-dg-column>
-                        <clr-dg-column>Average</clr-dg-column>
-                        <clr-dg-column>Difference</clr-dg-column>
+                        <clr-dg-column [clrDgField]="'version'">Version</clr-dg-column>
+                        <clr-dg-column [clrDgField]="'date'">Date</clr-dg-column>
+                        <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
+                        <clr-dg-column [clrDgField]="'average'">Average</clr-dg-column>
+                        <clr-dg-column [clrDgField]="'difference'">Difference</clr-dg-column>
+
+                        <clr-dg-row *clrDgItems="let appStat of luisAppStats">                    
+                            <clr-dg-cell>{{appStat.version}}</clr-dg-cell>
+                            <clr-dg-cell>{{appStat.date | date:"short"}}</clr-dg-cell>
+                            <clr-dg-cell>{{appStat.intent}}</clr-dg-cell>
+                            <clr-dg-cell>{{appStat.average}}</clr-dg-cell>
+                            <clr-dg-cell>{{appStat.difference}}</clr-dg-cell>
+                        </clr-dg-row>
+
                         <clr-dg-placeholder>Sorry. No test results was found.</clr-dg-placeholder>
                     </clr-datagrid>
                 </div>
@@ -61,10 +65,16 @@
             </div>
         </div>
     </div>
-
 </div>
 
-<clr-modal [(clrModalOpen)]="deleteModal" [clrModalStaticBackdrop]="true">
+<clr-modal *ngIf="luisApp" [clrModalSize]="'xl'" [(clrModalOpen)]="jsonModal" [clrModalStaticBackdrop]="true">
+    <h3 class="modal-title">{{luisApp.name}}</h3>
+    <div class="modal-body">
+        <pre style="overflow-x: scroll;"><code [highlight]="luisApp.appJson | json"></code></pre>
+    </div>
+</clr-modal>
+
+<clr-modal *ngIf="luisApp" [(clrModalOpen)]="deleteModal" [clrModalStaticBackdrop]="true">
     <h3 class="modal-title">Delete App {{luisApp.name}}</h3>
     <div class="modal-body">
         <div class="alert alert-danger" role="alert">
