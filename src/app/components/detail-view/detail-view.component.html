@@ -13,7 +13,8 @@
                 </div>
                 <div class="card-text">
                     <div><span class="p4">Version: </span>{{luisApp.version}}</div>
-                    <div><span class="p4">Dashbord-URL: </span><a href="{{luisApp.dashboardUrl}}">{{luisApp.dashboardUrl}}</a></div>
+                    <div><span class="p4">Dashbord-URL: </span><a
+                            href="{{luisApp.dashboardUrl}}">{{luisApp.dashboardUrl}}</a></div>
                     <div><span class="p4">Description: </span>{{luisApp.description}}</div>
                 </div>
             </div>
@@ -27,7 +28,8 @@
             </div>
             <div class="card-block">
                 <div class="card-text">
-                    <pre style="overflow-x: scroll;max-height: 270px;"><code [highlight]="luisApp.appJson | json"></code></pre>
+                    <pre
+                        style="overflow-x: scroll;max-height: 270px;"><code [highlight]="luisApp.appJson | json"></code></pre>
                 </div>
             </div>
             <div class="card-footer">
@@ -48,7 +50,7 @@
                         <clr-dg-column [clrDgField]="'average'">Average</clr-dg-column>
                         <clr-dg-column [clrDgField]="'difference'">Difference</clr-dg-column>
 
-                        <clr-dg-row *clrDgItems="let appStat of luisAppStats">                    
+                        <clr-dg-row *clrDgItems="let appStat of luisAppStats">
                             <clr-dg-cell>{{appStat.version}}</clr-dg-cell>
                             <clr-dg-cell>{{appStat.date | date:"short"}}</clr-dg-cell>
                             <clr-dg-cell>{{appStat.intent}}</clr-dg-cell>
@@ -65,6 +67,33 @@
             </div>
         </div>
     </div>
+    <div class="clr-col-4">
+        <div class="card">
+            <div class="card-header">
+                Charts
+            </div>
+            <div class="card-block">
+                <div class="card-text">
+                    <div class="chart-wrapper" *ngIf="chartData">
+                        <canvas baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions"
+                            [legend]="chartLegend" [chartType]="'bar'" [colors]="chartColors">
+                        </canvas>
+                    </div>
+                    <div class="chart-wrapper" *ngIf="chartData">
+                        <canvas baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions"
+                            [legend]="chartLegend" [chartType]="'line'" [colors]="chartColors">
+                        </canvas>
+                    </div>
+                    <div class="chart-wrapper" *ngIf="chartData">
+                        <canvas baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions"
+                            [legend]="chartLegend" [chartType]="'radar'" [colors]="chartColors">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <clr-modal *ngIf="luisApp" [clrModalSize]="'xl'" [(clrModalOpen)]="jsonModal" [clrModalStaticBackdrop]="true">

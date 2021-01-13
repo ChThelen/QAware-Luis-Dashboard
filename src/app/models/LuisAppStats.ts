@@ -1,5 +1,5 @@
 export class LuisAppStats{
-    verstion: string;
+    version: string;
     date: Date;
     intent: string;
     average: number;

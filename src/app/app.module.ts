@@ -13,6 +13,7 @@ import { CsvReaderComponent } from './components/csv-reader/csv-reader.component
 import { NotificationComponent } from './components/notification/notification.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
     BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
-    HighlightModule
+    HighlightModule,
+    ChartsModule
   ],
   providers: [
     {
