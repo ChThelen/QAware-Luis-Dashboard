@@ -1,0 +1,225 @@
+
+<div class="button-bar">
+
+  <div style="position: sticky; top:0; z-index: 2;">
+    <!--<div class="btn-group">
+      <button type="button" class="btn btn-link btn-success-outline" [disabled]="!(selectedUtterances.length >= 2)">
+        <span class="badge badge-success" *ngIf="selectedUtterances.length<=99 && selectedUtterances.length>=2">
+         {{selectedUtterances.length}}
+        </span>
+        <span class="badge badge-success" *ngIf="selectedUtterances.length>99">
+          99+
+         </span>
+        Create App
+      </button>
+    </div>-->
+  
+    <div class="btn-group">
+        <button type="button" class="btn btn-link btn-secondary" (click)="modalOpenedforNewLine=true"><clr-icon shape="plus"></clr-icon> Add
+            new Line</button>
+        <button type="button" class="btn btn-link btn-danger-outline" [disabled]="selectedUtterances.length == 0" (click)="deleteUtterances(selectedUtterances)" ><clr-icon shape="close"></clr-icon> Delete</button>
+   
+       
+        <clr-dropdown>
+            <button type="button" class="btn btn-link btn-info-outline" [disabled]="!(selectedUtterances.length >= 2)" clrDropdownTrigger>
+                Export
+                <clr-icon shape="caret down"></clr-icon>
+            </button>
+            <clr-dropdown-menu clrPosition="bottom-left" *clrIfOpen>
+                <button type="button" (click)="downloadCsv('myFile.csv')" clrDropdownItem>Export Csv File</button>
+                <button type="button" clrDropdownItem>Export Json File</button>
+            </clr-dropdown-menu>
+        </clr-dropdown>
+    </div>
+    
+  </div>
+    <span class="spacer"></span>
+   
+    <div class="btn-group btn-primary">
+     <!-- <button class="btn btn-outline" (click)="getIntents()" ><clr-icon shape="refresh"></clr-icon>&nbsp;Refresh</button> -->
+      <button class="btn btn-success" [clrLoading]="validateBtnState" [disabled]="!newChange"(click)="!disabledConfirm? confirmSave = true : saveChanges();newChange = false" ><clr-icon shape="floppy"></clr-icon>&nbsp;Save Changes</button>
+      <label class="btn">
+        <input type="file" (change)="readCsvFile($event)" accept=".csv" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> Extend
+      </label>
+    </div>
+  
+  </div>
+
+  <div  class="content" >
+          
+  <clr-datagrid style="overflow-x: hidden;" *ngIf="file">
+    <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
+    <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
+    <clr-dg-column [clrDgField]="'category'"><ng-container *clrDgHideableColumn="{hidden: false}">Category</ng-container></clr-dg-column>
+    <clr-dg-column [clrDgField]="'literal'"><ng-container *clrDgHideableColumn="{hidden: false}">Literal</ng-container> </clr-dg-column>
+    <clr-dg-column [clrDgField]="'startIndex'"><ng-container *clrDgHideableColumn="{hidden: false}">Start_Index</ng-container> </clr-dg-column>
+    <clr-dg-column [clrDgField]="'endIndex'"><ng-container *clrDgHideableColumn="{hidden: false}">End_Index</ng-container> </clr-dg-column>
+    <clr-dg-column [clrDgField]="'intent'"><ng-container *clrDgHideableColumn="{hidden: false}">Intent</ng-container> </clr-dg-column>
+    <clr-dg-column [clrDgField]="'tag'"> <ng-container *clrDgHideableColumn="{hidden: false}">Tag</ng-container></clr-dg-column>
+  
+    <clr-dg-row *clrDgItems="let utterance of uploadedUtterances" [clrDgItem]="utterance">
+        <clr-dg-action-overflow>
+            <button class="action-item" (click)="deleteUtterance(utterance)">
+              <clr-icon shape="trash"></clr-icon>
+            </button>
+        </clr-dg-action-overflow>
+  
+        <ng-container >
+          <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.id" type="text"> </app-editable-cell></clr-dg-cell>
+          <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.transcript" type="text"> </app-editable-cell></clr-dg-cell>
+          <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.category" type="text"> </app-editable-cell></clr-dg-cell>
+          <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.literal" type="text"> </app-editable-cell></clr-dg-cell>
+          <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.startIndex" type="text"> </app-editable-cell></clr-dg-cell>
+          <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.endIndex" type="text"> </app-editable-cell></clr-dg-cell>
+          <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.intent" type="text"> </app-editable-cell></clr-dg-cell>
+          <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.tag" type="text"> </app-editable-cell></clr-dg-cell>
+      </ng-container>
+  
+    </clr-dg-row>
+  
+    <clr-dg-footer>
+        <clr-dg-column-toggle>
+        <clr-dg-column-toggle-title>Show Columns</clr-dg-column-toggle-title>
+            <clr-dg-column-toggle-button>Select All Button</clr-dg-column-toggle-button>
+            <clr-radio-wrapper>
+                <input type="radio" clrRadio value="option1" name="options" />
+                <label>Option 1</label>
+            </clr-radio-wrapper>
+            <clr-radio-wrapper>
+                <input type="radio" clrRadio value="option2" name="options" />
+                <label>Option 2</label>
+            </clr-radio-wrapper>
+        </clr-dg-column-toggle>
+      <clr-dg-pagination #pagination [clrDgPageSize]="5">
+        <clr-dg-page-size [clrPageSizeOptions]="[5,10,20,50,100]">Utterances per page</clr-dg-page-size>
+        {{pagination.firstItem + 1}} - {{pagination.lastItem}} of {{pagination.totalItems}} utterances
+      </clr-dg-pagination>
+    </clr-dg-footer>
+  </clr-datagrid>
+  
+  <div style="display: flex; align-items: center;  justify-content: center; margin: 0px; margin-top: 25px;" *ngIf="file">
+    <button class="btn btn-success"[clrLoading]="validateBtnState" (click)="merge()"><clr-icon shape="shuffle"></clr-icon>&nbsp;&nbsp;Merge</button>
+  </div>
+ 
+        
+  
+    <clr-datagrid [(clrDgSelected)]="selectedUtterances" (clrDgSelectedChange)="selectionChanged($event)">
+        <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
+        <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
+        <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
+        <clr-dg-column [clrDgField]="'category'"><ng-container *clrDgHideableColumn="{hidden: false}">Category</ng-container></clr-dg-column>
+        <clr-dg-column [clrDgField]="'literal'"><ng-container *clrDgHideableColumn="{hidden: false}">Literal</ng-container> </clr-dg-column>
+        <clr-dg-column [clrDgField]="'startIndex'"><ng-container *clrDgHideableColumn="{hidden: false}">Start_Index</ng-container> </clr-dg-column>
+        <clr-dg-column [clrDgField]="'endIndex'"><ng-container *clrDgHideableColumn="{hidden: false}">End_Index</ng-container> </clr-dg-column>
+        <clr-dg-column [clrDgField]="'intent'"><ng-container *clrDgHideableColumn="{hidden: false}">Intent</ng-container> </clr-dg-column>
+        <clr-dg-column [clrDgField]="'tag'"> <ng-container *clrDgHideableColumn="{hidden: false}">Tag</ng-container></clr-dg-column>
+    
+        <clr-dg-action-bar>
+          
+          <div *ngFor="let intent of intents; let i = index" class="btn-group">
+            <div>
+                <button *ngIf="!intentsSelection[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelection[i]=!intentsSelection[i];selectIntents(intent)">{{intent}}</button>
+                <button *ngIf="intentsSelection[i]" class="btn btn-sm btn-primary" (click)="intentsSelection[i]=!intentsSelection[i]; deselectIntents(intent)">{{intent}}</button>
+
+            </div>
+             
+          </div>
+            
+        </clr-dg-action-bar>
+        <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance">
+        
+    
+        <ng-container >
+            <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.id" (changeEventEmitter)="newChanges($event)"  type="text"> </app-editable-cell></clr-dg-cell>
+            <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.transcript" (changeEventEmitter)="newChanges($event)" type="text"> </app-editable-cell></clr-dg-cell>
+            <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.category" (changeEventEmitter)="newChanges($event)"  type="text"> </app-editable-cell></clr-dg-cell>
+            <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.literal" (changeEventEmitter)="newChanges($event)"  type="text"> </app-editable-cell></clr-dg-cell>
+            <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.startIndex" (changeEventEmitter)="newChanges($event)" type="text"> </app-editable-cell></clr-dg-cell>
+            <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.endIndex" (changeEventEmitter)="newChanges($event)" type="text"> </app-editable-cell></clr-dg-cell>
+            <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.intent" (changeEventEmitter)="newChanges($event)" type="text"> </app-editable-cell></clr-dg-cell>
+            <clr-dg-cell><app-editable-cell [(ngModel)]="utterance.tag" (changeEventEmitter)="newChanges($event)"  type="text"> </app-editable-cell></clr-dg-cell>
+        </ng-container>
+    
+        </clr-dg-row>
+    
+        <clr-dg-footer>
+            <clr-dg-column-toggle>
+            <clr-dg-column-toggle-title>Show Columns</clr-dg-column-toggle-title>
+                <clr-dg-column-toggle-button>Select All Button</clr-dg-column-toggle-button>
+                <clr-radio-wrapper>
+    <input type="radio" clrRadio value="option1" name="options" />
+    <label>Option 1</label>
+    </clr-radio-wrapper>
+    <clr-radio-wrapper>
+    <input type="radio" clrRadio value="option2" name="options" />
+    <label>Option 2</label>
+    </clr-radio-wrapper>
+            </clr-dg-column-toggle>
+        <clr-dg-pagination #pagination [clrDgPageSize]="100">
+            <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>
+            {{pagination.firstItem + 1}} - {{pagination.lastItem}} of {{pagination.totalItems}} utterances
+        </clr-dg-pagination>
+        </clr-dg-footer>
+    </clr-datagrid>
+  </div>  
+  <clr-modal [(clrModalOpen)]="modalOpenedforNewLine" [clrModalClosable]="false" [clrModalSize]="'xl'">
+    <h3 class="modal-title">New Line </h3>
+    <div class="modal-body">
+      <table class="table">
+            <tr>
+                <td><input placeholder="ID" [(ngModel)]="newLine.id" style="width:50px" clrInput required /></td>
+                <td><input placeholder="Transcript" [(ngModel)]="newLine.transcript" style="width:200px" clrInput required /></td>
+                <td><input placeholder="Category_id" [(ngModel)]="newLine.category" style="width:100px" clrInput /></td>
+                <td><input placeholder="Literal" [(ngModel)]="newLine.literal" style="width:100px" clrInput /></td>
+                <td><input placeholder="Start_index" [value]="getFirstIndexOf(newLine.literal,newLine.transcript)" disabled ="newLine.startIndex" style="width:100px" clrInput /></td>
+                <td><input placeholder="End_index" [value]="getLastIndexOf(newLine.literal,newLine.transcript)" disabled [(ngModel)]="newLine.endIndex" style="width:100px" clrInput  /></td>
+                <td><input placeholder="Intent" [(ngModel)]="newLine.intent" style="width:100px" clrInput  /></td>
+                <td><input placeholder="Tag" [(ngModel)]="newLine.tag" style="width:100px" clrInput  /></td>
+            </tr>
+      </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" [disabled]="(newLine.id=='' || newLine.transcript=='')" (click)="modalOpenedforNewLine=false; insertUtterance(newLine)">
+            Speichern
+        </button>
+        <button type="button" class="btn btn-primary" (click)="modalOpenedforNewLine=false;cancelInsert()">
+          Abbrechen
+      </button>
+    </div>
+  </clr-modal>
+
+  <clr-modal [(clrModalOpen)]="confirmSave" [clrModalClosable]="false">
+    <h3 class="modal-title">Save Changes</h3>
+    <div class="modal-body">
+      <div class="alert alert-danger" role="alert">
+        <div class="alert-items">
+            <div class="alert-item static">
+                <div class="alert-icon-wrapper">
+                    <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+                </div>
+                <span class="alert-text">
+                  Save the changes can cause problems in your Ground-Truth,
+                  Do you really want to do it?
+                </span>
+            </div>
+        </div>
+    </div>
+    <clr-checkbox-container clrInline>
+ 
+      <clr-checkbox-wrapper>
+        <input type="checkbox" clrCheckbox name="options"  value="option1" [(ngModel)]="disabledConfirm" />
+        <label>Disable this Notification</label>
+      </clr-checkbox-wrapper>
+     
+    </clr-checkbox-container>
+   
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="confirmSave = false">
+            cancel
+        </button>
+        <button type="button" class="btn btn-success" (click)="saveChanges();confirmSave = false">
+         Save
+      </button>
+    </div>
+</clr-modal>  

@@ -11,6 +11,8 @@ import { DetailViewComponent } from './components/detail-view/detail-view.compon
 import { ManageViewComponent } from './components/manage-view/manage-view.component';
 import { CsvReaderComponent } from './components/csv-reader/csv-reader.component';
 import { DeployJsonComponent } from './components/deploy-json/deploy-json.component';
+import { GroundTruthComponent } from './ground-truth/ground-truth.component';
+import { EditableCellComponent } from './components/editable-cell/editable-cell.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { DeployJsonComponent } from './components/deploy-json/deploy-json.compon
     DetailViewComponent,
     ManageViewComponent,
     CsvReaderComponent,
-    DeployJsonComponent
+    DeployJsonComponent,
+    GroundTruthComponent,
+    EditableCellComponent
   ],
   imports: [
     BrowserModule,
