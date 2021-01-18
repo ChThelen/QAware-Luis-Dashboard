@@ -8,8 +8,10 @@
                         <div class="card">
                             <div class="card-header">
                                 Details
-                                <span style="float: right;"><a
-                                    href="{{luisApp.dashboardUrl}}" title="Open Luis Dashboard"><clr-icon shape="link"></clr-icon></a></span>
+                                <span style="float: right;"><a href="{{luisApp.dashboardUrl}}"
+                                        title="Open Luis Dashboard">
+                                        <clr-icon shape="link"></clr-icon>
+                                    </a></span>
                             </div>
                             <div class="card-block">
                                 <div class="card-title">
@@ -17,7 +19,7 @@
                                     'label-info': luisApp.status === 'deployed',
                                     'label-success': luisApp.status === 'published',
                                     'label-danger': luisApp.status === 'failed' }">{{luisApp.status}}
-                                </span>
+                                    </span>
                                     <h2 style="margin-top: 0rem;">{{luisApp.name}}</h2>
                                     <h3 style="margin-top: 0; color: hsl(198, 0%, 70%);">
                                         {{luisApp.appID}}
@@ -29,8 +31,8 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button class="btn btn-sm btn-link">Edit</button>
-                                <button class="btn btn-sm btn-link">Test</button>
+                                <button class="btn btn-sm btn-link" (click)="editWizard=true">Edit</button>
+                                <button class="btn btn-sm btn-link" (click)="testApp()">Test</button>
                                 <button class="btn btn-sm btn-link" (click)="deleteModal=true">Delete</button>
                             </div>
                         </div>
@@ -40,8 +42,7 @@
                             </div>
                             <div class="card-block">
                                 <div class="card-text">
-                                    <pre
-                                        style="overflow-x: scroll;max-height: 270px;"><code [highlight]="luisApp.appJson | json"></code>
+                                    <pre style="overflow-x: scroll;max-height: 270px;"><code [highlight]="luisApp.appJson | json"></code>
                                     </pre>
                                 </div>
                             </div>
@@ -169,4 +170,39 @@
             <button class="btn btn-danger" type="button" (click)="deleteApp()">Delete</button>
         </div>
     </clr-modal>
+
+    <clr-wizard #wizardlg [(clrWizardOpen)]="editWizard" clrWizardSize="lg">
+        <clr-wizard-title>{{luisApp.name}}</clr-wizard-title>
+
+        <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+        <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+        <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+        <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+
+        <clr-wizard-page>
+            <ng-template clrPageTitle>Select Action</ng-template>
+            <clr-radio-wrapper>
+                <input type="radio" clrRadio value="itent" name="options" />
+                <label>Add Intent</label>
+            </clr-radio-wrapper>
+            <clr-radio-wrapper>
+                <input type="radio" clrRadio value="entity" name="options" />
+                <label>Add Entity</label>
+            </clr-radio-wrapper>
+            <clr-radio-wrapper>
+                <input type="radio" clrRadio value="utteracnes" name="options" />
+                <label>Add Utterances</label>
+            </clr-radio-wrapper>
+            <clr-radio-wrapper>
+                <input type="radio" clrRadio value="appJson" name="options" />
+                <label>Update App JSON</label>
+            </clr-radio-wrapper>
+        </clr-wizard-page>
+
+        <clr-wizard-page>
+            <ng-template clrPageTitle>Edit App</ng-template>
+            ...
+        </clr-wizard-page>
+    </clr-wizard>
+
 </div>

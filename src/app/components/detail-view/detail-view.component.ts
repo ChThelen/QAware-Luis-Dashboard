@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LuisApp } from '../../models/LuisApp';
 import { DUMMY_APPS } from '../../models/LuisApp';
@@ -9,6 +9,7 @@ import { Location} from '@angular/common';
 import { LuisAppStats } from 'src/app/models/LuisAppStats';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
+import { ClrWizard } from '@clr/angular';
 
 @Component({
   selector: 'app-detail-view',
@@ -16,11 +17,13 @@ import { Color, Label } from 'ng2-charts';
   styleUrls: ['./detail-view.component.scss']
 })
 export class DetailViewComponent implements OnInit {
-  
+  @ViewChild("editWizard") wizard: ClrWizard;
+
   luisApp: LuisApp = null;
   luisAppStats: LuisAppStats[] = null;
   deleteModal: boolean = false;
   jsonModal: boolean = false;
+  editWizard: boolean = false;
 
   chartLabels: string[];
   chartData:  ChartDataSets[];
@@ -54,6 +57,11 @@ export class DetailViewComponent implements OnInit {
       this.luisApp.appJson = this.luisApp.appJson == null ? dummyJson : this.luisApp.appJson;
       
     });
+  }
+
+  testApp(): void{
+    const name = this.route.snapshot.paramMap.get('name');
+    
   }
 
   getAppStats(): void {
