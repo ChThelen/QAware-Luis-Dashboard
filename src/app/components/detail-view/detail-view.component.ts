@@ -27,16 +27,7 @@ export class DetailViewComponent implements OnInit {
 
   chartLabels: string[];
   chartData:  ChartDataSets[];
-  chartLegend = false;
-  chartOptions = {
-    scaleShowVerticalLines: false,
-    responsive: true,
-  };
-  chartColors: Color[] = [
-    {
-      backgroundColor: 'rgba(0,54,77,0.28)',
-    },
-  ];
+
   constructor(private location: Location, private route: ActivatedRoute, private luisAppService: LuisAppService, private notificationService: NotificationService) { }
 
   ngOnInit(): void {
@@ -80,7 +71,7 @@ export class DetailViewComponent implements OnInit {
       this.location.back();
     },
       err => {
-        //TO:DO Display Notfication
+        this.showNotification("Failed while deleting App!", null);
       }
     )
   }
