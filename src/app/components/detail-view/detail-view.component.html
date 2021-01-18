@@ -1,4 +1,4 @@
-<div *ngIf="luisApp">
+<div *ngIf="luisApp && luisApp.appJson">
     <clr-tabs>
         <clr-tab>
             <button clrTabLink id="linkOverview">Overview</button>
@@ -32,7 +32,7 @@
                             </div>
                             <div class="card-footer">
                                 <button class="btn btn-sm btn-link" (click)="editWizard=true">Edit</button>
-                                <button class="btn btn-sm btn-link" (click)="testApp()">Test</button>
+                                <button class="btn btn-sm btn-link" >Test</button>
                                 <button class="btn btn-sm btn-link" (click)="deleteModal=true">Delete</button>
                             </div>
                         </div>
