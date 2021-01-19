@@ -15,7 +15,14 @@
                             </div>
                             <div class="card-block">
                                 <div class="card-title">
-                                    <span class="label label-success" style="float: right; margin-top: 1em;" [ngClass]="{
+                                    <span style="float: right; margin-top: 1.2em;" class="p1 label label-blue">
+                                        Hits
+                                        <span class="badge">{{luisAppHits}}</span>
+                                    </span>
+                                    <span class="p1 label label-info"
+                                        style="float: right; margin-top: 1.2em;">v{{luisApp.version}}</span>
+                                    <span class="p1 label label-success" style="float: right; margin-top: 1.2em;"
+                                        [ngClass]="{
                                     'label-info': luisApp.status === 'deployed',
                                     'label-success': luisApp.status === 'published',
                                     'label-danger': luisApp.status === 'failed' }">{{luisApp.status}}
@@ -26,13 +33,12 @@
                                     </h3>
                                 </div>
                                 <div class="card-text">
-                                    <div><span class="p4">Version: </span>{{luisApp.version}}</div>
-                                    <div><span class="p4">Description: </span>{{luisApp.description}}</div>
+                                    <div class="p1">{{luisApp.description}}</div>
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button class="btn btn-sm btn-link" (click)="editWizard=true">Edit</button>
-                                <button class="btn btn-sm btn-link" >Test</button>
+                                <button class="btn btn-sm btn-link" (click)="openEditWizard()">Edit</button>
+                                <button class="btn btn-sm btn-link">Test</button>
                                 <button class="btn btn-sm btn-link" (click)="deleteModal=true">Delete</button>
                             </div>
                         </div>
@@ -122,37 +128,76 @@
         </div>
     </clr-modal>
 
-    <clr-wizard #wizardlg [(clrWizardOpen)]="editWizard" clrWizardSize="lg">
+    <clr-wizard #wizard [(clrWizardOpen)]="editWizard" clrWizardSize="lg" (clrWizardOnFinish)="closeEditWizard()"
+        (clrWizardOnCancel)="closeEditWizard()">
         <clr-wizard-title>{{luisApp.name}}</clr-wizard-title>
 
         <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
         <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
         <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-        <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+        <clr-wizard-button [type]="'finish'">Add</clr-wizard-button>
 
         <clr-wizard-page>
             <ng-template clrPageTitle>Select Action</ng-template>
             <clr-radio-wrapper>
-                <input type="radio" clrRadio value="itent" name="options" />
+                <input type="radio" clrRadio value="intent" name="options" [(ngModel)]="editOption" />
                 <label>Add Intent</label>
             </clr-radio-wrapper>
             <clr-radio-wrapper>
-                <input type="radio" clrRadio value="entity" name="options" />
+                <input type="radio" clrRadio value="entity" name="options" [(ngModel)]="editOption" />
                 <label>Add Entity</label>
             </clr-radio-wrapper>
             <clr-radio-wrapper>
-                <input type="radio" clrRadio value="utteracnes" name="options" />
+                <input type="radio" clrRadio value="utterances" name="options" [(ngModel)]="editOption" />
                 <label>Add Utterances</label>
             </clr-radio-wrapper>
             <clr-radio-wrapper>
-                <input type="radio" clrRadio value="appJson" name="options" />
+                <input type="radio" clrRadio value="json" name="options" [(ngModel)]="editOption" />
                 <label>Update App JSON</label>
             </clr-radio-wrapper>
-        </clr-wizard-page>
 
-        <clr-wizard-page>
-            <ng-template clrPageTitle>Edit App</ng-template>
-            ...
+            <div *ngIf="editOption === 'intent'">
+                <form clrForm clrLayout="vertical">
+                    <clr-input-container>
+                        <label>Intent Name</label>
+                        <input clrInput placeholder="e.g. TAXI_BOOK" name="name" [(ngModel)]="wizardModel.name" />
+                    </clr-input-container>
+                </form>
+            </div>
+            <div *ngIf="editOption === 'entity'">
+                <form clrForm clrLayout="vertical">
+                    <clr-input-container>
+                        <label>Entity Name</label>
+                        <input clrInput placeholder="e.g. location" name="name" [(ngModel)]="wizardModel.name" />
+                    </clr-input-container>
+                </form>
+            </div>
+            <div *ngIf="editOption === 'utterances'">
+                <form clrForm clrLayout="vertical">
+                    <clr-input-container>
+                        <label>Text</label>
+                        <input clrInput placeholder="e.g. I need an Taxi for 2am." name="name"
+                            [(ngModel)]="wizardModel.text" />
+                    </clr-input-container>
+
+                    <clr-input-container>
+                        <label>Intent Name</label>
+                        <input clrInput placeholder="e.g. TAXI_BOOK" name="name" [(ngModel)]="wizardModel.name" />
+                    </clr-input-container>
+                </form>
+
+                <button type="button" class="btn btn-icon btn-primary" aria-label="addUtterance">
+                    <clr-icon shape="plus"></clr-icon>
+                </button>
+
+                <clr-datagrid>
+                    <clr-dg-column>Text</clr-dg-column>
+                    <clr-dg-column>Intent</clr-dg-column>
+                </clr-datagrid>
+            </div>
+            <div *ngIf="editOption === 'json'">
+                json
+            </div>
         </clr-wizard-page>
     </clr-wizard>
 

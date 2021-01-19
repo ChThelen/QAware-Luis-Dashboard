@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LuisApp } from '../../models/LuisApp';
 import { DUMMY_APPS } from '../../models/LuisApp';
@@ -7,9 +7,11 @@ import { NotificationType, Notification, NotificationService } from 'src/app/ser
 import { environment } from 'src/environments/runtime-environment';
 import { Location} from '@angular/common';
 import { LuisAppStats } from 'src/app/models/LuisAppStats';
-import { ChartDataSets, ChartOptions } from 'chart.js';
-import { Color, Label } from 'ng2-charts';
+import { ChartDataSets } from 'chart.js';
 import { ClrWizard } from '@clr/angular';
+import { Intent } from 'src/app/models/Intent';
+import { Entity } from 'src/app/models/Entity';
+import { Utterance } from 'src/app/models/Utterance';
 
 @Component({
   selector: 'app-detail-view',
@@ -17,13 +19,17 @@ import { ClrWizard } from '@clr/angular';
   styleUrls: ['./detail-view.component.scss']
 })
 export class DetailViewComponent implements OnInit {
-  @ViewChild("editWizard") wizard: ClrWizard;
+  @ViewChild("wizard") wizard: ClrWizard;
 
   luisApp: LuisApp = null;
   luisAppStats: LuisAppStats[] = null;
+  luisAppHits: number = -1;
   deleteModal: boolean = false;
   jsonModal: boolean = false;
   editWizard: boolean = false;
+
+  wizardModel: any = {};
+  editOption: string = null;
 
   chartLabels: string[];
   chartData:  ChartDataSets[];
@@ -34,9 +40,22 @@ export class DetailViewComponent implements OnInit {
     if (environment.production) {
       this.getApp();
       this.getAppStats();
+      this.getAppHits();
     } else {
       this.luisApp = DUMMY_APPS[0];
     }
+  }
+
+  openEditWizard(): void{
+    this.wizardModel = {};
+    this.editWizard = true;
+  }
+
+  closeEditWizard(): void{
+    this.wizardModel = {};
+    this.wizard.reset();
+    this.editOption = null;
+    this.editWizard = false;
   }
 
   getApp(): void {
@@ -47,11 +66,18 @@ export class DetailViewComponent implements OnInit {
     });
   }
 
-  getAppJSON(): void{
+  getAppJSON(): void {
     const name = this.route.snapshot.paramMap.get('name');
     this.luisAppService.getAppJSON(name).subscribe(k =>{
       this.luisApp.appJson = k;
     });
+  }
+
+  getAppHits(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.getHitCount(name).subscribe(k =>{
+      this.luisAppHits = k;
+    })
   }
 
   getAppStats(): void {
