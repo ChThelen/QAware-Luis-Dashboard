@@ -5,6 +5,7 @@ import { DetailViewComponent } from './components/detail-view/detail-view.compon
 import { ManageViewComponent } from './components/manage-view/manage-view.component';
 import { CsvReaderComponent } from './components/csv-reader/csv-reader.component';
 import { GroundTruthComponent } from './ground-truth/ground-truth.component';
+import { DeployJsonComponent } from './components/deploy-json/deploy-json.component';
 
 
 const routes: Routes = [
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'manage', component: ManageViewComponent },
   { path: 'manage/:id', component: DetailViewComponent },
   { path: 'groundTruth', component: GroundTruthComponent },
+  { path: 'deploy', component: DeployJsonComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
 ];
 

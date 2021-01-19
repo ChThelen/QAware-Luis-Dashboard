@@ -2,17 +2,6 @@
 <div class="button-bar">
 
   <div style="position: sticky; top:0; z-index: 2;">
-    <!--<div class="btn-group">
-      <button type="button" class="btn btn-link btn-success-outline" [disabled]="!(selectedUtterances.length >= 2)">
-        <span class="badge badge-success" *ngIf="selectedUtterances.length<=99 && selectedUtterances.length>=2">
-         {{selectedUtterances.length}}
-        </span>
-        <span class="badge badge-success" *ngIf="selectedUtterances.length>99">
-          99+
-         </span>
-        Create App
-      </button>
-    </div>-->
   
     <div class="btn-group">
         <button type="button" class="btn btn-link btn-secondary" (click)="modalOpenedforNewLine=true"><clr-icon shape="plus"></clr-icon> Add
@@ -26,7 +15,7 @@
                 <clr-icon shape="caret down"></clr-icon>
             </button>
             <clr-dropdown-menu clrPosition="bottom-left" *clrIfOpen>
-                <button type="button" (click)="downloadCsv('myFile.csv')" clrDropdownItem>Export Csv File</button>
+                <button type="button" (click)="downloadCsv()" clrDropdownItem>Export Csv File</button>
                 <button type="button" clrDropdownItem>Export Json File</button>
             </clr-dropdown-menu>
         </clr-dropdown>
@@ -36,7 +25,7 @@
     <span class="spacer"></span>
    
     <div class="btn-group btn-primary">
-     <!-- <button class="btn btn-outline" (click)="getIntents()" ><clr-icon shape="refresh"></clr-icon>&nbsp;Refresh</button> -->
+     <button class="btn btn-outline" *ngIf="newChange" ><clr-icon shape="refresh"></clr-icon>&nbsp;Undo </button>
       <button class="btn btn-success" [clrLoading]="validateBtnState" [disabled]="!newChange"(click)="!disabledConfirm? confirmSave = true : saveChanges();newChange = false" ><clr-icon shape="floppy"></clr-icon>&nbsp;Save Changes</button>
       <label class="btn">
         <input type="file" (change)="readCsvFile($event)" accept=".csv" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> Extend
@@ -144,16 +133,11 @@
     
         <clr-dg-footer>
             <clr-dg-column-toggle>
-            <clr-dg-column-toggle-title>Show Columns</clr-dg-column-toggle-title>
+                <clr-dg-column-toggle-title>Show Columns</clr-dg-column-toggle-title>
                 <clr-dg-column-toggle-button>Select All Button</clr-dg-column-toggle-button>
                 <clr-radio-wrapper>
-    <input type="radio" clrRadio value="option1" name="options" />
-    <label>Option 1</label>
-    </clr-radio-wrapper>
-    <clr-radio-wrapper>
-    <input type="radio" clrRadio value="option2" name="options" />
-    <label>Option 2</label>
-    </clr-radio-wrapper>
+    
+                 </clr-radio-wrapper>
             </clr-dg-column-toggle>
         <clr-dg-pagination #pagination [clrDgPageSize]="100">
             <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>

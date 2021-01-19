@@ -107,7 +107,6 @@ export class GroundTruthComponent implements OnInit {
         fileReader.onload = () => {
           let data = fileReader.result;
           this.uploadedFile = (<string>data);
-          console.log(this.uploadedFile)
           this.createUtterances(this.uploadedFile,this.uploadedUtterances);
        }
        fileReader.onerror = () => {
@@ -147,7 +146,7 @@ export class GroundTruthComponent implements OnInit {
   }
   selectionChanged(event:any)
   {
-    console.log(event)
+    
     if(this.selectedUtterances.length == 0)
     {
       this.intents.forEach(element => this.intentsSelection.push(false)); 
@@ -182,8 +181,8 @@ export class GroundTruthComponent implements OnInit {
   * download currently csv file
   * 
   */
-downloadCsv(fileName:string) :void
-{
+downloadCsv() :void
+{   let fileName = "MyCsvFile" + new Date().toDateString();
     let content = this.refreshUtterances(this.selectedUtterances).join("\n");
     var hiddenElement = document.createElement('a');
     hiddenElement.href = 'data:text/csv;charset=UTF-8,' + encodeURIComponent(content);
@@ -197,9 +196,13 @@ downloadCsv(fileName:string) :void
   */
  downloadJson() :void
  {
-  //  this.uploadedFile = this.refreshUtterances(this.result);
+    let fileAsJson ="";
+    let content = this.refreshUtterances(this.selectedUtterances).join("\n");
+    this.luisService.convertCsvToJson(content,"MyJsonFile_"+new Date().toDateString())
+        .toPromise().then(data=>{fileAsJson = JSON.stringify(data, null,5);});
+  
      var hiddenElement = document.createElement('a');
-   //  hiddenElement.href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(this.fileAsJson);
+     hiddenElement.href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(fileAsJson);
      hiddenElement.target = '_blank';
      hiddenElement.download = (this.fileName.endsWith(".csv"))? this.fileName.substring(0, this.fileName.length-3)+"json": this.fileName.substring(0, this.fileName.length-4)+"json";
      hiddenElement.click();
