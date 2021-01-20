@@ -5,7 +5,7 @@ import { DUMMY_APPS } from '../../models/LuisApp';
 import { LuisAppService } from '../../services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 import { environment } from 'src/environments/runtime-environment';
-import { Location} from '@angular/common';
+import { Location } from '@angular/common';
 import { LuisAppStats } from 'src/app/models/LuisAppStats';
 import { ChartDataSets } from 'chart.js';
 import { ClrWizard } from '@clr/angular';
@@ -19,20 +19,31 @@ import { Utterance } from 'src/app/models/Utterance';
   styleUrls: ['./detail-view.component.scss']
 })
 export class DetailViewComponent implements OnInit {
-  @ViewChild("wizard") wizard: ClrWizard;
+  @ViewChild("editWizard") editWizard: ClrWizard;
 
+  //App Data
   luisApp: LuisApp = null;
   luisAppStats: LuisAppStats[] = null;
   luisAppHits: number = -1;
+
+  //App Delete Modal
   deleteModal: boolean = false;
+
+  //App JSON Modal
   jsonModal: boolean = false;
-  editWizard: boolean = false;
 
-  wizardModel: any = {};
-  editOption: string = null;
+  //Edit Wizard
+  editWizard_opened: boolean = false;
+  editWizard_option: string = null;
+  editWizard_utterances: Utterance[] = [];
+  editWizard_utterance: Utterance = null;
+  editWizard_selectedUtterances: Utterance[] = [];
+  editWizard_intent: Intent = null;
+  editWizard_entity: Entity = null;
 
+  //Chart Data
   chartLabels: string[];
-  chartData:  ChartDataSets[];
+  chartData: ChartDataSets[];
 
   constructor(private location: Location, private route: ActivatedRoute, private luisAppService: LuisAppService, private notificationService: NotificationService) { }
 
@@ -46,16 +57,62 @@ export class DetailViewComponent implements OnInit {
     }
   }
 
-  openEditWizard(): void{
-    this.wizardModel = {};
-    this.editWizard = true;
+  openEditWizard(): void {
+    this.editWizard_intent = new Intent();
+    this.editWizard_entity = new Entity();
+    this.editWizard_utterance = new Utterance();
+    this.editWizard_utterances = [];
+    this.editWizard_opened = true;
   }
 
-  closeEditWizard(): void{
-    this.wizardModel = {};
-    this.wizard.reset();
-    this.editOption = null;
-    this.editWizard = false;
+  closeEditWizard(): void {
+    this.editWizard.reset();
+    this.editWizard_option = null;
+    this.editWizard_opened = false;
+  }
+
+  finishEditWizard(): void {
+
+    const name = this.route.snapshot.paramMap.get('name');
+
+    switch (this.editWizard_option) {
+      case "intent": {
+        this.luisAppService.addIntent(name, this.editWizard_intent).subscribe(k => {
+          this.showNotification("Intent added successfully. Please reload page!",null);
+        });
+        break;
+      }
+      case "entity": {
+        this.luisAppService.addEntity(name, this.editWizard_entity).subscribe(k => {
+          this.showNotification("Entity added successfully. Please reload page!",null);
+        }); 
+        break;
+      }
+      case "utterances": {
+        this.luisAppService.addUtterances(name, this.editWizard_utterances).subscribe(k => {
+          this.showNotification("Utterances added successfully. Please reload page!",null);
+        }); 
+        break;
+      }
+      case "json": {
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+    this.closeEditWizard();
+  }
+
+  addUterance(): void {
+    this.editWizard_utterances.push({ ...this.editWizard_utterance });
+  }
+
+  removeUtterance(): void {
+    this.editWizard_selectedUtterances.forEach(selectedUtterance => {
+      this.editWizard_utterances = this.editWizard_utterances.filter(utterance => utterance !== selectedUtterance);
+    })
   }
 
   getApp(): void {
@@ -68,14 +125,14 @@ export class DetailViewComponent implements OnInit {
 
   getAppJSON(): void {
     const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getAppJSON(name).subscribe(k =>{
+    this.luisAppService.getAppJSON(name).subscribe(k => {
       this.luisApp.appJson = k;
     });
   }
 
   getAppHits(): void {
     const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getHitCount(name).subscribe(k =>{
+    this.luisAppService.getHitCount(name).subscribe(k => {
       this.luisAppHits = k;
     })
   }
@@ -85,7 +142,7 @@ export class DetailViewComponent implements OnInit {
     this.luisAppService.getAppStats(name).subscribe(k => {
       this.luisAppStats = k;
       this.chartData = new Array();
-      this.chartData.push({data: k.map((appStat: LuisAppStats) => appStat.average), label: name});
+      this.chartData.push({ data: k.map((appStat: LuisAppStats) => appStat.average), label: name });
       this.chartLabels = k.map((appStat: LuisAppStats) => appStat.version);
     });
   }
@@ -102,15 +159,14 @@ export class DetailViewComponent implements OnInit {
     )
   }
 
-  donwloadJsonFile() :void
-  {
-      var hiddenElement = document.createElement('a');
-      hiddenElement.setAttribute('type', 'hidden');
-      hiddenElement.href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(JSON.stringify(this.luisApp.appJson, null, "\t"));
-      hiddenElement.target = '_blank';
-      hiddenElement.download = `${this.luisApp.name}.json`;
-      hiddenElement.click();
-      hiddenElement.remove();
+  donwloadJsonFile(): void {
+    var hiddenElement = document.createElement('a');
+    hiddenElement.setAttribute('type', 'hidden');
+    hiddenElement.href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(JSON.stringify(this.luisApp.appJson, null, "\t"));
+    hiddenElement.target = '_blank';
+    hiddenElement.download = `${this.luisApp.name}.json`;
+    hiddenElement.click();
+    hiddenElement.remove();
   }
 
   showNotification(message: string, messageDetails: string) {

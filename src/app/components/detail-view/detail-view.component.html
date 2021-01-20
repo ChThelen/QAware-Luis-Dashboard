@@ -128,8 +128,9 @@
         </div>
     </clr-modal>
 
-    <clr-wizard #wizard [(clrWizardOpen)]="editWizard" clrWizardSize="lg" (clrWizardOnFinish)="closeEditWizard()"
-        (clrWizardOnCancel)="closeEditWizard()">
+    <clr-wizard #editWizard [(clrWizardOpen)]="editWizard_opened" clrWizardSize="lg"
+        (clrWizardOnCancel)="closeEditWizard()" (clrWizardOnFinish)="finishEditWizard()">
+
         <clr-wizard-title>{{luisApp.name}}</clr-wizard-title>
 
         <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
@@ -140,63 +141,74 @@
         <clr-wizard-page>
             <ng-template clrPageTitle>Select Action</ng-template>
             <clr-radio-wrapper>
-                <input type="radio" clrRadio value="intent" name="options" [(ngModel)]="editOption" />
+                <input type="radio" clrRadio value="intent" name="options" [(ngModel)]="editWizard_option" />
                 <label>Add Intent</label>
             </clr-radio-wrapper>
             <clr-radio-wrapper>
-                <input type="radio" clrRadio value="entity" name="options" [(ngModel)]="editOption" />
+                <input type="radio" clrRadio value="entity" name="options" [(ngModel)]="editWizard_option" />
                 <label>Add Entity</label>
             </clr-radio-wrapper>
             <clr-radio-wrapper>
-                <input type="radio" clrRadio value="utterances" name="options" [(ngModel)]="editOption" />
+                <input type="radio" clrRadio value="utterances" name="options" [(ngModel)]="editWizard_option" />
                 <label>Add Utterances</label>
             </clr-radio-wrapper>
             <clr-radio-wrapper>
-                <input type="radio" clrRadio value="json" name="options" [(ngModel)]="editOption" />
+                <input type="radio" clrRadio value="json" name="options" [(ngModel)]="editWizard_option" />
                 <label>Update App JSON</label>
             </clr-radio-wrapper>
 
-            <div *ngIf="editOption === 'intent'">
+            <div *ngIf="editWizard_option === 'intent'">
                 <form clrForm clrLayout="vertical">
                     <clr-input-container>
                         <label>Intent Name</label>
-                        <input clrInput placeholder="e.g. TAXI_BOOK" name="name" [(ngModel)]="wizardModel.name" />
+                        <input clrInput placeholder="e.g. TAXI_BOOK" name="name" [(ngModel)]="editWizard_intent.name" />
                     </clr-input-container>
                 </form>
             </div>
-            <div *ngIf="editOption === 'entity'">
+            <div *ngIf="editWizard_option === 'entity'">
                 <form clrForm clrLayout="vertical">
                     <clr-input-container>
                         <label>Entity Name</label>
-                        <input clrInput placeholder="e.g. location" name="name" [(ngModel)]="wizardModel.name" />
+                        <input clrInput placeholder="e.g. location" name="name" [(ngModel)]="editWizard_entity.name" />
                     </clr-input-container>
                 </form>
             </div>
-            <div *ngIf="editOption === 'utterances'">
+            <div *ngIf="editWizard_option === 'utterances'">
                 <form clrForm clrLayout="vertical">
                     <clr-input-container>
                         <label>Text</label>
                         <input clrInput placeholder="e.g. I need an Taxi for 2am." name="name"
-                            [(ngModel)]="wizardModel.text" />
+                            [(ngModel)]="editWizard_utterance.text" />
                     </clr-input-container>
 
                     <clr-input-container>
                         <label>Intent Name</label>
-                        <input clrInput placeholder="e.g. TAXI_BOOK" name="name" [(ngModel)]="wizardModel.name" />
+                        <input clrInput placeholder="e.g. TAXI_BOOK" name="name" [(ngModel)]="editWizard_utterance.intentName" />
                     </clr-input-container>
                 </form>
 
-                <button type="button" class="btn btn-icon btn-primary" aria-label="addUtterance">
-                    <clr-icon shape="plus"></clr-icon>
-                </button>
+                <clr-datagrid class="datagrid-compact" [(clrDgSelected)]="editWizard_selectedUtterances">
+                    <clr-dg-action-bar>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-secondary" (click)="addUterance()"><clr-icon shape="plus"></clr-icon> Add</button>
+                            <button type="button" class="btn btn-sm btn-secondary" (click)="removeUtterance()" ><clr-icon shape="close"></clr-icon> Delete</button>
+                        </div>
+                    </clr-dg-action-bar>
 
-                <clr-datagrid>
                     <clr-dg-column>Text</clr-dg-column>
                     <clr-dg-column>Intent</clr-dg-column>
+
+                    <clr-dg-row *ngFor="let utterance of editWizard_utterances" [clrDgItem]="utterance">
+                        <clr-dg-cell>{{utterance.text}}</clr-dg-cell>
+                        <clr-dg-cell>{{utterance.intentName}}</clr-dg-cell>
+                    </clr-dg-row>
+
+                    <clr-dg-placeholder>No Utterances found!</clr-dg-placeholder>
+
                 </clr-datagrid>
             </div>
-            <div *ngIf="editOption === 'json'">
-                json
+            <div *ngIf="editWizard_option === 'json'">
+                <span>Function currently not supported!</span>
             </div>
         </clr-wizard-page>
     </clr-wizard>
