@@ -24,7 +24,7 @@ export class DetailViewComponent implements OnInit {
   //App Data
   luisApp: LuisApp = null;
   luisAppStats: LuisAppStats[] = null;
-  luisAppHits: number = -1;
+  luisAppHits: number = 0;
 
   //App Delete Modal
   deleteModal: boolean = false;
@@ -35,17 +35,21 @@ export class DetailViewComponent implements OnInit {
   //Edit Wizard
   editWizard_opened: boolean = false;
   editWizard_option: string = null;
-  editWizard_utterances: Utterance[] = [];
-  editWizard_utterance: Utterance = null;
   editWizard_selectedUtterances: Utterance[] = [];
-  editWizard_intent: Intent = null;
-  editWizard_entity: Entity = null;
+  editWizard_utterances: Utterance[];
+  editWizard_utterance: Utterance;
+  editWizard_intent: Intent;
+  editWizard_entity: Entity;
 
   //Chart Data
   chartLabels: string[];
   chartData: ChartDataSets[];
 
-  constructor(private location: Location, private route: ActivatedRoute, private luisAppService: LuisAppService, private notificationService: NotificationService) { }
+  constructor(
+    private location: Location,
+    private route: ActivatedRoute,
+    private luisAppService: LuisAppService,
+    private notificationService: NotificationService) { }
 
   ngOnInit(): void {
     if (environment.production) {
@@ -78,20 +82,20 @@ export class DetailViewComponent implements OnInit {
     switch (this.editWizard_option) {
       case "intent": {
         this.luisAppService.addIntent(name, this.editWizard_intent).subscribe(k => {
-          this.showNotification("Intent added successfully. Please reload page!",null);
+          this.showNotification("Intent added successfully. Please reload page!", null);
         });
         break;
       }
       case "entity": {
         this.luisAppService.addEntity(name, this.editWizard_entity).subscribe(k => {
-          this.showNotification("Entity added successfully. Please reload page!",null);
-        }); 
+          this.showNotification("Entity added successfully. Please reload page!", null);
+        });
         break;
       }
       case "utterances": {
         this.luisAppService.addUtterances(name, this.editWizard_utterances).subscribe(k => {
-          this.showNotification("Utterances added successfully. Please reload page!",null);
-        }); 
+          this.showNotification("Utterances added successfully. Please reload page!", null);
+        });
         break;
       }
       case "json": {
@@ -106,13 +110,29 @@ export class DetailViewComponent implements OnInit {
   }
 
   addUterance(): void {
-    this.editWizard_utterances.push({ ...this.editWizard_utterance });
+    if (this.editWizard_utterance.text && this.editWizard_utterance.intentName) {
+      this.editWizard_utterances.push(this.editWizard_utterance);
+      this.editWizard_utterance = new Utterance();
+    }
   }
 
   removeUtterance(): void {
     this.editWizard_selectedUtterances.forEach(selectedUtterance => {
       this.editWizard_utterances = this.editWizard_utterances.filter(utterance => utterance !== selectedUtterance);
     })
+  }
+
+  trainApp(): void{
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.trainApp(name).subscribe(result => {
+      if((<number> result.body) === 0){
+        this.showNotification("Training was successfully. Please reload page!", null);
+      }
+    },
+      err => {
+        this.showNotification("Failed while testing App!", null);
+      }
+    )
   }
 
   getApp(): void {

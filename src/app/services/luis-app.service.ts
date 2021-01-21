@@ -23,35 +23,39 @@ export class LuisAppService {
   }
 
   public addIntent(appName: string, intent: Intent): Observable<HttpResponse<any>> {
-    return this.httpClient.post<any>(this.buildUrl("/addIntent"), intent, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response'});
+    return this.httpClient.post<any>(this.buildUrl("/addIntent"), intent, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response' });
   }
 
   public addUtterances(appName: string, utterances: Array<Utterance>): Observable<HttpResponse<any>> {
-    return this.httpClient.post<any>(this.buildUrl("/addUtterances"), utterances, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response'});
+    return this.httpClient.post<any>(this.buildUrl("/addUtterances"), utterances, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response' });
   }
 
   public addEntity(appName: string, entity: Entity): Observable<HttpResponse<any>> {
-    return this.httpClient.post<any>(this.buildUrl("/addEntity"), entity, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response'});
+    return this.httpClient.post<any>(this.buildUrl("/addEntity"), entity, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response' });
   }
 
   public getAppJSON(appName: string): Observable<string> {
-    return this.httpClient.get<string>(this.buildUrl("/getJSON"), { params: { "name": appName }});
+    return this.httpClient.get<string>(this.buildUrl("/getJSON"), { params: { "name": appName } });
   }
 
   public getHitCount(appName: string): Observable<number> {
-    return this.httpClient.get<number>(this.buildUrl("/getHitCount"), { params: { "name": appName }});
+    return this.httpClient.get<number>(this.buildUrl("/getHitCount"), { params: { "name": appName } });
   }
 
   public getSimpleHit(appName: string, utterance: string): Observable<string> {
-    return this.httpClient.get<string>(this.buildUrl("/simpleHit"), { params: { "name": appName , utterance: utterance}});
+    return this.httpClient.get<string>(this.buildUrl("/simpleHit"), { params: { "name": appName, utterance: utterance } });
   }
 
   public getAppStats(appName: string): Observable<Array<LuisAppStats>> {
-    return this.httpClient.get<Array<LuisAppStats>>(this.buildUrl("/getAppStats"), { params: {"name": appName }});
+    return this.httpClient.get<Array<LuisAppStats>>(this.buildUrl("/getAppStats"), { params: { "name": appName } });
   }
 
   public deleteApp(appName: string, force: boolean = true): Observable<HttpResponse<any>> {
     return this.httpClient.delete(this.buildUrl("/deleteApp"), { params: new HttpParams().set("name", appName).set("force", String(force)), observe: 'response' });
+  }
+
+  public trainApp(appName: string): Observable<HttpResponse<any>> {
+    return this.httpClient.post<any>(this.buildUrl("/train"), { params: { "name": appName }, observe: 'response' });
   }
 
   public convertCsvToJson(csv: string, name: string): Observable<string> {
@@ -63,7 +67,7 @@ export class LuisAppService {
     return this.httpClient.post<string>(this.baseUrl + "/luis/convert/convertToCSV", json, { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
   }
 
-  private buildUrl(uri: string): string{
+  private buildUrl(uri: string): string {
     return this.baseUrl + this.endpoint + uri;
   }
 
