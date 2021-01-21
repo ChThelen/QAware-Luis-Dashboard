@@ -1,0 +1,11 @@
+<div class="btn-group btn-link">
+    <button class="btn btn-icon" (click)="gridViewIsActive=!gridViewIsActive">
+        <clr-icon *ngIf="!gridViewIsActive" class="is-solid" shape="grid-view" size="24"></clr-icon>
+        <clr-icon *ngIf="gridViewIsActive" class="is-solid" shape="view-list" size="24"></clr-icon>
+    </button>
+    <button class = "btn btn-icon">
+        <clr-icon shape="plus"></clr-icon>
+    </button>
+</div>
+<app-tiles *ngIf="gridViewIsActive" [apps]="apps"></app-tiles>
+<app-manage-view *ngIf="!gridViewIsActive" [apps]="apps" (deletedApp)="loadApps()"></app-manage-view>
