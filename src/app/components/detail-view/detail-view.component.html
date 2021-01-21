@@ -1,13 +1,216 @@
-<div class="clr-row">
-    <div class="clr-col-3">
-        <h2>{{luisApp.appName}}</h2>
-        <h3 style="margin-top: 0; color: hsl(198, 0%, 70%);">
-            <span>ID:</span> {{luisApp.appId}}
-        </h3>
-        <div><span class="p4">Version: </span>{{luisApp.version}}</div>
-        <div><span class="p4">Dashbord-URL: </span>{{luisApp.dashboardUrl}}</div>
-        <div><span class="p4">Description: </span>{{luisApp.description}}</div>
-        <button class="btn btn-primary p4">Edit</button>
-        <button class="btn p4" routerLink="/manage">Back</button>    
-    </div>
+<div *ngIf="luisApp && luisApp.appJson">
+    <clr-tabs>
+        <clr-tab>
+            <button clrTabLink id="linkOverview">Overview</button>
+            <clr-tab-content id="overview">
+                <div class="clr-row clr-align-items-start clr-justify-content-start">
+                    <div class="clr-col clr-col-auto">
+                        <div class="card">
+                            <div class="card-header">
+                                Details
+                                <span style="float: right;"><a href="{{luisApp.dashboardUrl}}"
+                                        title="Open Luis Dashboard">
+                                        <clr-icon shape="link"></clr-icon>
+                                    </a></span>
+                            </div>
+                            <div class="card-block">
+                                <div class="card-title">
+                                    <span style="float: right; margin-top: 1.2em;" class="p1 label label-blue">
+                                        Hits
+                                        <span class="badge">{{luisAppHits}}</span>
+                                    </span>
+                                    <span class="p1 label label-info"
+                                        style="float: right; margin-top: 1.2em;">v{{luisApp.version}}</span>
+                                    <span class="p1 label label-success" style="float: right; margin-top: 1.2em;"
+                                        [ngClass]="{
+                                    'label-info': luisApp.status === 'deployed',
+                                    'label-success': luisApp.status === 'published',
+                                    'label-danger': luisApp.status === 'failed' }">{{luisApp.status}}
+                                    </span>
+                                    <h2 style="margin-top: 0rem;">{{luisApp.name}}</h2>
+                                    <h3 style="margin-top: 0; color: hsl(198, 0%, 70%);">
+                                        {{luisApp.appID}}
+                                    </h3>
+                                </div>
+                                <div class="card-text">
+                                    <div class="p1">{{luisApp.description}}</div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-sm btn-link" (click)="openEditWizard()">Edit</button>
+                                <button class="btn btn-sm btn-link"(click)="trainApp()" >Test</button>
+                                <button class="btn btn-sm btn-link" (click)="deleteModal=true">Delete</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                App JSON
+                            </div>
+                            <div class="card-block">
+                                <div class="card-text">
+                                    <pre style="overflow-x: scroll;max-height: 270px;"><code [highlight]="luisApp.appJson | json"></code>
+                                    </pre>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-sm btn-link" (click)="jsonModal=true">View More</button>
+                                <button class="btn btn-sm btn-link" (click)="donwloadJsonFile()">Download</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                Test History
+                            </div>
+                            <div class="card-block">
+
+                                <clr-datagrid class="datagrid-compact">
+                                    <clr-dg-column [clrDgField]="'version'">Version</clr-dg-column>
+                                    <clr-dg-column [clrDgField]="'date'">Date</clr-dg-column>
+                                    <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
+                                    <clr-dg-column [clrDgField]="'average'">Average</clr-dg-column>
+                                    <clr-dg-column [clrDgField]="'difference'">Difference</clr-dg-column>
+
+                                    <clr-dg-row *clrDgItems="let appStat of luisAppStats">
+                                        <clr-dg-cell>{{appStat.version}}</clr-dg-cell>
+                                        <clr-dg-cell>{{appStat.date | date:"short"}}</clr-dg-cell>
+                                        <clr-dg-cell>{{appStat.intent}}</clr-dg-cell>
+                                        <clr-dg-cell>{{appStat.average | number:'1.2-3'}}</clr-dg-cell>
+                                        <clr-dg-cell>{{appStat.difference | number:'1.2-3'}}</clr-dg-cell>
+                                    </clr-dg-row>
+
+                                    <clr-dg-placeholder>Sorry. No test results was found.</clr-dg-placeholder>
+
+                                    <clr-dg-footer>
+                                        <clr-dg-pagination #pagination [clrDgPageSize]="10">
+                                        </clr-dg-pagination>
+                                    </clr-dg-footer>
+                                </clr-datagrid>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </clr-tab-content>
+        </clr-tab>
+        <clr-tab>
+            <button clrTabLink id="linkResults">Charts</button>
+            <clr-tab-content id="results">
+                <app-chart [chartData]="chartData" [chartLabels]="chartLabels"></app-chart>
+            </clr-tab-content>
+        </clr-tab>
+    </clr-tabs>
+
+    <clr-modal [clrModalSize]="'xl'" [(clrModalOpen)]="jsonModal" [clrModalStaticBackdrop]="true">
+        <h3 class="modal-title">{{luisApp.name}}</h3>
+        <div class="modal-body">
+            <pre style="overflow-x: scroll;"><code [highlight]="luisApp.appJson | json"></code></pre>
+        </div>
+    </clr-modal>
+
+    <clr-modal [(clrModalOpen)]="deleteModal" [clrModalStaticBackdrop]="true">
+        <h3 class="modal-title">Delete App {{luisApp.name}}</h3>
+        <div class="modal-body">
+            <div class="alert alert-danger" role="alert">
+                <div class="alert-items">
+                    <div class="alert-item static">
+                        <div class="alert-icon-wrapper">
+                            <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+                        </div>
+                        <span class="alert-text">
+                            Are you sure you want to delete this app?
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" type="button" (click)="deleteModal = false">Cancel</button>
+            <button class="btn btn-danger" type="button" (click)="deleteApp()">Delete</button>
+        </div>
+    </clr-modal>
+
+    <clr-wizard #editWizard [(clrWizardOpen)]="editWizard_opened" clrWizardSize="lg"
+        (clrWizardOnCancel)="closeEditWizard()" (clrWizardOnFinish)="finishEditWizard()">
+
+        <clr-wizard-title>{{luisApp.name}}</clr-wizard-title>
+
+        <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+        <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+        <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+        <clr-wizard-button [type]="'finish'">Add</clr-wizard-button>
+
+        <clr-wizard-page>
+            <ng-template clrPageTitle>Select Action</ng-template>
+            <clr-radio-wrapper>
+                <input type="radio" clrRadio value="intent" name="options" [(ngModel)]="editWizard_option" />
+                <label>Add Intent</label>
+            </clr-radio-wrapper>
+            <clr-radio-wrapper>
+                <input type="radio" clrRadio value="entity" name="options" [(ngModel)]="editWizard_option" />
+                <label>Add Entity</label>
+            </clr-radio-wrapper>
+            <clr-radio-wrapper>
+                <input type="radio" clrRadio value="utterances" name="options" [(ngModel)]="editWizard_option" />
+                <label>Add Utterances</label>
+            </clr-radio-wrapper>
+            <clr-radio-wrapper>
+                <input type="radio" clrRadio value="json" name="options" [(ngModel)]="editWizard_option" />
+                <label>Update App JSON</label>
+            </clr-radio-wrapper>
+
+            <div *ngIf="editWizard_option === 'intent'">
+                <form clrForm clrLayout="vertical">
+                    <clr-input-container>
+                        <label>Intent Name</label>
+                        <input clrInput placeholder="e.g. TAXI_BOOK" name="name" [(ngModel)]="editWizard_intent.name" />
+                    </clr-input-container>
+                </form>
+            </div>
+            <div *ngIf="editWizard_option === 'entity'">
+                <form clrForm clrLayout="vertical">
+                    <clr-input-container>
+                        <label>Entity Name</label>
+                        <input clrInput placeholder="e.g. location" name="name" [(ngModel)]="editWizard_entity.name" />
+                    </clr-input-container>
+                </form>
+            </div>
+            <div *ngIf="editWizard_option === 'utterances'">
+                <form clrForm clrLayout="vertical">
+                    <clr-input-container>
+                        <label>Text</label>
+                        <input clrInput placeholder="e.g. I need an Taxi for 2am." name="name"
+                            [(ngModel)]="editWizard_utterance.text" />
+                    </clr-input-container>
+
+                    <clr-input-container>
+                        <label>Intent Name</label>
+                        <input clrInput placeholder="e.g. TAXI_BOOK" name="name" [(ngModel)]="editWizard_utterance.intentName" />
+                    </clr-input-container>
+                </form>
+
+                <clr-datagrid class="datagrid-compact" [(clrDgSelected)]="editWizard_selectedUtterances">
+                    <clr-dg-action-bar>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-secondary" (click)="addUterance()"><clr-icon shape="plus"></clr-icon> Add</button>
+                            <button type="button" class="btn btn-sm btn-secondary" (click)="removeUtterance()" ><clr-icon shape="close"></clr-icon> Delete</button>
+                        </div>
+                    </clr-dg-action-bar>
+
+                    <clr-dg-column>Text</clr-dg-column>
+                    <clr-dg-column>Intent</clr-dg-column>
+
+                    <clr-dg-row *ngFor="let utterance of editWizard_utterances" [clrDgItem]="utterance">
+                        <clr-dg-cell>{{utterance.text}}</clr-dg-cell>
+                        <clr-dg-cell>{{utterance.intentName}}</clr-dg-cell>
+                    </clr-dg-row>
+
+                    <clr-dg-placeholder>No Utterances found!</clr-dg-placeholder>
+
+                </clr-datagrid>
+            </div>
+            <div *ngIf="editWizard_option === 'json'">
+                <span>Function currently not supported!</span>
+            </div>
+        </clr-wizard-page>
+    </clr-wizard>
+
 </div>

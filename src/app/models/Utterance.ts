@@ -41,3 +41,11 @@ export const BADGES: string[] =
   "badge-succes",
   "badge-danger",
 ];
+
+import { EntityLabel } from "./EntityLabel";
+
+export class Utterance{
+    text: string;
+    intentName: string;
+    entityLabels: EntityLabel[];
+}

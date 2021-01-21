@@ -1,9 +1,6 @@
-<button type="button" class="btn btn-primary" (click)="openCreateWizard()">
-    <clr-icon shape="plus"></clr-icon> New App
-</button>
 <clr-datagrid>
     <clr-dg-column>App ID</clr-dg-column>
-    <clr-dg-column [clrDgField]="'appName'">Name</clr-dg-column>
+    <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
     <clr-dg-column [clrDgField]="'version'">Version</clr-dg-column>
     <clr-dg-column>Dashboard URL</clr-dg-column>
     <clr-dg-column>Description</clr-dg-column>
@@ -11,7 +8,7 @@
 
     <clr-dg-row *clrDgItems="let app of apps">
         <clr-dg-action-overflow>
-            <button class="action-item" routerLink="{{'/manage/' + app.appId }}">
+            <button class="action-item" routerLink="{{'/apps/' + app.name }}">
                 <clr-icon shape="pencil"></clr-icon>
             </button>
             <button class="action-item" (click)="openDeleteModal(app)">
@@ -19,15 +16,15 @@
             </button>
         </clr-dg-action-overflow>
 
-        <clr-dg-cell>{{app.appId}}</clr-dg-cell>
-        <clr-dg-cell>{{app.appName}}</clr-dg-cell>
+        <clr-dg-cell>{{app.appID}}</clr-dg-cell>
+        <clr-dg-cell>{{app.name}}</clr-dg-cell>
         <clr-dg-cell>{{app.version}}</clr-dg-cell>
         <clr-dg-cell><a href="{{app.dashboardUrl}}">{{app.dashboardUrl}}</a></clr-dg-cell>
         <clr-dg-cell>{{app.description}}</clr-dg-cell>
         <clr-dg-cell>
             <span>
                 <span class="color-square"
-                    [style.backgroundColor]="app.status === 'FAILED' ? 'hsl(9, 95%, 92%)' : app.status === 'PUBLISHED' ? 'hsl(93, 52%, 88%)' : 'hsl(198, 83%, 94%)'"></span>
+                    [style.backgroundColor]="app.status === 'failed' ? 'hsl(9, 95%, 92%)' : app.status === 'published' ? 'hsl(93, 52%, 88%)' : 'hsl(198, 83%, 94%)'"></span>
                 {{app.status}}
             </span>
         </clr-dg-cell>
@@ -42,68 +39,8 @@
     </clr-dg-footer>
 </clr-datagrid>
 
-<clr-wizard #createAppWizard [(clrWizardOpen)]="createWizard" clrWizardSize="lg">
-    <clr-wizard-title>Deploy Luis App</clr-wizard-title>
-
-    <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
-    <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
-    <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-    <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
-
-    <clr-wizard-page>
-        <ng-template clrPageTitle>Basic Information</ng-template>
-        <form class="clr-form">
-            <div class="clr-form-control">
-                <label class="clr-control-label">Name</label>
-                <div class="clr-control-container">
-                    <div class="clr-input-wrapper">
-                        <input type="text" required name="name" placeholder="Example App" class="clr-input" />
-                    </div>
-
-                </div>
-            </div>
-            <div class="clr-form-control">
-                <label class="clr-control-label">Description</label>
-                <div class="clr-control-container">
-                    <div class="clr-input-wrapper">
-                        <input type="text" required name="description" placeholder="This is an Example App."
-                            class="clr-input" />
-                    </div>
-
-                </div>
-            </div>
-            <div class="clr-form-control">
-
-                <label class="clr-control-label">Culture</label>
-                <div class="clr-control-container">
-                    <div class="clr-input-wrapper">
-                        <input type="text" required name="culture" placeholder="en-us" class="clr-input" />
-                    </div>
-
-                </div>
-            </div>
-            <div class="clr-form-control">
-                <label class="clr-control-label">LuisJSON</label>
-                <div class="clr-control-container">
-                    <div class="clr-file-wrapper">
-                        <label for="basic" class="clr-control-label"><span class="btn btn-sm">Select</span></label>
-                        <input type="file" id="basic" placeholder="Enter value here" class="clr-file" accept=".json"/>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </clr-wizard-page>
-
-    <clr-wizard-page>
-        <ng-template clrPageTitle>Customization</ng-template>
-        <form clrForm clrLayout="horizontal">
-        </form>
-    </clr-wizard-page>
-
-</clr-wizard>
-
-<clr-modal [(clrModalOpen)]="deleteModal" [clrModalStaticBackdrop]="true">
-    <h3 class="modal-title">Delete App {{selectedApp.appName}}</h3>
+<clr-modal *ngIf="selectedApp" [(clrModalOpen)]="deleteModal" [clrModalStaticBackdrop]="true">
+    <h3 class="modal-title">Delete App {{selectedApp.name}}</h3>
     <div class="modal-body">
         <div class="alert alert-danger" role="alert">
             <div class="alert-items">
@@ -119,7 +56,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-outline" type="button" (click)="deleteModal = false">Cancel</button>
-        <button class="btn btn-danger" type="button" (click)="deleteModal = false">Delete</button>
+        <button class="btn btn-outline" type="button" (click)="selectedApp=null && deleteModal = false">Cancel</button>
+        <button class="btn btn-danger" type="button" (click)="deleteApp(selectedApp.name)">Delete</button>
     </div>
 </clr-modal>

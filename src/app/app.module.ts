@@ -13,6 +13,10 @@ import { CsvReaderComponent } from './components/csv-reader/csv-reader.component
 import { DeployJsonComponent } from './components/deploy-json/deploy-json.component';
 import { GroundTruthComponent } from './ground-truth/ground-truth.component';
 import { EditableCellComponent } from './components/editable-cell/editable-cell.component';
+import { NotificationComponent } from './components/notification/notification.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -24,6 +28,9 @@ import { EditableCellComponent } from './components/editable-cell/editable-cell.
     DeployJsonComponent,
     GroundTruthComponent,
     EditableCellComponent
+    NotificationComponent,
+    DashboardComponent,
+    ChartComponent
   ],
   imports: [
     BrowserModule,
@@ -31,9 +38,22 @@ import { EditableCellComponent } from './components/editable-cell/editable-cell.
     ClarityModule,
     BrowserAnimationsModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    HighlightModule,
+    ChartsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        coreLibraryLoader: () => import('highlight.js/lib/core'),
+        lineNumbersLoader: () => import('highlightjs-line-numbers.js'),
+        languages: {
+          json: () => import('highlight.js/lib/languages/json')
+        }
+      }
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

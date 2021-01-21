@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
-import {DUMMY_APPS, LuisApp} from '../../models/LuisApp';
-import {ClrWizard} from "@clr/angular";
+import { Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { LuisApp } from 'src/app/models/LuisApp';
+import { LuisAppService } from 'src/app/services/luis-app.service';
+import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-manage-view',
@@ -8,27 +9,46 @@ import {ClrWizard} from "@clr/angular";
   styleUrls: ['./manage-view.component.scss']
 })
 export class ManageViewComponent implements OnInit {
-  @ViewChild("createAppWizard") wizard: ClrWizard;
-  
-  createWizard: boolean = false;
+
+  showAppCreation: boolean = false;
   deleteModal: boolean = false;
-  selectedApp: LuisApp = DUMMY_APPS[0];
+  selectedApp: LuisApp = null;
+  
+  @Input()
+  apps: Array<LuisApp> = [];
 
-  // DUMMY DATA REMOVE LATER
-  apps = DUMMY_APPS;
+  @Output() 
+  deletedApp: EventEmitter<string> = new EventEmitter();
 
-  constructor() {}
+  constructor(private luisAppService: LuisAppService, private notificationService: NotificationService) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  openDeleteModal(luisApp: LuisApp){
+  openDeleteModal(luisApp: LuisApp) {
     this.selectedApp = luisApp;
     this.deleteModal = true;
   }
 
-  openCreateWizard(){
-    this.createWizard = !this.createWizard;
+  deleteApp(appName: string) {
+    this.luisAppService.deleteApp(appName).subscribe(result => {
+      this.selectedApp = null;
+      this.deletedApp.emit(appName);
+      this.deleteModal = false;
+    },
+      err => {
+        //TO:DO Display Notfication
+      }
+    )
+  }
+
+  showNotification(message: string, messageDetails: string) {
+    this.notificationService.add(
+      new Notification(
+        NotificationType.Info,
+        message,
+        messageDetails
+      )
+    )
   }
 
 }

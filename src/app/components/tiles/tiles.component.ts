@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LuisApp } from 'src/app/models/LuisApp';
-import { DUMMY_APPS } from 'src/app/models/LuisApp';
-import {LuisAppService} from 'src/app/services/luis-app.service';
+import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-tiles',
@@ -10,25 +9,22 @@ import {LuisAppService} from 'src/app/services/luis-app.service';
 })
 export class TilesComponent implements OnInit {
 
+  @Input()
   apps: Array<LuisApp> = [];
 
-  constructor(private luisAppService: LuisAppService) { }
+  constructor(private notificationService: NotificationService) { }
 
   ngOnInit(): void {
-    this.loadApps();
   }
 
-  loadApps() {
-    /* uncomment when backend service is available
-    this.apps = [];
-    this.luisAppService.getApps().subscribe(k => {
-      this.apps = k;
-    });
-    */
-    
-    // DUMMY DATA REMOVE LATER
-    this.apps = DUMMY_APPS;
-
+  showNotification(message: string, messageDetails: string) {
+    this.notificationService.add(
+      new Notification(
+        NotificationType.Info,
+        message,
+        messageDetails
+      )
+    )
   }
 
 }
