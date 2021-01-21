@@ -64,5 +64,18 @@ export class LuisAppService {
   {
     return this.httpClient.post<string>(this.baseUrl+"/luis/service/getPublishSettings", name, {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});
   }
+  public merge(csv:string):Observable<string>
+  {
+    const body = { title: csv}
+    return this.httpClient.put<string>(this.baseUrl+"/luis/service/addRecords", body, {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});
+  }
+  public changeGT(csv:string):Observable<string>
+  {
+    return this.httpClient.put<string>(this.baseUrl+"/luis/service/changeGT",csv, {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});
+  }
+  public getGT():Observable<string> 
+  {
+    return this.httpClient.get<string>(this.baseUrl+"/luis/service/getGT", {headers: new HttpHeaders({"Content-Type": 'text/plain; charset=utf-8'}),responseType:'text' as 'json'});
+  }
 
 }

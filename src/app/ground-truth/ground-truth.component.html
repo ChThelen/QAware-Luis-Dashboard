@@ -26,7 +26,7 @@
    
     <div class="btn-group btn-primary">
      <button class="btn btn-outline" *ngIf="newChange" ><clr-icon shape="refresh"></clr-icon>&nbsp;Undo </button>
-      <button class="btn btn-success" [clrLoading]="validateBtnState" [disabled]="!newChange"(click)="!disabledConfirm? confirmSave = true : saveChanges();newChange = false" ><clr-icon shape="floppy"></clr-icon>&nbsp;Save Changes</button>
+      <button class="btn btn-success" [disabled]="!newChange"(click)="saveChanges()" ><clr-icon shape="floppy"></clr-icon>&nbsp;Save Changes</button>
       <label class="btn">
         <input type="file" (change)="readCsvFile($event)" accept=".csv" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> Extend
       </label>
@@ -87,7 +87,7 @@
   </clr-datagrid>
   
   <div style="display: flex; align-items: center;  justify-content: center; margin: 0px; margin-top: 25px;" *ngIf="file">
-    <button class="btn btn-success"[clrLoading]="validateBtnState" (click)="merge()"><clr-icon shape="shuffle"></clr-icon>&nbsp;&nbsp;Merge</button>
+    <button class="btn btn-success" (click)="merge()"><clr-icon shape="shuffle"></clr-icon>&nbsp;&nbsp;Merge</button>
   </div>
  
         

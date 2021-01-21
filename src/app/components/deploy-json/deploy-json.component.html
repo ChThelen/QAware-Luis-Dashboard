@@ -61,7 +61,7 @@
     <!--STEP 0-->
     <div class="card" *ngIf="timelineStyle.step0.open">
       <div class="card-header">
-        <h3 style="text-align: center;"> STEP 0</h3>
+        <h3 style="text-align: center;"> Add Utterances</h3>
       </div>
       <div class="card-block">
             
@@ -145,7 +145,7 @@
     <!-- STEP 1-->
     <div class="card" *ngIf="timelineStyle.step1.open" >
       <div class="card-header">
-        <h3 style="text-align: center;"> STEP 1</h3>
+        <h3 style="text-align: center;"> Create new app on Luis</h3>
       </div>
       <div class="card-block">
         
@@ -223,7 +223,7 @@
         <h3 style="text-align: center;"> STEP 2</h3>
       </div>
       <div class="card-block center">
-        <button class="btn btn-primary">Train</button>
+        <button class="btn btn-primary" [@rotateOut]="{ value: rotateOut, params: { timing: myTiming || 5, delay: myDelay || 2 } }">Train</button>
       </div>
       <div class="card-footer">
         <button class="btn btn-primary">Next</button>

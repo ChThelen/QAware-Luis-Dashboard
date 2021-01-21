@@ -56,6 +56,7 @@ export class DeployJsonComponent implements OnInit
   {
     this.createUtterances(this.groundTruth,this.result);
     this.intents = this.getIntents();
+    luisService.getGT().subscribe(data => this.groundTruth = data);
   }
 
   ngOnInit(): void 
