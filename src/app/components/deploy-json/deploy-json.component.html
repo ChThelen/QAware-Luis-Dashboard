@@ -1,0 +1,236 @@
+<div class="clr-row" >
+  <div class="clr-col-lg-3 clr-col-12 " >
+    <div class="card">
+      <div class="card-header">
+        <h3 style="text-align: center;"> STEPPER</h3>
+      </div>
+      
+      <div class=" card-block container">
+
+        <clr-timeline clrLayout="vertical" >
+          <clr-timeline-step [clrState]="timelineStyle.step0.state">
+            <clr-timeline-step-header>Step 0</clr-timeline-step-header>
+            <clr-timeline-step-title>Add Utterances</clr-timeline-step-title>
+            <clr-timeline-step-description>In this quickstart, you build a new app in the LUIS portal. First, create the basic parts of an app, intents, and entities. </clr-timeline-step-description>
+          </clr-timeline-step>
+          <clr-timeline-step class="gemini-ignore" [clrState]="timelineStyle.step1.state">
+            <clr-timeline-step-header>Step 1</clr-timeline-step-header>
+            <clr-timeline-step-title>Create new app on Luis</clr-timeline-step-title>
+            <clr-timeline-step-description>
+              In the window that appears, enter the following information:
+              <ul class="list">
+                <li>Name:	A name for your app. Required.</li>
+                <li>Description:	A description for your app. Optional.</li>
+                <li>Culture	The language that your app understands and speaks. Here German.</li>
+              </ul>
+            </clr-timeline-step-description>
+          </clr-timeline-step>
+          <clr-timeline-step [clrState]="timelineStyle.step2.state">
+            <clr-timeline-step-header>Step 2</clr-timeline-step-header>
+            <clr-timeline-step-title>Train the App</clr-timeline-step-title>
+            <clr-timeline-step-description>
+              
+              If you changed the app since you trained it last, train the app.
+              <button class="btn btn-sm btn-primary" (click)="train()" [disabled]="luis.app.created!=0">Train</button>
+            </clr-timeline-step-description>
+          </clr-timeline-step>
+          
+          <clr-timeline-step [clrState]="timelineStyle.step3.state">
+            <clr-timeline-step-header>Step 3</clr-timeline-step-header>
+            <clr-timeline-step-title>Publish the App</clr-timeline-step-title>
+            <clr-timeline-step-description>
+              <ul class="list">
+                <li> Publish the app to access it from the HTTP endpoint</li>
+                <li>In order to receive a LUIS prediction in a chat bot or other client application, you need to publish the app to the prediction endpoint.</li>
+              </ul>
+            </clr-timeline-step-description>
+          </clr-timeline-step>
+          <clr-timeline-step [clrState]="timelineStyle.step4.state">
+            <clr-timeline-step-header>Step 4</clr-timeline-step-header>
+            <clr-timeline-step-title>Test your new App</clr-timeline-step-title>
+            <clr-timeline-step-description>
+              <!-- Use the interactive Test pane in the LUIS portal to validate that the entity is extracted from new utterances the app hasn't seen yet. -->
+            </clr-timeline-step-description>
+          </clr-timeline-step>
+        </clr-timeline>
+      </div>
+    </div>
+  </div>
+  <div class="clr-col-lg-9 clr-col-12 " >
+    
+    <!--STEP 0-->
+    <div class="card" *ngIf="timelineStyle.step0.open">
+      <div class="card-header">
+        <h3 style="text-align: center;"> Add Utterances</h3>
+      </div>
+      <div class="card-block">
+            
+        <clr-tabs>
+          <clr-tab>
+              <button clrTabLink>Ground-Truth</button>
+              <clr-tab-content *clrIfActive>
+                <clr-datagrid [(clrDgSelected)]="selectedUtterances" (clrDgSelectedChange)="selectionChanged($event)">
+                  <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
+                  <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
+                  <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
+                  <clr-dg-column [clrDgField]="'category'"><ng-container *clrDgHideableColumn="{hidden: false}">Category</ng-container></clr-dg-column>
+                  <clr-dg-column [clrDgField]="'literal'"><ng-container *clrDgHideableColumn="{hidden: false}">Literal</ng-container> </clr-dg-column>
+                  <clr-dg-column [clrDgField]="'startIndex'"><ng-container *clrDgHideableColumn="{hidden: false}">Start_Index</ng-container> </clr-dg-column>
+                  <clr-dg-column [clrDgField]="'endIndex'"><ng-container *clrDgHideableColumn="{hidden: false}">End_Index</ng-container> </clr-dg-column>
+                  <clr-dg-column [clrDgField]="'intent'"><ng-container *clrDgHideableColumn="{hidden: false}">Intent</ng-container> </clr-dg-column>
+                  <clr-dg-column [clrDgField]="'tag'"> <ng-container *clrDgHideableColumn="{hidden: false}">Tag</ng-container></clr-dg-column>
+              
+                  <clr-dg-action-bar>
+                    
+                    <div *ngFor="let intent of intents; let i = index" class="btn-group">
+                      <div>
+                          <button *ngIf="!intentsSelection[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelection[i]=!intentsSelection[i];selectIntents(intent)">{{intent}}</button>
+                          <button *ngIf="intentsSelection[i]" class="btn btn-sm btn-primary" (click)="intentsSelection[i]=!intentsSelection[i]; deselectIntents(intent)">{{intent}}</button>
+        
+                      </div>
+                      
+                    </div>
+                      
+                  </clr-dg-action-bar>
+                  <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance">
+                  
+              
+                  <ng-container >
+                      <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
+                      <clr-dg-cell>{{utterance.transcript}}</clr-dg-cell>
+                      <clr-dg-cell>{{utterance.category}}</clr-dg-cell>
+                      <clr-dg-cell>{{utterance.literal}}</clr-dg-cell>
+                      <clr-dg-cell>{{utterance.startIndex}} </clr-dg-cell>
+                      <clr-dg-cell>{{utterance.endIndex}} </clr-dg-cell>
+                      <clr-dg-cell>{{utterance.intent}} </clr-dg-cell>
+                      <clr-dg-cell>{{utterance.tag}}</clr-dg-cell>
+                  </ng-container>
+              
+                  </clr-dg-row>
+              
+                  <clr-dg-footer>
+                      <clr-dg-column-toggle>
+                          <clr-dg-column-toggle-title>Show Columns</clr-dg-column-toggle-title>
+                          <clr-dg-column-toggle-button>Select All Button</clr-dg-column-toggle-button>
+                          <clr-radio-wrapper>
+              
+                          </clr-radio-wrapper>
+                      </clr-dg-column-toggle>
+                  <clr-dg-pagination #pagination [clrDgPageSize]="13">
+                      <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>
+                      {{pagination.firstItem + 1}} - {{pagination.lastItem}} of {{pagination.totalItems}} utterances
+                  </clr-dg-pagination>
+                  </clr-dg-footer>
+                </clr-datagrid>
+              </clr-tab-content>
+          </clr-tab>
+      
+          <clr-tab>
+              <button clrTabLink>Upload File</button>
+              <clr-tab-content *clrIfActive>
+                <br>
+                <label class="btn">
+                  <input type="file"  accept=".csv,.json" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
+                </label>
+              </clr-tab-content>
+          </clr-tab>
+      
+      </clr-tabs>
+        
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary" [disabled]="selectedUtterances.length==0" (click)="closeStep(); timelineStyle.step1.open=true">Add Utterance<span *ngIf="selectedUtterances.length>=2">s</span></button>
+      </div>
+    </div>
+    <!-- STEP 1-->
+    <div class="card" *ngIf="timelineStyle.step1.open" >
+      <div class="card-header">
+        <h3 style="text-align: center;"> Create new app on Luis</h3>
+      </div>
+      <div class="card-block">
+        
+        <div >
+          <clr-accordion clrAccordionMultiPanel="true">
+            <clr-accordion-panel >
+              <clr-accordion-title>See your Json</clr-accordion-title>
+              <clr-accordion-content clrIfExpanded="false">
+                <br>
+                <button class="btn btn-primary-outline">Open Json</button>
+              
+              </clr-accordion-content>
+            </clr-accordion-panel>
+            <clr-accordion-panel clrAccordionPanelOpen="true">
+              <clr-accordion-title>App Settings</clr-accordion-title>
+              <clr-accordion-content clrIfExpanded="true">
+               <div class="settings-info">
+                <div>
+                  <label >Status : &nbsp;</label>
+                  <span class="label label-danger" *ngIf="luis.app.created === 1"> NOT CREATED</span>
+                  <span class="label label-warning" *ngIf="luis.app.created === 0 && luis.app.trained === 1">CREATED</span>
+                  <span class="label label-success" *ngIf="luis.app.trained === 0">DEPLOYED</span>
+                </div>
+               
+                <div>
+                  <label >App ID : &nbsp;</label>
+                   <span class="label label-success" *ngIf="luis.app.created == 0">{{luis.app.id}}</span>
+                </div>
+                <div>
+                  <label >Version: &nbsp;</label>
+                   <span class="label label-success" *ngIf="luis.app.created == 0">{{luis.app.version}}</span>
+                </div>
+              </div>
+              </clr-accordion-content>
+            </clr-accordion-panel>
+            <clr-accordion-panel clrAccordionPanelOpen="true">
+              <clr-accordion-title>Create App</clr-accordion-title>
+              <clr-accordion-content clrIfExpanded="true">
+                <form clrForm>
+                  <clr-input-container>
+                    <label >App Name</label>
+                    <input clrInput placeholder="Name" name="input" [(ngModel)]="luis.app.name" />
+                  </clr-input-container>
+                  <clr-textarea-container>
+                    <label>Description</label>
+                     <textarea placeholder="Description" clrTextarea  [(ngModel)]="luis.app.description" ></textarea>
+                     <clr-control-helper>Optional</clr-control-helper>
+                  </clr-textarea-container>
+                  <clr-select-container>
+                    <label>Culture</label>
+                    <select clrSelect  >
+                      <option value="one">de-de</option>
+                    </select>
+                  </clr-select-container>
+                  
+                  <br><br>
+                  <button class="btn btn-primary-outline" (click)="editNameAndDescription(luis.app.name,luis.app.description);jsonStringValueChanged();createApp()">Create App</button>
+                </form>
+              </clr-accordion-content>
+            </clr-accordion-panel>
+          
+            
+            
+          </clr-accordion>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary"  (click)="closeStep(); timelineStyle.step2.open=true">Next</button>
+        <button class="btn btn-primary-outline" (click)="closeStep(); timelineStyle.step0.open=true">Back</button>
+    </div>
+    </div>
+    <!--STEP 2-->
+    <div class="card" *ngIf="timelineStyle.step2.open" >
+      <div class="card-header">
+        <h3 style="text-align: center;"> STEP 2</h3>
+      </div>
+      <div class="card-block center">
+        <button class="btn btn-primary" [@rotateOut]="{ value: rotateOut, params: { timing: myTiming || 5, delay: myDelay || 2 } }">Train</button>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary">Next</button>
+        <button class="btn btn-primary-outline" (click)="closeStep(); timelineStyle.step1.open=true">Back</button>
+     </div>
+  </div>
+    
+  </div>
+</div>
+

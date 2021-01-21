@@ -1,0 +1,8 @@
+<div>
+    <div *ngIf="editing">
+      <input [required]="required" (blur)="onBlur($event);valueChange();" class="clr-input" [name]="value" [(ngModel)]="value" [placeholder]="label" />
+    </div>
+    <div *ngIf="!editing">
+      <a (click)="beginEdit(value);valueChange();newChange=false;" (focus)="beginEdit(value);valueChange();" tabindex="0">{{value}} <span *ngIf="value?.trim()==''">-</span></a>
+    </div>
+  </div>

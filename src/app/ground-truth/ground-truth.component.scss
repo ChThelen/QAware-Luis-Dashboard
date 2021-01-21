@@ -14,7 +14,7 @@ button.action-item:hover {
     overflow: hidden;
     position: absolute;
     z-index: -1;
-}
+  }
 
 .spacer
 {
@@ -24,6 +24,10 @@ button.action-item:hover {
 {
     display: flex;
     flex-wrap: wrap;
+    border-bottom: solid 1px rgb(204, 201, 201);
+    padding-bottom: 25px;
+   
+    
 }
  .pre
  {
@@ -59,3 +63,12 @@ button.action-item:hover {
     margin-right: auto;
     width: 80%;
 }
+.content
+{
+    overflow-y: scroll;
+  scroll-behavior: smooth;
+  height: 91%;
+  padding-right: 20px;
+
+}
+

@@ -238,6 +238,11 @@ downloadCsv() :void
   {
     this.newLine = new CsvUtterance();
   }
+  /**Observe the changes on the deploy-json-component */
+  jsonStringChanged(json :string)
+  {
+    this.fileAsJson = json;
+  }
 
   showNotification(message: string, messageDetails: string) {
     this.notificationService.add(

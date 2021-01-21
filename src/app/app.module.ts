@@ -10,11 +10,13 @@ import { TilesComponent } from './components/tiles/tiles.component';
 import { DetailViewComponent } from './components/detail-view/detail-view.component';
 import { ManageViewComponent } from './components/manage-view/manage-view.component';
 import { CsvReaderComponent } from './components/csv-reader/csv-reader.component';
+import { DeployJsonComponent } from './components/deploy-json/deploy-json.component';
+import { GroundTruthComponent } from './ground-truth/ground-truth.component';
+import { EditableCellComponent } from './components/editable-cell/editable-cell.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChartsModule } from 'ng2-charts';
-import { ChartComponent } from './components/chart/chart.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +25,9 @@ import { ChartComponent } from './components/chart/chart.component';
     DetailViewComponent,
     ManageViewComponent,
     CsvReaderComponent,
+    DeployJsonComponent,
+    GroundTruthComponent,
+    EditableCellComponent
     NotificationComponent,
     DashboardComponent,
     ChartComponent

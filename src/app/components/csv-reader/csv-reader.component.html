@@ -31,6 +31,12 @@
 
 <clr-tabs>
   <clr-tab>
+    <button clrTabLink id="link1" >Ground-Truth</button>
+    <clr-tab-content id="content0" >
+
+    </clr-tab-content>
+  </clr-tab>
+  <clr-tab>
       <button clrTabLink id="link1" >CSV</button>
       <clr-tab-content id="content1" *clrIfActive="!isJsonFile">
         <clr-datagrid *ngIf="result.length > 0 && printText && file">
@@ -81,9 +87,16 @@
             </clr-dg-pagination>
           </clr-dg-footer>
         </clr-datagrid>
-        <pre class="clr-row language-html pre" *ngIf="!printText">
-          <code style="text-align: start;" class="clr-col-10 clr-col-lg language-html">{{fileAsCsvString}}</code>
-        </pre>
+        
+        <div class="card language-html pre" *ngIf="!printText">
+          <div class="card-header">
+            
+            <h3 style="text-align: center;">YOUR CSV FILE <button class="btn btn-sm btn-link"> <clr-icon size="24" shape="copy"></clr-icon></button> </h3>
+          </div>
+          <div class="card-block center">
+             <pre style="border: none;"><code>{{fileAsCsvString}}</code></pre>
+          </div>
+        </div>
       </clr-tab-content>
   </clr-tab>
   <clr-tab>
@@ -91,14 +104,19 @@
       <clr-tab-content *clrIfActive="isJsonFile">
         
         <div class="clr-row" *ngIf="file">
-          <div class="clr-col-lg-7 clr-col-12 ">
+          <div class="clr-col-lg-6 clr-col-12 ">
             <div class="card language-html">
-              <pre style="border: none;"><code>{{fileAsJson}}</code></pre>
+              <div class="card-header">
+                <h3 style="text-align: center;">YOUR JSON FILE <button class="btn btn-sm btn-link " style="margin: 0;"> <clr-icon size="24" shape="copy"></clr-icon></button></h3>
+              </div>
+              <div class="card-block">
+                 <pre style="border: none;"><code>{{fileAsJson}}</code></pre>
+              </div>
             </div>
           </div>
-          <div class="clr-col-lg-5 clr-col-12">
+          <div class="clr-col-lg-6 clr-col-12">
             <!-- Here Component to deploy JSON On LUIS-->
-          
+            <app-deploy-json [jsonString]="fileAsJson" (jsonStringChange)="jsonStringChanged($event)"></app-deploy-json>
           </div>
             
             
