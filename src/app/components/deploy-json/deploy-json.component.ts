@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { HEADERS, Utterance } from 'src/app/models/Utterance';
+import { HEADERS, CsvUtterance } from 'src/app/models/CsvUtterance';
 import { LuisAppService } from 'src/app/services/luis-app.service';
 
 @Component({
@@ -7,197 +7,180 @@ import { LuisAppService } from 'src/app/services/luis-app.service';
   templateUrl: './deploy-json.component.html',
   styleUrls: ['./deploy-json.component.scss']
 })
-export class DeployJsonComponent implements OnInit 
-{
-  @Input() 
-  jsonString:string;
+export class DeployJsonComponent implements OnInit {
+  @Input()
+  jsonString: string;
 
   @Output()
   jsonStringChange = new EventEmitter<string>();
 
-  
+
   intents: string[] = [];
   intentsSelection: boolean[] = [];
-  selectedUtterances:Utterance[] = []
-  result: Utterance[] = [];
- 
+  selectedUtterances: CsvUtterance[] = []
+  result: CsvUtterance[] = [];
+
   timelineStyle = {
-    step0:{state:"current",open:true},
-    step1:{state:"not-started",open:false},
-    step2:{state:"not-started",open:false},
-    step3:{state:"not-started",open:false},
-    step4:{state:"not-started",open:false},
-  }; 
+    step0: { state: "current", open: true },
+    step1: { state: "not-started", open: false },
+    step2: { state: "not-started", open: false },
+    step3: { state: "not-started", open: false },
+    step4: { state: "not-started", open: false },
+  };
   luis = {
-    app: 
+    app:
     {
       name: '',
       description: '',
       id: '',
-      version:'',
-      created:1,
+      version: '',
+      created: 1,
       trained: 1,
-      published:1,
-      staging : true,
-      production : false
+      published: 1,
+      staging: true,
+      production: false
     }
   };
-  closeStep()
-  {
+  closeStep() {
     this.timelineStyle = {
-      step0:{state:"current",open:false},
-      step1:{state:"not-started",open:false},
-      step2:{state:"not-started",open:false},
-      step3:{state:"not-started",open:false},
-      step4:{state:"not-started",open:false},
-    }; 
+      step0: { state: "current", open: false },
+      step1: { state: "not-started", open: false },
+      step2: { state: "not-started", open: false },
+      step3: { state: "not-started", open: false },
+      step4: { state: "not-started", open: false },
+    };
   }
-  constructor(private luisService:LuisAppService)
-  {
-    this.createUtterances(this.groundTruth,this.result);
+  constructor(private luisService: LuisAppService) {
+    this.createUtterances(this.groundTruth, this.result);
     this.intents = this.getIntents();
     luisService.getGT().subscribe(data => this.groundTruth = data);
   }
 
-  ngOnInit(): void 
-  {
-    
+  ngOnInit(): void {
+
   }
-  createUtterances(file:string,result:Utterance[]) : void
-  {
-    
+  createUtterances(file: string, result: CsvUtterance[]): void {
+
     let dataArray: string[] = file.split(/\r\n|\n/);
     let headers = dataArray[0].split(";");
-   
-      let i = 1;
-      for ( i = 1; i < dataArray.length; i++) {
-        let currentLine = dataArray[i].split(";");
-        if (currentLine.length == headers.length) {
-          let utterance: Utterance = new Utterance();
-          utterance.id = currentLine[0];
-          utterance.transcript = currentLine[1];
-          utterance.category = currentLine[2];
-          utterance.literal = currentLine[3];
-          utterance.startIndex = currentLine[4];
-          utterance.endIndex = currentLine[5];
-          utterance.intent = currentLine[6];
-          utterance.tag = currentLine[7];
-          result.push(utterance);
-        } else {
-          console.log('Error occured while reading file on line ' + i + '.');
-        }
-    
+
+    let i = 1;
+    for (i = 1; i < dataArray.length; i++) {
+      let currentLine = dataArray[i].split(";");
+      if (currentLine.length == headers.length) {
+        let csvUtterance: CsvUtterance = new CsvUtterance();
+        csvUtterance.id = currentLine[0];
+        csvUtterance.transcript = currentLine[1];
+        csvUtterance.category = currentLine[2];
+        csvUtterance.literal = currentLine[3];
+        csvUtterance.startIndex = currentLine[4];
+        csvUtterance.endIndex = currentLine[5];
+        csvUtterance.intent = currentLine[6];
+        csvUtterance.tag = currentLine[7];
+        result.push(csvUtterance);
+      } else {
+        console.log('Error occured while reading file on line ' + i + '.');
       }
-    
+
+    }
+
   }
-  selectIntents(intent:string)
-  {
-    this.result.forEach( element => {if(element.intent == intent){this.selectedUtterances.push(element)}});
+  selectIntents(intent: string) {
+    this.result.forEach(element => { if (element.intent == intent) { this.selectedUtterances.push(element) } });
   }
-  deselectIntents(intent:string)
-  {
-    this.selectedUtterances=this.selectedUtterances.filter(element => element.intent != intent);
+  deselectIntents(intent: string) {
+    this.selectedUtterances = this.selectedUtterances.filter(element => element.intent != intent);
   }
-  getIntents() : string[]
-  {
+  getIntents(): string[] {
     let temp = this.result.map(element => element.intent);
     temp = [...new Set(temp)];
-    temp.forEach(element => this.intentsSelection.push(false)); 
+    temp.forEach(element => this.intentsSelection.push(false));
     return temp;
   }
-  selectionChanged(event:any)
-  {
-   
-  
-      
-    
+  selectionChanged(event: any) {
+
+
+
+
   }
-  createApp()
-  {
-    this.luisService.createApp(this.jsonString).subscribe(data=>{this.luis.app.id=data; console.log(data)});
+  createApp() {
+    this.luisService.createApp(this.jsonString).subscribe(data => { this.luis.app.id = data; console.log(data) });
     this.luis.app.created = 0;
-    if(this.luis.app.id.length > 5 || this.luis.app.created == 0) // App has been created
+    if (this.luis.app.id.length > 5 || this.luis.app.created == 0) // App has been created
     {
       this.manageTimeLineStyle();
-      
+
     }
     else // App isn't created or already existing
     {
-        //TODO : User must be notify 
+      //TODO : User must be notify 
     }
   }
-  train()
-  {
-    this.luisService.train(this.jsonString).subscribe(data=>{this.luis.app.trained=data});
+  train() {
+    this.luisService.trainApp(this.jsonString).subscribe(data => { 
+      this.luis.app.trained = <number> data.body;
+    });
+    
     this.luis.app.trained = 0;
-    if(this.luis.app.trained == 0) // App is trained
+    if (this.luis.app.trained == 0) // App is trained
     {
       this.manageTimeLineStyle();
     }
     else // App isn't trained
     {
-    
-        //TODO : User must be notify 
+
+      //TODO : User must be notify 
     }
   }
-  publish()
-  {
-    this.luisService.publish(this.jsonString,this.luis.app.staging).subscribe(data=>{this.luis.app.published=data});
+  publish() {
+    this.luisService.publish(this.jsonString, this.luis.app.staging).subscribe(data => { this.luis.app.published = data });
     this.luis.app.published = 0;
-    if(this.luis.app.published == 0) // App is published
+    if (this.luis.app.published == 0) // App is published
     {
       this.manageTimeLineStyle();
     }
     else // App isn't published
     {
-        //TODO : User must be notify 
+      //TODO : User must be notify 
     }
   }
-  
-  manageTimeLineStyle()
-  {
-    if(this.luis.app.created == 0 && this.luis.app.trained == 1 && this.luis.app.published == 1)
-    {
+
+  manageTimeLineStyle() {
+    if (this.luis.app.created == 0 && this.luis.app.trained == 1 && this.luis.app.published == 1) {
       this.timelineStyle.step1.state = "success";
       this.timelineStyle.step2.state = "current";
     }
-    else if(this.luis.app.trained == 0 && this.luis.app.published == 1)
-    {
+    else if (this.luis.app.trained == 0 && this.luis.app.published == 1) {
       this.timelineStyle.step2.state = "success";
       this.timelineStyle.step3.state = "current";
     }
-    if(this.luis.app.published == 0)
-    {
+    if (this.luis.app.published == 0) {
       this.timelineStyle.step3.state = "success";
       this.timelineStyle.step4.state = "current";
     }
   }
-  editNameAndDescription(name:string,description:string)
-  {
-    
-   if(this.luis.app.name.trim()!="")
-    {
+  editNameAndDescription(name: string, description: string) {
+
+    if (this.luis.app.name.trim() != "") {
       let startIndex = this.jsonString.split(/\r\n|\n/).join("").lastIndexOf('\"name\"');
-      let endIndex = this.jsonString.split(/\r\n|\n/).join("").indexOf(",",startIndex)+1;
-      let oldName = this.jsonString.split(/\r\n|\n/).join("").substring(startIndex,endIndex);
-      let newName = '\"name\":'+' \"'+ name.trim() +"\",";
-      this.jsonString = this.jsonString.replace(oldName,newName);
+      let endIndex = this.jsonString.split(/\r\n|\n/).join("").indexOf(",", startIndex) + 1;
+      let oldName = this.jsonString.split(/\r\n|\n/).join("").substring(startIndex, endIndex);
+      let newName = '\"name\":' + ' \"' + name.trim() + "\",";
+      this.jsonString = this.jsonString.replace(oldName, newName);
     }
-    if(this.luis.app.description.trim()!="")
-    {
+    if (this.luis.app.description.trim() != "") {
       let startIndex = this.jsonString.split(/\r\n|\n/).join("").lastIndexOf('\"desc\"');
-      let endIndex = this.jsonString.split(/\r\n|\n/).join("").indexOf(",",startIndex)+1;
-      let oldDesc = this.jsonString.split(/\r\n|\n/).join("").substring(startIndex,endIndex);
-      let newDesc = '\"desc\":'+' \"'+ description.trim() +"\",";
-      this.jsonString = this.jsonString.replace(oldDesc,newDesc);
+      let endIndex = this.jsonString.split(/\r\n|\n/).join("").indexOf(",", startIndex) + 1;
+      let oldDesc = this.jsonString.split(/\r\n|\n/).join("").substring(startIndex, endIndex);
+      let newDesc = '\"desc\":' + ' \"' + description.trim() + "\",";
+      this.jsonString = this.jsonString.replace(oldDesc, newDesc);
     }
   }
-  jsonStringValueChanged()
-  {
+  jsonStringValueChanged() {
     this.jsonStringChange.emit(this.jsonString);
   }
-  
-  groundTruth : string = `#;transcript;category;literal;start_index;end_index;intent;tag
+
+  groundTruth: string = `#;transcript;category;literal;start_index;end_index;intent;tag
   1;Buch mir ein Taxi von Muenchen nach Berlin;vonOrt;Muenchen;21;29;BOOK;
   2;Buch mir ein Taxi von Muenchen nach Berlin;zuOrt;Berlin;35;41;BOOK;
   3;Buch mir ein Taxi von Muenchen nach Berlin;Anzahl;ein;8;11;BOOK;

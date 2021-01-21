@@ -1,4 +1,4 @@
-export class Utterance {
+export class CsvUtterance {
     id: string;
     transcript: string;
     category: string;
