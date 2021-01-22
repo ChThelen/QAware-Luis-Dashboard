@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DetailViewComponent } from './components/detail-view/detail-view.component';
-import { CsvReaderComponent } from './components/csv-reader/csv-reader.component';
 import { GroundTruthComponent } from './ground-truth/ground-truth.component';
 import { DeployJsonComponent } from './components/deploy-json/deploy-json.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
