@@ -10,7 +10,7 @@ import { TilesComponent } from './components/tiles/tiles.component';
 import { DetailViewComponent } from './components/detail-view/detail-view.component';
 import { ManageViewComponent } from './components/manage-view/manage-view.component';
 import { DeployJsonComponent } from './components/deploy-json/deploy-json.component';
-import { GroundTruthComponent } from './ground-truth/ground-truth.component';
+import { GroundTruthComponent } from './components/ground-truth/ground-truth.component';
 import { EditableCellComponent } from './components/editable-cell/editable-cell.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
