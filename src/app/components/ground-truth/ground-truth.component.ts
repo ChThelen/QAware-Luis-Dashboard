@@ -3,8 +3,6 @@ import { CsvUtterance, HEADERS } from 'src/app/models/CsvUtterance';
 import { LuisAppService } from 'src/app/services/luis-app.service';
 import { ClrLoadingState } from '@clr/angular';
 
-
-
 @Component({
   selector: 'app-ground-truth',
   templateUrl: './ground-truth.component.html',
@@ -31,15 +29,12 @@ export class GroundTruthComponent implements OnInit {
   intents: string[] = [];
   intentsSelection: boolean[] = [];
 
+  groundTruth: string = ""
 
-  constructor(private luisService: LuisAppService) {
-
-
-  }
+  constructor(private luisService: LuisAppService) {}
 
   ngOnInit(): void {
-    this.intents = this.getIntents();
-    this.luisService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result); });
+    this.luisService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result);this.intents = this.getIntents();});
   }
 
   selectIntents(intent: string) {
@@ -241,7 +236,7 @@ export class GroundTruthComponent implements OnInit {
     this.newChange = change;
     console.log(change);
   }
-  groundTruth: string = ""
+
 }
 
 function arrayEquals(a, b) {
