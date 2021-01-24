@@ -9,8 +9,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TilesComponent } from './components/tiles/tiles.component';
 import { DetailViewComponent } from './components/detail-view/detail-view.component';
 import { ManageViewComponent } from './components/manage-view/manage-view.component';
-import { CsvReaderComponent } from './components/csv-reader/csv-reader.component';
+import { DeployJsonComponent } from './components/deploy-json/deploy-json.component';
+import { GroundTruthComponent } from './components/ground-truth/ground-truth.component';
+import { EditableCellComponent } from './components/editable-cell/editable-cell.component';
 import { NotificationComponent } from './components/notification/notification.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
+import { ChartsModule } from 'ng2-charts';
+import {ChartComponent} from './components/chart/chart.component';
 
 @NgModule({
   declarations: [
@@ -18,8 +24,12 @@ import { NotificationComponent } from './components/notification/notification.co
     TilesComponent,
     DetailViewComponent,
     ManageViewComponent,
-    CsvReaderComponent,
-    NotificationComponent
+    DeployJsonComponent,
+    GroundTruthComponent,
+    EditableCellComponent,
+    NotificationComponent,
+    DashboardComponent,
+    ChartComponent
   ],
   imports: [
     BrowserModule,
@@ -27,9 +37,22 @@ import { NotificationComponent } from './components/notification/notification.co
     ClarityModule,
     BrowserAnimationsModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    HighlightModule,
+    ChartsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        coreLibraryLoader: () => import('highlight.js/lib/core'),
+        lineNumbersLoader: () => import('highlightjs-line-numbers.js'),
+        languages: {
+          json: () => import('highlight.js/lib/languages/json')
+        }
+      }
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

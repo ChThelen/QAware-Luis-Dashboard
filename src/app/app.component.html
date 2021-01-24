@@ -1,16 +1,16 @@
 <clr-main-container class="main-container">
   <div *ngIf="!environment.production" class="alert alert-app-level alert-warning" role="alert">
     <div class="alert-items">
-        <div class="alert-item static">
-            <div class="alert-icon-wrapper">
-                <clr-icon class="alert-icon" shape="exclamation-triangle"></clr-icon>
-            </div>
-            <div class="alert-text">
-                Dashboard is not running in production mode. Dummy data will be used for demonstration.
-            </div>
+      <div class="alert-item static">
+        <div class="alert-icon-wrapper">
+          <clr-icon class="alert-icon" shape="exclamation-triangle"></clr-icon>
         </div>
+        <div class="alert-text">
+          Dashboard is not running in production mode. Dummy data will be used for demonstration.
+        </div>
+      </div>
     </div>
-</div>
+  </div>
   <clr-header class="header header-6">
     <div class="branding">
       <a class="nav-link" routerLink="/dashboard">
@@ -20,42 +20,28 @@
     </div>
     <div class="header-nav">
       <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
-        
         <span class="nav-text">Dashboard</span>
       </a>
     </div>
     <div class="header-nav">
-      <a class="nav-link" routerLink="/manage" routerLinkActive="active">
-        
-        <span class="nav-text">Management</span>
-      </a>
     </div>
     <div class="header-nav">
-      <a class="nav-link" routerLink="/import" routerLinkActive="active">
-        
-        <span class="nav-text">Editor</span>
+      <a class="nav-link" routerLink="/groundTruth" routerLinkActive="active">   
+        <span class="nav-text">Ground-Truth Editor</span>
       </a>
     </div>
     
-    <div class="header-nav">
-      <a class="nav-link" routerLink="/training" routerLinkActive="active">
-        
-        <span class="nav-text">Training</span>
-      </a>
-    </div>
-
     <div class="header-actions">
-        <a (click)="switchTheme()" class="nav-link nav-icon-text">
-          <clr-icon *ngIf="darkThemeIsActive" class="is-solid" shape="sun" size="24"></clr-icon>
-          <clr-icon *ngIf="!darkThemeIsActive" class="is-solid" shape="moon" size="24"></clr-icon>
-        </a>
+      <a (click)="switchTheme()" class="nav-link nav-icon">
+        <clr-icon *ngIf="darkThemeIsActive" class="is-solid" shape="sun" size="24"></clr-icon>
+        <clr-icon *ngIf="!darkThemeIsActive" class="is-solid" shape="moon" size="24"></clr-icon>
+      </a>
     </div>
   </clr-header>
 
   <div class="content-container">
-    <div class="content-area">
-      <app-notification *ngIf="shouldDisplayNotification" [notification]="notification">
-      </app-notification>
+    <div class="content-area" style="padding-bottom: 0;">
+      <app-notification *ngIf="shouldDisplayNotification" [notification]="notification"></app-notification>
       <router-outlet></router-outlet>
     </div>
   </div>

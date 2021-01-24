@@ -1,9 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { DUMMY_APPS, LuisApp } from '../../models/LuisApp';
-import { ClrWizard } from "@clr/angular";
+import { Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { LuisApp } from 'src/app/models/LuisApp';
 import { LuisAppService } from 'src/app/services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
-import { environment } from 'src/environments/runtime-environment';
 
 @Component({
   selector: 'app-manage-view',
@@ -11,49 +9,36 @@ import { environment } from 'src/environments/runtime-environment';
   styleUrls: ['./manage-view.component.scss']
 })
 export class ManageViewComponent implements OnInit {
-  @ViewChild("createAppWizard") wizard: ClrWizard;
 
-  createWizard: boolean = false;
+  showAppCreation: boolean = false;
   deleteModal: boolean = false;
   selectedApp: LuisApp = null;
-  apps = [];
+  
+  @Input()
+  apps: Array<LuisApp> = [];
+
+  @Output() 
+  deletedApp: EventEmitter<string> = new EventEmitter();
 
   constructor(private luisAppService: LuisAppService, private notificationService: NotificationService) {}
 
-  ngOnInit(): void {
-    if(environment.production){
-      this.loadApps();
-    } else{
-      this.apps = DUMMY_APPS;
-    }
-  }
+  ngOnInit(): void {}
 
   openDeleteModal(luisApp: LuisApp) {
     this.selectedApp = luisApp;
     this.deleteModal = true;
   }
 
-  openCreateWizard() {
-    this.createWizard = !this.createWizard;
-  }
-
   deleteApp(appName: string) {
     this.luisAppService.deleteApp(appName).subscribe(result => {
       this.selectedApp = null;
-      this.loadApps();
+      this.deletedApp.emit(appName);
       this.deleteModal = false;
     },
       err => {
         //TO:DO Display Notfication
       }
     )
-  }
-
-  loadApps() {
-    this.apps = [];
-    this.luisAppService.getApps().subscribe(result => {
-      this.apps = result;
-    });
   }
 
   showNotification(message: string, messageDetails: string) {

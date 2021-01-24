@@ -14,3 +14,12 @@ button.action-item:hover {
     margin-right: 0.2rem;
     border-radius: .2rem;
 }
+
+.button-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
