@@ -16,7 +16,6 @@ import { NotificationComponent } from './components/notification/notification.co
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChartsModule } from 'ng2-charts';
-import {ChartComponent} from './components/chart/chart.component';
 
 @NgModule({
   declarations: [
@@ -28,8 +27,7 @@ import {ChartComponent} from './components/chart/chart.component';
     GroundTruthComponent,
     EditableCellComponent,
     NotificationComponent,
-    DashboardComponent,
-    ChartComponent
+    DashboardComponent
   ],
   imports: [
     BrowserModule,

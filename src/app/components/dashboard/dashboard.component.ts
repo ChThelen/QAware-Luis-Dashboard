@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LuisApp, DUMMY_APPS } from 'src/app/models/LuisApp';
-import { LuisAppService } from 'src/app/services/luis-app.service';
+import { PersistentService } from 'src/app/services/persistent.service';
 import { NotificationService, NotificationType, Notification } from 'src/app/services/notification.service';
 import { environment } from 'src/environments/runtime-environment';
 
@@ -15,7 +15,7 @@ export class DashboardComponent implements OnInit {
   
   apps: Array<LuisApp> = [];
 
-  constructor(private luisAppService: LuisAppService, private notificationService: NotificationService) { }
+  constructor(private persistentService: PersistentService, private notificationService: NotificationService) { }
 
   ngOnInit(): void {
     if(environment.production){
@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
 
   loadApps() {
     this.apps = [];
-    this.luisAppService.getApps().subscribe(k => {
+    this.persistentService.getApps().subscribe(k => {
       this.apps = k;
     });
   }

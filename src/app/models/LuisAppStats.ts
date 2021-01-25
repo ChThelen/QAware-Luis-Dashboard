@@ -3,5 +3,4 @@ export class LuisAppStats{
     date: Date;
     intent: string;
     average: number;
-    difference: number;
 }
