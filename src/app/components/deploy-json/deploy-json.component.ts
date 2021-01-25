@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HEADERS, CsvUtterance } from 'src/app/models/CsvUtterance';
 import { LuisAppService } from 'src/app/services/luis-app.service';
+import { PersistentService } from 'src/app/services/persistent.service';
 
 @Component({
   selector: 'app-deploy-json',
@@ -50,10 +51,12 @@ export class DeployJsonComponent implements OnInit {
       step4: { state: "not-started", open: false },
     };
   }
-  constructor(private luisService: LuisAppService) {
+  constructor(
+    private luisService: LuisAppService,
+    private persistentService: PersistentService) {
     this.createUtterances(this.groundTruth, this.result);
     this.intents = this.getIntents();
-    luisService.getGT().subscribe(data => this.groundTruth = data);
+    persistentService.getGT().subscribe(data => this.groundTruth = data);
   }
 
   ngOnInit(): void {
@@ -129,18 +132,6 @@ export class DeployJsonComponent implements OnInit {
     else // App isn't trained
     {
 
-      //TODO : User must be notify 
-    }
-  }
-  publish() {
-    this.luisService.publish(this.jsonString, this.luis.app.staging).subscribe(data => { this.luis.app.published = data });
-    this.luis.app.published = 0;
-    if (this.luis.app.published == 0) // App is published
-    {
-      this.manageTimeLineStyle();
-    }
-    else // App isn't published
-    {
       //TODO : User must be notify 
     }
   }

@@ -12,6 +12,8 @@ import { ClrWizard } from '@clr/angular';
 import { Intent } from 'src/app/models/Intent';
 import { Entity } from 'src/app/models/Entity';
 import { Utterance } from 'src/app/models/Utterance';
+import { Color } from 'ng2-charts';
+import { PersistentService } from '../../services/persistent.service';
 
 @Component({
   selector: 'app-detail-view',
@@ -44,11 +46,24 @@ export class DetailViewComponent implements OnInit {
   //Chart Data
   chartLabels: string[];
   chartData: ChartDataSets[];
-
+  chartLegend = true;
+  
+  chartOptions = {
+    scaleShowVerticalLines: false,
+    responsive: true,
+  };
+  
+  chartColors: Color[] = [
+    {
+      backgroundColor: 'rgba(0,54,77,0.28)',
+    },
+  ];
+  
   constructor(
     private location: Location,
     private route: ActivatedRoute,
     private luisAppService: LuisAppService,
+    private persistentService: PersistentService,
     private notificationService: NotificationService) { }
 
   ngOnInit(): void {
@@ -82,19 +97,19 @@ export class DetailViewComponent implements OnInit {
     switch (this.editWizard_option) {
       case "intent": {
         this.luisAppService.addIntent(name, this.editWizard_intent).subscribe(k => {
-          this.showNotification("Intent added successfully. Please reload page!", null);
+          this.showNotification("Intent added successfully. Please reload page!", null, NotificationType.Info);
         });
         break;
       }
       case "entity": {
         this.luisAppService.addEntity(name, this.editWizard_entity).subscribe(k => {
-          this.showNotification("Entity added successfully. Please reload page!", null);
+          this.showNotification("Entity added successfully. Please reload page!", null, NotificationType.Info);
         });
         break;
       }
       case "utterances": {
         this.luisAppService.addUtterances(name, this.editWizard_utterances).subscribe(k => {
-          this.showNotification("Utterances added successfully. Please reload page!", null);
+          this.showNotification("Utterances added successfully. Please reload page!", null, NotificationType.Info);
         });
         break;
       }
@@ -126,18 +141,19 @@ export class DetailViewComponent implements OnInit {
     const name = this.route.snapshot.paramMap.get('name');
     this.luisAppService.trainApp(name).subscribe(result => {
       if((<number> result.body) === 0){
-        this.showNotification("Training was successfully. Please reload page!", null);
+        this.showNotification("Training was successfully. Please reload page!", null, NotificationType.Info);
+        window.location.reload();
       }
     },
       err => {
-        this.showNotification("Failed while testing App!", null);
+        this.showNotification("Failed while testing App!", null, NotificationType.Danger);
       }
-    )
+    );
   }
 
   getApp(): void {
     const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getApps().subscribe(k => {
+    this.persistentService.getApps().subscribe(k => {
       this.luisApp = k.filter((app: LuisApp) => app.name === name)[0];
       this.getAppJSON();
     });
@@ -145,7 +161,7 @@ export class DetailViewComponent implements OnInit {
 
   getAppJSON(): void {
     const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getAppJSON(name).subscribe(k => {
+    this.persistentService.getAppJSON(name).subscribe(k => {
       this.luisApp.appJson = k;
     });
   }
@@ -159,7 +175,7 @@ export class DetailViewComponent implements OnInit {
 
   getAppStats(): void {
     const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getAppStats(name).subscribe(k => {
+    this.persistentService.getAppStats(name).subscribe(k => {
       this.luisAppStats = k;
       this.chartData = new Array();
       this.chartData.push({ data: k.map((appStat: LuisAppStats) => appStat.average), label: name });
@@ -167,16 +183,28 @@ export class DetailViewComponent implements OnInit {
     });
   }
 
-  deleteApp() {
-    this.luisAppService.deleteApp(this.luisApp.name).subscribe(result => {
+  deleteApp(): void {
+    this.luisAppService.deleteApp(this.luisApp.name).subscribe(response => {
       this.luisApp = null;
       this.deleteModal = false;
       this.location.back();
     },
       err => {
-        this.showNotification("Failed while deleting App!", null);
+        this.showNotification("Failed while deleting App!", err, NotificationType.Danger);
       }
-    )
+    );
+  }
+
+  publishApp(): void{
+    const name = this.route.snapshot.paramMap.get('name');
+
+    this.luisAppService.publish(name, false).subscribe(response => {
+      window.location.reload();
+    },
+    err => {
+      this.showNotification("Failed while publishing App!",err , NotificationType.Danger);
+    }
+  );
   }
 
   donwloadJsonFile(): void {
@@ -189,10 +217,10 @@ export class DetailViewComponent implements OnInit {
     hiddenElement.remove();
   }
 
-  showNotification(message: string, messageDetails: string) {
+  showNotification(message: string, messageDetails: string, type: NotificationType) {
     this.notificationService.add(
       new Notification(
-        NotificationType.Info,
+        type,
         message,
         messageDetails
       )

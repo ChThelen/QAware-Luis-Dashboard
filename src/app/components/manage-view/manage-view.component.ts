@@ -20,7 +20,9 @@ export class ManageViewComponent implements OnInit {
   @Output() 
   deletedApp: EventEmitter<string> = new EventEmitter();
 
-  constructor(private luisAppService: LuisAppService, private notificationService: NotificationService) {}
+  constructor(
+    private luisAppService: LuisAppService,
+    private notificationService: NotificationService) {}
 
   ngOnInit(): void {}
 

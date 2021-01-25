@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CsvUtterance, HEADERS } from 'src/app/models/CsvUtterance';
 import { LuisAppService } from 'src/app/services/luis-app.service';
 import { ClrLoadingState } from '@clr/angular';
+import { PersistentService } from 'src/app/services/persistent.service';
+import { ConvertService } from 'src/app/services/convert.service';
 
 @Component({
   selector: 'app-ground-truth',
@@ -31,10 +33,13 @@ export class GroundTruthComponent implements OnInit {
 
   groundTruth: string = ""
 
-  constructor(private luisService: LuisAppService) {}
+  constructor(
+    private luisService: LuisAppService,
+    private persistentService: PersistentService,
+    private convertService: ConvertService) {}
 
   ngOnInit(): void {
-    this.luisService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result);this.intents = this.getIntents();});
+    this.persistentService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result);this.intents = this.getIntents();});
   }
 
   selectIntents(intent: string) {
@@ -118,8 +123,8 @@ export class GroundTruthComponent implements OnInit {
   }
   saveChanges() {
     if (this.newChange) {
-      this.luisService.changeGT(this.groundTruth).subscribe(data => console.log(data));
-      this.luisService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result); });
+      this.persistentService.changeGT(this.groundTruth).subscribe(data => console.log(data));
+      this.persistentService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result); });
     }
 
     this.newChange = false;
@@ -180,7 +185,7 @@ export class GroundTruthComponent implements OnInit {
   downloadJson(): void {
     let fileAsJson = "";
     let content = this.refreshUtterances(this.selectedUtterances).join("\n");
-    this.luisService.convertCsvToJson(content, "MyJsonFile_" + new Date().toDateString())
+    this.convertService.convertCsvToJson(content, "MyJsonFile_" + new Date().toDateString())
       .toPromise().then(data => { fileAsJson = JSON.stringify(data, null, 5); });
 
     var hiddenElement = document.createElement('a');
