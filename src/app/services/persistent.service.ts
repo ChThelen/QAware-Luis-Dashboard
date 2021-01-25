@@ -1,9 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/runtime-environment';
-import { LuisApp } from '../models/LuisApp';
-import { LuisAppStats } from '../models/LuisAppStats';
+import { DUMMY_APPS, EXAMPLE_JSON, LuisApp } from '../models/LuisApp';
+import { DUMMY_STATS, LuisAppStats } from '../models/LuisAppStats';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +14,23 @@ export class PersistentService {
   private endpoint = "/luis/app";
 
   constructor(private httpClient: HttpClient) { }
-  
+
+  public getApp(appName: string): Promise<LuisApp>{
+    return new Promise(resolve => {
+      this.getApps()
+      .subscribe(k => {
+        const luisApp = k.filter((app: LuisApp) => app.name === appName)[0];
+        resolve(luisApp);
+      });
+    });
+  }
+
   public getApps(): Observable<Array<LuisApp>> {
+
+    if(!environment.production){
+      return of(DUMMY_APPS);
+    }
+
     return this.httpClient.get<Array<LuisApp>>(this.buildUrl("/getApps"));
   }
 
@@ -24,6 +39,11 @@ export class PersistentService {
   }
 
   public getAppStats(appName: string): Observable<Array<LuisAppStats>> {
+
+    if(!environment.production){
+      return of(DUMMY_STATS);
+    }
+
     return this.httpClient.get<Array<LuisAppStats>>(this.buildUrl("/getAppStats"), { params: { "name": appName } });
   }
 
