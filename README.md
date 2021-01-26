@@ -21,7 +21,7 @@
 
 * [About the Project](#about-the-project)
   * [Built With](#built-with)
-* [Preview](#preview)
+* [Functionality](#functionality)
   * [Dashboard](#dashboard)
   * [App Management](#app-management)
   * [App Statistics](#app-statistics)
@@ -39,9 +39,12 @@
 * [Angular](https://angular.io)
 * [Clarity](https://clarity.design/)
 
-## Preview
+## Functionality
 
 ### Dashboard
+- Dark Mode ✅ <br/>
+- Switch between Card & List-View ✅ <br/>
+
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Light.png"/> 
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Dark.png" width="425"/>-->
 
@@ -49,18 +52,26 @@
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Dark-List.png" width="425"/>-->
 
 ### App Management
+- View Name, Id, Status and Description for deployed App ✅ <br/>
+- Integrated Link to offical Microsoft Luis Dashboard ✅ <br/>
+- Publish deployed App ✅ <br/>
+- Train & Test deployed App ✅ <br/>
+- Edit deployed App e.g. add Intents, Utterances and Entities ✅ <br/>
+- Update deployed App to new version ✅ <br/>
+- View & Download LuisJSON from deployed LuisApp ✅ <br/>
+- Delete deyploved App ✅ <br/>
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light.png"/>
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark.png" width="425"/>-->
 
-#### Edit App
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Edit.png"/>
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Edit.png" width="425"/>-->
 
-#### View & Download JSON
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Json.png"/>
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Json.png" width="425"/>-->
 
 ### App Statistics
+- View History & Charts for teste LuisApp ✅ <br/>
+
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics.png"/>
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics.png" width="425"/>-->
 
@@ -68,17 +79,19 @@
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics-Table.png" width="425"/>-->
 
 ### GroundTruth Editor
+- View and Edit GroundTruth ✅ <br/>
+- Extend GroundTruth by uploading CSV-File ✅ <br/>
+- Download GroundTruth as CSV-File ✅ <br/>
+- Deploy new LuisApp by selecting custom entries from GroundTruth ✅ <br/>
+
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light.png"/> 
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark.png" width="425"/>-->
 
-#### Merge
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light-Merge.png"/> 
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark-Merge.png" width="425"/>-->
 
-#### Add Entries
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light-NewLine.png"/> 
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark-NewLine.png" width="425"/>-->
-
 
 ## Development Setup
 
