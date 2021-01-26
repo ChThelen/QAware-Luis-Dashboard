@@ -25,7 +25,7 @@
   * [Dashboard](#dashboard)
   * [App Management](#app-management)
   * [App Statistics](#app-statistics)
-  * [GroundTruth Editor](#groundtrurh-editor)
+  * [GroundTruth Editor](#groundtruth-editor)
 * [Development Setup](#development-setup)
   * [Prerequisites](#prerequisites)
   * [Getting Started](#getting-started)
