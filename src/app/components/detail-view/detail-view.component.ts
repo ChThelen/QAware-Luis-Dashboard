@@ -50,9 +50,9 @@ export class DetailViewComponent implements OnInit {
     scales: {
       yAxes: [{
           ticks: {
-              max: 5,
+              max: 1,
               min: 0,
-              stepSize: 0.5
+              stepSize: 0.01
           }
       }]
   }
@@ -119,7 +119,8 @@ export class DetailViewComponent implements OnInit {
         if(!datasets.has(intentStat.intent)){
           datasets.set(intentStat.intent, {
             label: intentStat.intent,
-            data: []
+            data: [],
+            fill: false
           })
         }
 
