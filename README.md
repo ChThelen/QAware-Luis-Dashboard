@@ -85,7 +85,6 @@
 ### Prerequisites
 * [QAware-Luis-Backend](https://github.com/latzinger/QAware-Luis)
 * Install [Node.js] which includes [Node Package Manager][npm]
-* Install [Apache Maven][mvn]
 
 Install the Angular CLI globally:
 
@@ -95,7 +94,18 @@ npm install -g @angular/cli
 
 ### Getting Started
 
+Serve Angular App:
+
+```
+ng serve --open
+```
+
 ### Build
+* Install [Apache Maven][mvn]
+
+```
+mvn clean install
+```
 
 ## Contributing
 
@@ -118,7 +128,7 @@ Distributed under the Apache License. See `LICENSE` for more information.
 [issues-shield]: https://img.shields.io/github/issues/latzinger/QAware-Luis-Dashboard?style=flat-square
 [issues-url]: https://github.com/latzinger/QAware-Luis-Dashboard/issues
 [license-shield]: https://img.shields.io/github/license/latzinger/QAware-Luis-Dashboard?style=flat-square
-[license-url]: https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/LICENSE.txt
+[license-url]: https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/LICENSE
 [node.js]: https://nodejs.org/
 [npm]: https://www.npmjs.com/get-npm
 [mvn]: https://maven.apache.org/index.html
