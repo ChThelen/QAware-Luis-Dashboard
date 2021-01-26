@@ -21,7 +21,11 @@
 
 * [About the Project](#about-the-project)
   * [Built With](#built-with)
-  * [Functionality](#functionality)
+* [Preview](#preview)
+  * [Dashboard](#dashboard)
+  * [App Management](#app-management)
+  * [App Statistics](#app-statistics)
+  * [GroundTruth Editor](#groundtrurh-editor)
 * [Development Setup](#development-setup)
   * [Prerequisites](#prerequisites)
   * [Getting Started](#getting-started)
@@ -35,20 +39,34 @@
 * [Angular](https://angular.io)
 * [Clarity](https://clarity.design/)
 
-### Functionality
+## Preview
+
+### Dashboard
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Light.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Dark.png" width="425"/> 
 
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Light-List.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Dark-List.png" width="425"/> 
 
+### App Management
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark.png" width="425"/> 
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Edit.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark.png" width="425"/> 
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Json.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Json.png" width="425"/> 
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics.png" width="425"/> 
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics-Table.png" width="425"/> 
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark.png" width="425"/> 
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Light.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark-Merge.png" width="425"/> 
 
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Light.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark-Merge.png" width="425"/> 
+#### Edit App
+<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Edit.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Edit.png" width="425"/> 
+
+#### View & Download JSON
+<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Json.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Json.png" width="425"/> 
+
+### App Statistics
+<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics.png" width="425"/> 
+
+<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics-Table.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics-Table.png" width="425"/> 
+
+### GroundTruth Editor
+<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark.png" width="425"/> 
+
+#### Merge
+<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light-Merge.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark-Merge.png" width="425"/> 
+
+#### Add Entries
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light-NewLine.png" width="425"/> <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark-NewLine.png" width="425"/> 
 
 
