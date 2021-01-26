@@ -15,10 +15,6 @@
                             </div>
                             <div class="card-block">
                                 <div class="card-title">
-                                    <span style="float: right; margin-top: 1.2em;" class="p1 label label-blue">
-                                        Hits
-                                        <span class="badge">{{luisAppHits}}</span>
-                                    </span>
                                     <span class="p1 label label-info"
                                         style="float: right; margin-top: 1.2em;">v{{luisApp.version}}</span>
                                     <span class="p1 label label-success" style="float: right; margin-top: 1.2em;"
@@ -37,16 +33,27 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <!--
-                                <button class="btn btn-sm btn-link" (click)="openEditWizard()" disabled>Edit</button>
-                                -->
                                 <button class="btn btn-sm btn-link" (click)="publishApp()"
                                     [disabled]="luisApp.status === 'published'"
                                     [class.btn-publish]="luisApp.status !== 'published'">Publish</button>
-                                <button class="btn btn-sm btn-link" (click)="trainApp()">Update</button>
                                 <button class="btn btn-sm btn-link" (click)="trainApp()">Train</button>
                                 <button class="btn btn-sm btn-link" (click)="trainApp()">Test</button>
-                                <button class="btn btn-sm btn-link" (click)="deleteModal=true">Delete</button>
+                                <div class="dropdown top-left" [class.open]="appDropDown">
+                                    <button class="dropdown-toggle btn btn-sm btn-link"
+                                        (click)="appDropDown = !appDropDown">
+                                        Other
+                                        <cds-icon shape="angle"></cds-icon>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <button class="btn btn-sm btn-link"
+                                            (click)="openEditWizard(); appDropDown=false;" disabled>Edit</button>
+                                        <button class="btn btn-sm btn-link"
+                                            (click)="trainApp(); appDropDown=false;">Update</button>
+                                        <button class="btn btn-sm btn-link"
+                                            (click)="deleteModal=true; appDropDown=false;">Delete</button>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                         <div class="card">
@@ -72,61 +79,76 @@
         <clr-tab>
             <button clrTabLink id="linkResults">Statistics</button>
             <clr-tab-content id="history">
+                <span>
+                    <p class="p6" style="color: hsl(198, 0%, 70%); margin: 2em 0 0 0.2em;">
+                        {{luisAppHits}} hits since last call
+                    </p>
+                </span>
                 <div class="clr-row clr-align-items-start clr-justify-content-start">
-                    <div class="clr-col">
-                        <div class="card" style="max-width: 708px;">
+                    <div class="clr-col-6">
+                        <div class="card">
                             <div class="card-block">
                                 <div class="chart-wrapper">
-                                    <canvas baseChart [datasets]="dummyChartData.datasets"
-                                        [labels]="dummyChartData.labels" [chartType]="'line'"
-                                        [options]="dummyChartOptions">
+                                    <canvas baseChart [datasets]="chartDataSets" [labels]="chartLabels"
+                                        [chartType]="'line'" [options]="chartOptions">
                                     </canvas>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="clr-col">
-                        <div class="card" style="max-width: 708px;">
+                    <div class="clr-col-6">
+                        <div class="card">
                             <div class="card-block">
                                 <div class="chart-wrapper">
-                                    <canvas baseChart [datasets]="dummyChartData.datasets"
-                                        [labels]="dummyChartData.labels" [chartType]="'bar'"
-                                        [options]="dummyChartOptions">
+                                    <canvas baseChart [datasets]="chartDataSets" [labels]="chartLabels"
+                                        [chartType]="'bar'" [options]="chartOptions">
                                     </canvas>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="clr-col-12">
+                        <clr-datagrid>
+                            <clr-dg-column [clrDgField]="'version'">Version</clr-dg-column>
+                            <clr-dg-column [clrDgField]="'date'">Date</clr-dg-column>
+
+                            <clr-dg-row *clrDgItems="let appStat of luisAppStats" [clrDgItem]="appStat">
+                                <clr-dg-cell>{{appStat.version}}</clr-dg-cell>
+                                <clr-dg-cell>{{appStat.date | date:"short"}}</clr-dg-cell>
+                            </clr-dg-row>
+
+                            <clr-dg-placeholder>Sorry. No test results was found.</clr-dg-placeholder>
+
+                            <clr-dg-footer>
+                                <clr-dg-pagination #pagination [clrDgPageSize]="20">
+                                    <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Entries per page
+                                    </clr-dg-page-size>
+                                    {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of
+                                    {{pagination.totalItems}}
+                                    entries
+                                </clr-dg-pagination>
+                            </clr-dg-footer>
+
+                            <clr-dg-detail *clrIfDetail="let appStat">
+                                <clr-dg-detail-header>Intents</clr-dg-detail-header>
+                                <clr-dg-detail-body>
+                                    <clr-datagrid style="margin-bottom: 12px;">
+                                        <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
+                                        <clr-dg-column [clrDgField]="'average'">Average</clr-dg-column>
+
+                                        <clr-dg-row *clrDgItems="let intentStat of appStat.intents"
+                                            [clrDgItem]="intentStat">
+                                            <clr-dg-cell>{{intentStat.intent}}</clr-dg-cell>
+                                            <clr-dg-cell>{{intentStat.average | number:'1.2-3'}}</clr-dg-cell>
+                                        </clr-dg-row>
+
+                                        <clr-dg-placeholder>Sorry. No intents was found.</clr-dg-placeholder>
+                                    </clr-datagrid>
+                                </clr-dg-detail-body>
+                            </clr-dg-detail>
+                        </clr-datagrid>
                     </div>
                 </div>
-                <clr-datagrid>
-                    <clr-dg-column [clrDgField]="'version'">Version</clr-dg-column>
-                    <clr-dg-column [clrDgField]="'date'">Date</clr-dg-column>
-
-                    <clr-dg-row *clrDgItems="let appStat of luisAppStats" [clrDgItem]="appStat">
-                        <clr-dg-cell>{{appStat.version}}</clr-dg-cell>
-                        <clr-dg-cell>{{appStat.date | date:"short"}}</clr-dg-cell>
-                    </clr-dg-row>
-
-                    <clr-dg-placeholder>Sorry. No test results was found.</clr-dg-placeholder>
-
-                    <clr-dg-footer>
-                        <clr-dg-pagination #pagination [clrDgPageSize]="20">
-                            <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Entries per page
-                            </clr-dg-page-size>
-                            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of
-                            {{pagination.totalItems}}
-                            entries
-                        </clr-dg-pagination>
-                    </clr-dg-footer>
-
-                    <clr-dg-detail *clrIfDetail="let detail">
-                        <clr-dg-detail-header>Intents</clr-dg-detail-header>
-                        <clr-dg-detail-body>
-                            <clr-dg-cell>{{detail.version}}</clr-dg-cell>
-                            <clr-dg-cell>{{detail.version | number:'1.2-3'}}</clr-dg-cell>
-                        </clr-dg-detail-body>
-                    </clr-dg-detail>
-                </clr-datagrid>
             </clr-tab-content>
         </clr-tab>
     </clr-tabs>

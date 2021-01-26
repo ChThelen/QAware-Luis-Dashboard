@@ -62,19 +62,19 @@ export const DUMMY_STATS: LuisAppStats[] = [
         intents: [
             {
                 intent: "TAXI_BOOK",
-                average: 0.8665849
+                average: 0.8592530456666667
             },
             {
                 intent: "TAXI_PRICE",
-                average: 0.8665849
+                average: 0.8592530456666667
             },
             {
                 intent: "TAXI_TIME",
-                average: 0.8665849
+                average: 0.8592530456666667
             },
             {
                 intent: "TAXI_CANCEL",
-                average: 0.8665849
+                average: 0.8592530456666667
             }
         ]
 
@@ -85,19 +85,19 @@ export const DUMMY_STATS: LuisAppStats[] = [
         intents: [
             {
                 intent: "TAXI_BOOK",
-                average: 0.8665849
+                average: 0.8592530456666667
             },
             {
                 intent: "TAXI_PRICE",
-                average: 0.8665849
+                average: 0.8592530456666667
             },
             {
                 intent: "TAXI_TIME",
-                average: 0.8665849
+                average: 0.8592530456666667
             },
             {
                 intent: "TAXI_CANCEL",
-                average: 0.8665849
+                average: 0.8592530456666667
             }
         ]
 

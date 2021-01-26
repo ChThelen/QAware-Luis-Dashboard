@@ -34,8 +34,13 @@ export class PersistentService {
     return this.httpClient.get<Array<LuisApp>>(this.buildUrl("/getApps"));
   }
 
-  public getAppJSON(appName: string): Observable<string> {
-    return this.httpClient.get<string>(this.buildUrl("/getJSON"), { params: { "name": appName } });
+  public getAppJSON(appName: string): Observable<any> {
+    
+    if(!environment.production){
+      return of(EXAMPLE_JSON);
+    }
+
+    return this.httpClient.get<any>(this.buildUrl("/getJSON"), { params: { "name": appName } });
   }
 
   public getAppStats(appName: string): Observable<Array<LuisAppStats>> {

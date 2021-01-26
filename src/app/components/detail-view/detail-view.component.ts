@@ -5,13 +5,12 @@ import { LuisAppService } from '../../services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 import { Location } from '@angular/common';
 import { LuisAppStats } from 'src/app/models/LuisAppStats';
-import { ChartDataSets } from 'chart.js';
 import { ClrWizard } from '@clr/angular';
 import { Intent } from 'src/app/models/Intent';
 import { Entity } from 'src/app/models/Entity';
 import { Utterance } from 'src/app/models/Utterance';
-import { Color } from 'ng2-charts';
 import { PersistentService } from '../../services/persistent.service';
+import { ChartDataSets } from 'chart.js';
 
 @Component({
   selector: 'app-detail-view',
@@ -25,6 +24,9 @@ export class DetailViewComponent implements OnInit {
   luisApp: LuisApp = null;
   luisAppStats: LuisAppStats[] = null;
   luisAppHits: number = 0;
+
+  //Dropdown
+  appDropDown = false;
 
   //App Delete Modal
   deleteModal: boolean = false;
@@ -42,30 +44,22 @@ export class DetailViewComponent implements OnInit {
   editWizard_entity: Entity;
 
   //Chart Data
-  dummyChartType = 'line';
-  dummyChartData = {
-    labels: ['v0.1', 'v0.1', 'v0.2', 'v0.2', 'v0.3', 'v0.3', 'v0.4'],
-    datasets: [{
-      label: 'TAXI_BOOK',
-      data: [0, 4, 5, 21, 3, 30, 15]
-    },
-    {
-      label: 'TAXI_CANCEL',
-      data: [2, 6, 6, 12, 6, 20, 35]
-    },
-    {
-      label: 'TAXI_PRICE',
-      data: [4, 8, 7, 21, 9, 30, 22]
-    },
-    {
-      label: 'TAXI_TIME',
-      data: [6, 10, 8, 12, 12, 20, 45]
-    }],
-  }
-  dummyChartOptions = {
+  chartOptions = {
     scaleShowVerticalLines: false,
     responsive: true,
+    scales: {
+      yAxes: [{
+          ticks: {
+              max: 5,
+              min: 0,
+              stepSize: 0.5
+          }
+      }]
   }
+  }
+
+  chartLabels: string[];
+  chartDataSets: ChartDataSets[];
 
   constructor(
     private location: Location,
@@ -75,16 +69,20 @@ export class DetailViewComponent implements OnInit {
     private notificationService: NotificationService) { }
 
   ngOnInit(): void {
-    this.getApp();
+    this.getApp().then(luisApp => {
+      this.luisApp = luisApp;
+      this.getAppJSON();
+    });
     this.getAppStats();
     this.getAppHits();
   }
 
-  getApp(): void {
+  getApp(): Promise<LuisApp> {
     const name = this.route.snapshot.paramMap.get('name');
-    this.persistentService.getApp(name).then(luisApp => {
-      this.luisApp = luisApp;
-      this.getAppJSON();
+    return new Promise(resolve => {
+      this.persistentService.getApp(name).then(luisApp => {
+        resolve(luisApp);
+      })
     })
   }
 
@@ -106,7 +104,36 @@ export class DetailViewComponent implements OnInit {
     const name = this.route.snapshot.paramMap.get('name');
     this.persistentService.getAppStats(name).subscribe(k => {
       this.luisAppStats = k;
+      this.generateChartData(k);
     });
+  }
+
+  generateChartData(luisAppStats: LuisAppStats[]){
+    let labels: string[] = [];
+    let datasets: Map<string, ChartDataSets> = new Map<string, ChartDataSets>();
+    luisAppStats.forEach(appStat => {
+      labels.push(appStat.version);
+
+      appStat.intents.forEach(intentStat =>{
+
+        if(!datasets.has(intentStat.intent)){
+          datasets.set(intentStat.intent, {
+            label: intentStat.intent,
+            data: []
+          })
+        }
+
+        let dataset: ChartDataSets = datasets.get(intentStat.intent);
+        dataset.data.push(intentStat.average);
+        datasets.set(intentStat.intent, dataset);
+
+      });
+
+    });
+
+    this.chartLabels = labels;
+    this.chartDataSets = new Array<ChartDataSets>();
+    datasets.forEach(k => this.chartDataSets.push(k));
   }
 
   deleteApp(): void {
