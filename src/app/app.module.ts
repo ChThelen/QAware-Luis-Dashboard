@@ -16,6 +16,7 @@ import { NotificationComponent } from './components/notification/notification.co
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChartsModule } from 'ng2-charts';
+import { CdsModule } from '@cds/angular';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { ChartsModule } from 'ng2-charts';
     FormsModule,
     HttpClientModule,
     HighlightModule,
-    ChartsModule
+    ChartsModule,
+    CdsModule
   ],
   providers: [
     {

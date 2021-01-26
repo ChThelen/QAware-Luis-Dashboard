@@ -1,19 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LuisApp } from '../../models/LuisApp';
-import { DUMMY_APPS } from '../../models/LuisApp';
 import { LuisAppService } from '../../services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
-import { environment } from 'src/environments/runtime-environment';
 import { Location } from '@angular/common';
 import { LuisAppStats } from 'src/app/models/LuisAppStats';
-import { ChartDataSets } from 'chart.js';
 import { ClrWizard } from '@clr/angular';
 import { Intent } from 'src/app/models/Intent';
 import { Entity } from 'src/app/models/Entity';
 import { Utterance } from 'src/app/models/Utterance';
-import { Color } from 'ng2-charts';
 import { PersistentService } from '../../services/persistent.service';
+import { ChartDataSets } from 'chart.js';
 
 @Component({
   selector: 'app-detail-view',
@@ -27,6 +24,9 @@ export class DetailViewComponent implements OnInit {
   luisApp: LuisApp = null;
   luisAppStats: LuisAppStats[] = null;
   luisAppHits: number = 0;
+
+  //Dropdown
+  appDropDown = false;
 
   //App Delete Modal
   deleteModal: boolean = false;
@@ -44,21 +44,23 @@ export class DetailViewComponent implements OnInit {
   editWizard_entity: Entity;
 
   //Chart Data
-  chartLabels: string[];
-  chartData: ChartDataSets[];
-  chartLegend = true;
-  
   chartOptions = {
     scaleShowVerticalLines: false,
     responsive: true,
-  };
-  
-  chartColors: Color[] = [
-    {
-      backgroundColor: 'rgba(0,54,77,0.28)',
-    },
-  ];
-  
+    scales: {
+      yAxes: [{
+          ticks: {
+              max: 1,
+              min: 0,
+              stepSize: 0.01
+          }
+      }]
+  }
+  }
+
+  chartLabels: string[];
+  chartDataSets: ChartDataSets[];
+
   constructor(
     private location: Location,
     private route: ActivatedRoute,
@@ -67,13 +69,143 @@ export class DetailViewComponent implements OnInit {
     private notificationService: NotificationService) { }
 
   ngOnInit(): void {
-    if (environment.production) {
-      this.getApp();
-      this.getAppStats();
-      this.getAppHits();
-    } else {
-      this.luisApp = DUMMY_APPS[0];
+    this.getApp().then(luisApp => {
+      this.luisApp = luisApp;
+      this.getAppJSON();
+    });
+    this.getAppStats();
+    this.getAppHits();
+  }
+
+  getApp(): Promise<LuisApp> {
+    const name = this.route.snapshot.paramMap.get('name');
+    return new Promise(resolve => {
+      this.persistentService.getApp(name).then(luisApp => {
+        resolve(luisApp);
+      })
+    })
+  }
+
+  getAppJSON(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.persistentService.getAppJSON(name).subscribe(k => {
+      this.luisApp.appJson = k;
+    });
+  }
+
+  getAppHits(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.getHitCount(name).subscribe(k => {
+      this.luisAppHits = k;
+    })
+  }
+
+  getAppStats(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.persistentService.getAppStats(name).subscribe(k => {
+      this.luisAppStats = k;
+      this.generateChartData(k);
+    });
+  }
+
+  generateChartData(luisAppStats: LuisAppStats[]){
+    let labels: string[] = [];
+    let datasets: Map<string, ChartDataSets> = new Map<string, ChartDataSets>();
+    luisAppStats.forEach(appStat => {
+      labels.push(appStat.version);
+
+      appStat.intents.forEach(intentStat =>{
+
+        if(!datasets.has(intentStat.intent)){
+          datasets.set(intentStat.intent, {
+            label: intentStat.intent,
+            data: [],
+            fill: false
+          })
+        }
+
+        let dataset: ChartDataSets = datasets.get(intentStat.intent);
+        dataset.data.push(intentStat.average);
+        datasets.set(intentStat.intent, dataset);
+
+      });
+
+    });
+
+    this.chartLabels = labels;
+    this.chartDataSets = new Array<ChartDataSets>();
+    datasets.forEach(k => this.chartDataSets.push(k));
+  }
+
+  deleteApp(): void {
+    this.luisAppService.deleteApp(this.luisApp.name).subscribe(response => {
+      this.luisApp = null;
+      this.deleteModal = false;
+      this.location.back();
+    },
+      err => {
+        this.showNotification("Failed while deleting App!", err, NotificationType.Danger);
+      }
+    );
+  }
+
+  publishApp(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+
+    this.luisAppService.publish(name, false).subscribe(response => {
+      window.location.reload();
+    },
+      err => {
+        this.showNotification("Failed while publishing App!", err, NotificationType.Danger);
+      }
+    );
+  }
+
+  addUterance(): void {
+    if (this.editWizard_utterance.text && this.editWizard_utterance.intentName) {
+      this.editWizard_utterances.push(this.editWizard_utterance);
+      this.editWizard_utterance = new Utterance();
     }
+  }
+
+  removeUtterance(): void {
+    this.editWizard_selectedUtterances.forEach(selectedUtterance => {
+      this.editWizard_utterances = this.editWizard_utterances.filter(utterance => utterance !== selectedUtterance);
+    })
+  }
+
+  trainApp(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.trainApp(name).subscribe(result => {
+      if ((<number>result.body) === 0) {
+        this.showNotification("Training was successfully. Please reload page!", null, NotificationType.Info);
+        window.location.reload();
+      }
+    },
+      err => {
+        this.showNotification("Failed while testing App!", null, NotificationType.Danger);
+      }
+    );
+  }
+
+  donwloadJsonFile(): void {
+    var hiddenElement = document.createElement('a');
+    hiddenElement.setAttribute('type', 'hidden');
+    hiddenElement.href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(JSON.stringify(this.luisApp.appJson, null, "\t"));
+    hiddenElement.target = '_blank';
+    hiddenElement.download = `${this.luisApp.name}.json`;
+    hiddenElement.click();
+    hiddenElement.remove();
+  }
+
+  showNotification(message: string, messageDetails: string, type: NotificationType) {
+    this.notificationService.add(
+      new Notification(
+        type,
+        message,
+        messageDetails
+      )
+    )
   }
 
   openEditWizard(): void {
@@ -122,109 +254,6 @@ export class DetailViewComponent implements OnInit {
     }
 
     this.closeEditWizard();
-  }
-
-  addUterance(): void {
-    if (this.editWizard_utterance.text && this.editWizard_utterance.intentName) {
-      this.editWizard_utterances.push(this.editWizard_utterance);
-      this.editWizard_utterance = new Utterance();
-    }
-  }
-
-  removeUtterance(): void {
-    this.editWizard_selectedUtterances.forEach(selectedUtterance => {
-      this.editWizard_utterances = this.editWizard_utterances.filter(utterance => utterance !== selectedUtterance);
-    })
-  }
-
-  trainApp(): void{
-    const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.trainApp(name).subscribe(result => {
-      if((<number> result.body) === 0){
-        this.showNotification("Training was successfully. Please reload page!", null, NotificationType.Info);
-        window.location.reload();
-      }
-    },
-      err => {
-        this.showNotification("Failed while testing App!", null, NotificationType.Danger);
-      }
-    );
-  }
-
-  getApp(): void {
-    const name = this.route.snapshot.paramMap.get('name');
-    this.persistentService.getApps().subscribe(k => {
-      this.luisApp = k.filter((app: LuisApp) => app.name === name)[0];
-      this.getAppJSON();
-    });
-  }
-
-  getAppJSON(): void {
-    const name = this.route.snapshot.paramMap.get('name');
-    this.persistentService.getAppJSON(name).subscribe(k => {
-      this.luisApp.appJson = k;
-    });
-  }
-
-  getAppHits(): void {
-    const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getHitCount(name).subscribe(k => {
-      this.luisAppHits = k;
-    })
-  }
-
-  getAppStats(): void {
-    const name = this.route.snapshot.paramMap.get('name');
-    this.persistentService.getAppStats(name).subscribe(k => {
-      this.luisAppStats = k;
-      this.chartData = new Array();
-      this.chartData.push({ data: k.map((appStat: LuisAppStats) => appStat.average), label: name });
-      this.chartLabels = k.map((appStat: LuisAppStats) => appStat.version);
-    });
-  }
-
-  deleteApp(): void {
-    this.luisAppService.deleteApp(this.luisApp.name).subscribe(response => {
-      this.luisApp = null;
-      this.deleteModal = false;
-      this.location.back();
-    },
-      err => {
-        this.showNotification("Failed while deleting App!", err, NotificationType.Danger);
-      }
-    );
-  }
-
-  publishApp(): void{
-    const name = this.route.snapshot.paramMap.get('name');
-
-    this.luisAppService.publish(name, false).subscribe(response => {
-      window.location.reload();
-    },
-    err => {
-      this.showNotification("Failed while publishing App!",err , NotificationType.Danger);
-    }
-  );
-  }
-
-  donwloadJsonFile(): void {
-    var hiddenElement = document.createElement('a');
-    hiddenElement.setAttribute('type', 'hidden');
-    hiddenElement.href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(JSON.stringify(this.luisApp.appJson, null, "\t"));
-    hiddenElement.target = '_blank';
-    hiddenElement.download = `${this.luisApp.name}.json`;
-    hiddenElement.click();
-    hiddenElement.remove();
-  }
-
-  showNotification(message: string, messageDetails: string, type: NotificationType) {
-    this.notificationService.add(
-      new Notification(
-        type,
-        message,
-        messageDetails
-      )
-    )
   }
 
 }
