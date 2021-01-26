@@ -37,7 +37,7 @@
                                     [disabled]="luisApp.status === 'published'"
                                     [class.btn-publish]="luisApp.status !== 'published'">Publish</button>
                                 <button class="btn btn-sm btn-link" (click)="trainApp()">Train</button>
-                                <button class="btn btn-sm btn-link" (click)="trainApp()">Test</button>
+                                <button class="btn btn-sm btn-link" (click)="openTesWizard()">Test</button>
                                 <div class="dropdown top-left" [class.open]="appDropDown">
                                     <button class="dropdown-toggle btn btn-sm btn-link"
                                         (click)="appDropDown = !appDropDown">
@@ -260,8 +260,57 @@
 
                     <clr-dg-placeholder>No Utterances found!</clr-dg-placeholder>
 
+
                 </clr-datagrid>
             </div>
+        </clr-wizard-page>
+    </clr-wizard>
+
+    <clr-wizard #testWizard [(clrWizardOpen)]="testWizard_opened" clrWizardSize="xl"
+        (clrWizardOnCancel)="closeTestWizard()" (clrWizardOnFinish)="finishTestWizard()">
+
+        <clr-wizard-title>{{luisApp.name}}</clr-wizard-title>
+
+        <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+        <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+        <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+        <clr-wizard-button [type]="'finish'">Test</clr-wizard-button>
+
+        <clr-wizard-page>
+            <ng-template clrPageTitle>Test Data</ng-template>
+
+            <clr-datagrid>
+
+                <clr-dg-column>Text</clr-dg-column>
+                <clr-dg-column>Intent</clr-dg-column>
+
+                <clr-dg-row *ngFor="let utterance of luisAppTestData" [clrDgItem]="utterance">
+                    <clr-dg-cell>{{utterance.text}}</clr-dg-cell>
+                    <clr-dg-cell>{{utterance.intent}}</clr-dg-cell>
+                </clr-dg-row>
+
+                <clr-dg-placeholder>No Test Data found!</clr-dg-placeholder>
+
+                <clr-dg-detail *clrIfDetail="let utterance">
+                    <clr-dg-detail-header>Entities</clr-dg-detail-header>
+                    <clr-dg-detail-body>
+                        <clr-datagrid>
+                            <clr-dg-column>Entity</clr-dg-column>
+                            <clr-dg-column>StartPos</clr-dg-column>
+                            <clr-dg-column>EndPos</clr-dg-column>
+
+                            <clr-dg-row *clrDgItems="let entity of utterance.entities"
+                                [clrDgItem]="entity">
+                                <clr-dg-cell>{{entity.entity}}</clr-dg-cell>
+                                <clr-dg-cell>{{entity.startPos }}</clr-dg-cell>
+                                <clr-dg-cell>{{entity.endPos }}</clr-dg-cell>
+                            </clr-dg-row>
+
+                            <clr-dg-placeholder>No Entities found.</clr-dg-placeholder>
+                        </clr-datagrid>
+                    </clr-dg-detail-body>
+                </clr-dg-detail>
+            </clr-datagrid>
         </clr-wizard-page>
     </clr-wizard>
 

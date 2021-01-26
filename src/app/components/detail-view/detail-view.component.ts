@@ -19,11 +19,13 @@ import { ChartDataSets } from 'chart.js';
 })
 export class DetailViewComponent implements OnInit {
   @ViewChild("editWizard") editWizard: ClrWizard;
+  @ViewChild("testWizard") testWizard: ClrWizard;
 
   //App Data
   luisApp: LuisApp = null;
   luisAppStats: LuisAppStats[] = null;
   luisAppHits: number = 0;
+  luisAppTestData: any;
 
   //Dropdown
   appDropDown = false;
@@ -43,19 +45,22 @@ export class DetailViewComponent implements OnInit {
   editWizard_intent: Intent;
   editWizard_entity: Entity;
 
+  //Test Wizard
+  testWizard_opened: boolean = false;
+
   //Chart Data
   chartOptions = {
     scaleShowVerticalLines: false,
     responsive: true,
     scales: {
       yAxes: [{
-          ticks: {
-              max: 1,
-              min: 0,
-              stepSize: 0.01
-          }
+        ticks: {
+          max: 1,
+          min: 0,
+          stepSize: 0.01
+        }
       }]
-  }
+    }
   }
 
   chartLabels: string[];
@@ -108,15 +113,15 @@ export class DetailViewComponent implements OnInit {
     });
   }
 
-  generateChartData(luisAppStats: LuisAppStats[]){
+  generateChartData(luisAppStats: LuisAppStats[]) {
     let labels: string[] = [];
     let datasets: Map<string, ChartDataSets> = new Map<string, ChartDataSets>();
     luisAppStats.forEach(appStat => {
       labels.push(appStat.version);
 
-      appStat.intents.forEach(intentStat =>{
+      appStat.intents.forEach(intentStat => {
 
-        if(!datasets.has(intentStat.intent)){
+        if (!datasets.has(intentStat.intent)) {
           datasets.set(intentStat.intent, {
             label: intentStat.intent,
             data: [],
@@ -178,8 +183,8 @@ export class DetailViewComponent implements OnInit {
     const name = this.route.snapshot.paramMap.get('name');
     this.luisAppService.trainApp(name).subscribe(result => {
       if ((<number>result.body) === 0) {
-        this.showNotification("Training was successfully. Please reload page!", null, NotificationType.Info);
         window.location.reload();
+        this.showNotification("Training was successfully.", null, NotificationType.Info);
       }
     },
       err => {
@@ -220,6 +225,28 @@ export class DetailViewComponent implements OnInit {
     this.editWizard.reset();
     this.editWizard_option = null;
     this.editWizard_opened = false;
+  }
+
+  openTesWizard(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.getTestData(name).subscribe(k => {
+      this.luisAppTestData = k;
+    });
+    this.testWizard_opened = true;
+  }
+
+  closeTestWizard(): void {
+    this.testWizard.reset();
+    this.testWizard_opened = false;
+  }
+
+  finishTestWizard(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+
+    this.luisAppService.batchTestApp(name, "all").subscribe(k => {
+      this.closeTestWizard();
+    });
+
   }
 
   finishEditWizard(): void {
