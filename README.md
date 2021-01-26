@@ -21,8 +21,10 @@
 
 * [About the Project](#about-the-project)
   * [Built With](#built-with)
-* [Functionality](#functionality)
+* [Services](#services)
+* [Components](#components)
   * [Dashboard](#dashboard)
+  * [App Deployment](#app-deployment)
   * [App Management](#app-management)
   * [App Statistics](#app-statistics)
   * [GroundTruth Editor](#groundtruth-editor)
@@ -39,7 +41,13 @@
 * [Angular](https://angular.io)
 * [Clarity](https://clarity.design/)
 
-## Functionality
+## Services
+- **LuisAppService:** Responsible for handling operations related to the luis-api by requesting the backend.
+- **PersistentService:** Responsible for retrieving presistent app information like AppData, AppStats and the GroundTruth from the backend.
+- **ConvertService:** Responsible for converting CSV-Files to LuisJson-Files and vica versa, by requesting the backend.
+- **NotificationService:** Responsible for handling standard and app-level alerts.
+
+## Components
 
 ### Dashboard
 - Dark Mode ✅ <br/>
@@ -50,6 +58,8 @@
 
 <img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Light-List.png"/> 
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Dark-List.png" width="425"/>-->
+
+### App Deployment
 
 ### App Management
 - View Name, Id, Status and Description for deployed App ✅ <br/>
