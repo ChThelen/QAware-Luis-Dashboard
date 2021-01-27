@@ -96,7 +96,7 @@
               
                   <clr-dg-action-bar>
                     
-                    <div *ngFor="let intent of intents; let i = index" class="btn-group">
+                    <div *ngFor="let intent of intents; let i = index" class="btn-group" >
                       <div>
                           <button *ngIf="!intentsSelectionTestdata[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i];selectIntents(intent,1)">{{intent}}</button>
                           <button *ngIf="intentsSelectionTestdata[i]" class="btn btn-sm btn-primary" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i]; deselectIntents(intent,1)">{{intent}}</button>
@@ -144,7 +144,7 @@
               <clr-tab-content *clrIfActive>
                 <br>
                 <label class="btn">
-                  <input type="file"  accept=".csv,.json" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
+                  <input type="file"  accept=".csv,.json" placeholder="Upload File"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
                 </label>
               </clr-tab-content>
           </clr-tab>
@@ -216,7 +216,7 @@
             <clr-tab-content *clrIfActive>
               <br>
               <label class="btn">
-                <input type="file"  accept=".csv,.json" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
+                <input type="file"  accept=".csv,.json" placeholder="Upload File"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
               </label>
             </clr-tab-content>
         </clr-tab>

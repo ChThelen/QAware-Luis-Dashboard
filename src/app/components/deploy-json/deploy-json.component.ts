@@ -25,6 +25,15 @@ export class DeployJsonComponent implements OnInit {
 
   data =  {type:'train'};
 
+  uploadedFile = {
+    exist:false,
+    isJsonFile:false,
+    isCsvFile:false,
+    csv:"",
+    json:"",
+    name:""
+  }
+
   timelineStyle = {
     step0: { state: "current", open: true },
     step1: { state: "not-started", open: false },
@@ -234,21 +243,94 @@ export class DeployJsonComponent implements OnInit {
 
   convertSelectedUtterancesToJson(): void 
   {
-   
+    let code = 0 ; // successfull
+
     if(this.selectedTrainingsdata.length!= 0)
     {
       let selectedTrainingsdata = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
       this.luisService.convertCsvToJson(selectedTrainingsdata, "MyJsonFile_" + new Date().toDateString())
-      .toPromise().then(data => { this.selectedTrainingsdataJson = JSON.stringify(data, null, 5); });
+      .toPromise().then(data => { this.selectedTrainingsdataJson = JSON.stringify(data, null, 5); 
+                        err => { 
+                          // TODO : Notifications
+                        }});
 
     }
     if(this.selectedTestdata.length!= 0)
     {
       let selectedTestdata = this.refreshUtterances(this.selectedTestdata).join("\n");
-      this.luisService.convertCsvToJson(selectedTestdata, "MyJsonFile_" + new Date().toDateString())
-      .toPromise().then(data => { this.selectedTestdataJson = JSON.stringify(data, null, 5); });
+      this.luisService.testData(selectedTestdata, "MyJsonFile_" + new Date().toDateString())
+      .toPromise().then(data => { this.selectedTestdataJson = JSON.stringify(data, null, 5);
+                        err => { 
+                          // TODO : Notifications
+                        } });
     }
-   
+    if((this.selectedTestdata.length== 0))
+    {
+      let selectedTestdata = this.refreshUtterances(this.selectedTestdata).join("\n");
+      this.luisService.autoData(selectedTestdata, "MyJsonFile_", "1.0","","de-de" + new Date().toDateString())
+      .toPromise().then(data => { this.selectedTestdataJson = JSON.stringify(data, null, 5);
+                        err => { 
+                          // TODO : Notifications
+                        } });
+    }
   }
-  
+  uploadFileTrainData(event:any)
+  {
+    let file : File;
+    let fileList: FileList = event.target.files;
+    file = fileList.item(0);
+    
+
+    if (!((file.name.endsWith(".csv")) || (file.name.endsWith('.json')))) {
+      file = null;
+      console.log('Error occured while reading file. Please import valid .csv or .json file!');
+    }
+    else {
+      let fileReader = new FileReader();
+      this.uploadedFile.name = fileList.item(0).name;
+      this.uploadedFile.exist = true; 
+      fileReader.readAsText(file);
+      if ((file.name.endsWith(".csv"))) // Reading csv file
+      {
+        this.uploadedFile.isCsvFile = true;
+        this.uploadedFile.isJsonFile = false;
+        fileReader.onload = () => {
+          let data = fileReader.result;
+          this.uploadedFile.csv = (<string>data);
+          this.uploadedFile.json = "";
+        }
+        fileReader.onerror = () => {
+          this.uploadedFile = {
+            exist:false,
+            isJsonFile:false,
+            isCsvFile:false,
+            csv:"",
+            json:"",
+            name:""
+          }
+        };
+      }
+      else if(file.name.endsWith(".json"))
+      {
+        this.uploadedFile.isCsvFile = false;
+        this.uploadedFile.isJsonFile = true;
+        fileReader.onload = () => {
+          let data = fileReader.result;
+          this.uploadedFile.csv = "";
+          this.uploadedFile.json = (<string>data);
+        }
+        fileReader.onerror = () => {
+          this.uploadedFile = {
+            exist:false,
+            isJsonFile:false,
+            isCsvFile:false,
+            csv:"",
+            json:"",
+            name:""
+          }
+        };
+      }
+
+    }
+  }
 }
