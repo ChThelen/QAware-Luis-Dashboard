@@ -17,8 +17,14 @@ export class DeployJsonComponent implements OnInit {
 
   intents: string[] = [];
   intentsSelection: boolean[] = [];
-  selectedUtterances: CsvUtterance[] = []
+  selectedUtterances: CsvUtterance[] = [];
   result: CsvUtterance[] = [];
+  selectedTestdata: CsvUtterance[] = [];
+  selectedTrainingsdata: CsvUtterance[] = [];
+
+  addTrainData = true; 
+  addTestData = false;
+  skip = false;
 
   timelineStyle = {
     step0: { state: "current", open: true },
@@ -41,6 +47,23 @@ export class DeployJsonComponent implements OnInit {
       production: false
     }
   };
+  loadTrainingAndTestData()
+  {
+    if(this.addTrainData)
+    {
+      this.selectedTrainingsdata = this.selectedUtterances;
+      this.selectedUtterances = [];
+    }
+    else if(this.addTestData)
+    {
+      this.selectedTestdata = this.selectedUtterances;
+      this.selectedUtterances = [];
+    }
+    else if(this.skip)
+    {
+      this.selectedTestdata = this.selectedUtterances;
+    }
+  }
   closeStep() {
     this.timelineStyle = {
       step0: { state: "current", open: false },
