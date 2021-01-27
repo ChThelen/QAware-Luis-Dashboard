@@ -12,10 +12,12 @@ export class DeployJsonComponent implements OnInit {
   jsonString: string;
   intents: string[] = [];
   intentsSelectionTestdata: boolean[] = [];
-  
+  intentsSelectionTraindata: boolean[] = [];
   result: CsvUtterance[] = [];
   selectedTestdata: CsvUtterance[] = [];
   selectedTrainingsdata: CsvUtterance[] = [];
+  selectedTestdataJson : string = "";
+  selectedTrainingsdataJson :string = ""; 
   groundTruth: string = "";
   addTrainData = true; 
   addTestData = false;
@@ -44,7 +46,6 @@ export class DeployJsonComponent implements OnInit {
       production: false
     }
   };
-  intentsSelectionTraindata: boolean[] = [];
   
   closeStep() {
     this.timelineStyle = {
@@ -64,7 +65,6 @@ export class DeployJsonComponent implements OnInit {
 
   ngOnInit(): void {
     this.luisService.getGT().subscribe(data => { this.groundTruth = data;  this.createUtterances(this.groundTruth, this.result); this.intents = this.getIntents(0);this.intents = this.getIntents(1); });
-    
 
   }
   createUtterances(file: string, result: CsvUtterance[]): void {
@@ -93,7 +93,26 @@ export class DeployJsonComponent implements OnInit {
     }
 
   }
-  selectIntents(intent: string, trainOrTest) { // train = 0 , test = else
+  refreshUtterances(utterances: CsvUtterance[]) {
+    let entriesArray = [];
+    for (let i = 0; i < utterances.length; i++) {
+      let entries = [];
+      entries[0] = "" + (i + 1);
+
+      entries[1] = utterances[i].transcript;
+      entries[2] = utterances[i].category;
+      entries[3] = utterances[i].literal;
+      entries[4] = utterances[i].startIndex;
+      entries[5] = utterances[i].endIndex;
+      entries[6] = utterances[i].intent;
+      entries[7] = utterances[i].tag;
+      entriesArray.push(entries.join(";").replace(/-/gi, ""));
+    }
+    entriesArray.unshift(HEADERS.join(";"));
+
+    return entriesArray;
+  }
+  selectIntents(intent: string, trainOrTest:number) { // train = 0 , test = else
     if(trainOrTest == 0)
     {
       this.result.forEach(element => { if (element.intent == intent) { this.selectedTrainingsdata.push(element) } });
@@ -103,7 +122,7 @@ export class DeployJsonComponent implements OnInit {
       this.result.forEach(element => { if (element.intent == intent) { this.selectedTestdata.push(element) } });
     }
   }
-  deselectIntents(intent: string, trainOrTest) {
+  deselectIntents(intent: string, trainOrTest:number) {
     if(trainOrTest == 0)
     {
       this.selectedTrainingsdata = this.selectedTrainingsdata.filter(element => element.intent != intent);
@@ -135,10 +154,8 @@ export class DeployJsonComponent implements OnInit {
     }
     
   }
-  selectionChanged(event: any) {
-
-
-
+  selectionChanged(event: any) 
+  {
 
   }
   createApp() {
@@ -215,7 +232,23 @@ export class DeployJsonComponent implements OnInit {
     }
   }
 
+  convertSelectedUtterancesToJson(): void 
+  {
+   
+    if(this.selectedTrainingsdata.length!= 0)
+    {
+      let selectedTrainingsdata = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
+      this.luisService.convertCsvToJson(selectedTrainingsdata, "MyJsonFile_" + new Date().toDateString())
+      .toPromise().then(data => { this.selectedTrainingsdataJson = JSON.stringify(data, null, 5); });
 
-
-
+    }
+    if(this.selectedTestdata.length!= 0)
+    {
+      let selectedTestdata = this.refreshUtterances(this.selectedTestdata).join("\n");
+      this.luisService.convertCsvToJson(selectedTestdata, "MyJsonFile_" + new Date().toDateString())
+      .toPromise().then(data => { this.selectedTestdataJson = JSON.stringify(data, null, 5); });
+    }
+   
+  }
+  
 }

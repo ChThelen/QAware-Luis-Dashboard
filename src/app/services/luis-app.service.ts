@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Version } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from "@angular/common/http";
 import { environment } from '../../environments/runtime-environment';
 import { Observable } from 'rxjs';
@@ -96,4 +96,11 @@ export class LuisAppService {
     return this.baseUrl + this.endpoint + uri;
   }
   
+  public testData(csv: string, name: string): Observable<string> {
+    return this.httpClient.post<string>(this.buildUrl("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": name } });
+  }
+  public autoData(csv: string, name: string,version:string,desc:string, culture:string): Observable<string> {
+    return this.httpClient.post<string>(this.buildUrl("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }),
+     params: { "name": name , "version": version,"desc": desc, "culture":culture } });
+  }
 }
