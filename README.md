@@ -1,8 +1,12 @@
+<span align="center">
+  
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![Apache License][license-shield]][license-url]
+
+</span>
 
 <p align="center">
 
@@ -160,15 +164,15 @@ mvn clean install
 
 Distributed under the Apache License. See `LICENSE` for more information.
 
-[contributors-shield]: https://img.shields.io/github/contributors/latzinger/QAware-Luis-Dashboard?style=flat-square
+[contributors-shield]: https://img.shields.io/github/contributors/latzinger/QAware-Luis-Dashboard
 [contributors-url]: https://github.com/latzinger/QAware-Luis-Dashboard/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/latzinger/QAware-Luis-Dashboard?style=flat-square
+[forks-shield]: https://img.shields.io/github/forks/latzinger/QAware-Luis-Dashboard
 [forks-url]: https://github.com/latzinger/QAware-Luis-Dashboard/network/members
-[stars-shield]: https://img.shields.io/github/stars/latzinger/QAware-Luis-Dashboard?style=flat-square
+[stars-shield]: https://img.shields.io/github/stars/latzinger/QAware-Luis-Dashboard
 [stars-url]: https://github.com/latzinger/QAware-Luis-Dashboard/stargazers
-[issues-shield]: https://img.shields.io/github/issues/latzinger/QAware-Luis-Dashboard?style=flat-square
+[issues-shield]: https://img.shields.io/github/issues/latzinger/QAware-Luis-Dashboard
 [issues-url]: https://github.com/latzinger/QAware-Luis-Dashboard/issues
-[license-shield]: https://img.shields.io/github/license/latzinger/QAware-Luis-Dashboard?style=flat-square
+[license-shield]: https://img.shields.io/github/license/latzinger/QAware-Luis-Dashboard
 [license-url]: https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/LICENSE
 [node.js]: https://nodejs.org/
 [npm]: https://www.npmjs.com/get-npm
