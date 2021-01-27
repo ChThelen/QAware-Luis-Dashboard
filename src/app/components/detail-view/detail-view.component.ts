@@ -56,7 +56,8 @@ export class DetailViewComponent implements OnInit {
       yAxes: [{
         scaleLabel: {
           display: true,
-          labelString: 'Average (Intent Performance)'
+          labelString: 'Average (Intent Performance)',
+          fontStyle: 'bold'
         },
         ticks: {
           max: 1,
@@ -67,7 +68,8 @@ export class DetailViewComponent implements OnInit {
       xAxes: [{
         scaleLabel: {
           display: true,
-          labelString: 'App-Version'
+          labelString: 'App-Version',
+          fontStyle: 'bold'
         }
       }]
     }
