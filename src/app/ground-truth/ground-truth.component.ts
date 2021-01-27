@@ -32,9 +32,8 @@ export class GroundTruthComponent implements OnInit {
   intentsSelection: boolean[] = [];
 
 
-  constructor(private luisService: LuisAppService) {
-
-
+  constructor(private luisService: LuisAppService) 
+  {
   }
 
   ngOnInit(): void {
@@ -54,7 +53,8 @@ export class GroundTruthComponent implements OnInit {
     temp.forEach(element => this.intentsSelection.push(false));
     return temp;
   }
-  createUtterances(file: string, result: CsvUtterance[]): void {
+  createUtterances(file: string, result: CsvUtterance[]): void 
+  {
 
     if (result.length != 0)
       result = [];
@@ -85,7 +85,8 @@ export class GroundTruthComponent implements OnInit {
       this.resetFile();
     }
   }
-  readCsvFile(event: any) {
+  readCsvFile(event: any) 
+  {
 
     let fileList: FileList = event.target.files;
     this.file = fileList.item(0);
@@ -113,7 +114,8 @@ export class GroundTruthComponent implements OnInit {
 
     }
   }
-  merge() {
+  merge() 
+  {
     this.uploadedUtterances.forEach(data => this.result.push(data));
     this.resetFile();
     this.result.sort((a, b) => { return (parseInt(a.id) < parseInt(b.id)) ? -1 : 1 })
