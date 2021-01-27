@@ -54,10 +54,20 @@ export class DetailViewComponent implements OnInit {
     responsive: true,
     scales: {
       yAxes: [{
+        scaleLabel: {
+          display: true,
+          labelString: 'Average (Intent Performance)'
+        },
         ticks: {
           max: 1,
           min: 0,
           stepSize: 0.01
+        }
+      }],
+      xAxes: [{
+        scaleLabel: {
+          display: true,
+          labelString: 'App-Version'
         }
       }]
     }
