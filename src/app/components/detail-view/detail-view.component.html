@@ -112,7 +112,7 @@
                     </div>
                     <div class="clr-col-12">
                         <clr-datagrid>
-                            <clr-dg-column [clrDgField]="'version'">Version</clr-dg-column>
+                            <clr-dg-column [clrDgField]="'version'">App-Version</clr-dg-column>
                             <clr-dg-column [clrDgField]="'date'">Date</clr-dg-column>
 
                             <clr-dg-row *clrDgItems="let appStat of luisAppStats" [clrDgItem]="appStat">
@@ -137,7 +137,7 @@
                                 <clr-dg-detail-body>
                                     <clr-datagrid style="margin-bottom: 12px;">
                                         <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
-                                        <clr-dg-column [clrDgField]="'average'">Average</clr-dg-column>
+                                        <clr-dg-column [clrDgField]="'average'">Average (Intent Performance)</clr-dg-column>
 
                                         <clr-dg-row *clrDgItems="let intentStat of appStat.intents"
                                             [clrDgItem]="intentStat">

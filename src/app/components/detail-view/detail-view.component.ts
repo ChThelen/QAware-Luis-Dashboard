@@ -11,6 +11,7 @@ import { Entity } from 'src/app/models/Entity';
 import { Utterance } from 'src/app/models/Utterance';
 import { PersistentService } from '../../services/persistent.service';
 import { ChartDataSets } from 'chart.js';
+import { CombinedLuisApp } from 'src/app/models/CombinedLuisApp';
 
 @Component({
   selector: 'app-detail-view',
@@ -86,14 +87,34 @@ export class DetailViewComponent implements OnInit {
     private notificationService: NotificationService) { }
 
   ngOnInit(): void {
+    this.getCombinedAppData().then(k => {
+      this.luisApp = k.appData;
+      this.luisAppStats = k.statData;
+      this.luisApp.appJson = k.json; 
+      this.generateChartData();
+      this.getAppHits();
+    });
+
+    /* For loading Data separate
     this.getApp().then(luisApp => {
       this.luisApp = luisApp;
       this.getAppJSON();
     });
     this.getAppStats();
     this.getAppHits();
+    */
   }
 
+  getCombinedAppData(): Promise<CombinedLuisApp> {
+    const name = this.route.snapshot.paramMap.get('name');
+    return new Promise(resolve => {
+      this.persistentService.getCombinedApp(name).subscribe(k => {
+        resolve(k);
+      });
+    })
+  }
+
+  /* For loading Data separate
   getApp(): Promise<LuisApp> {
     const name = this.route.snapshot.paramMap.get('name');
     return new Promise(resolve => {
@@ -110,6 +131,15 @@ export class DetailViewComponent implements OnInit {
     });
   }
 
+  getAppStats(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.persistentService.getAppStats(name).subscribe(k => {
+      this.luisAppStats = k;
+    });
+  }
+
+  */
+
   getAppHits(): void {
     const name = this.route.snapshot.paramMap.get('name');
     this.luisAppService.getHitCount(name).subscribe(k => {
@@ -117,18 +147,10 @@ export class DetailViewComponent implements OnInit {
     })
   }
 
-  getAppStats(): void {
-    const name = this.route.snapshot.paramMap.get('name');
-    this.persistentService.getAppStats(name).subscribe(k => {
-      this.luisAppStats = k;
-      this.generateChartData(k);
-    });
-  }
-
-  generateChartData(luisAppStats: LuisAppStats[]) {
+  generateChartData() {
     let labels: string[] = [];
     let datasets: Map<string, ChartDataSets> = new Map<string, ChartDataSets>();
-    luisAppStats.forEach(appStat => {
+    this.luisAppStats.forEach(appStat => {
       labels.push(appStat.version);
 
       appStat.intents.forEach(intentStat => {

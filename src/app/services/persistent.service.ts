@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/runtime-environment';
 import { DUMMY_APPS, EXAMPLE_JSON, LuisApp } from '../models/LuisApp';
 import { DUMMY_STATS, LuisAppStats } from '../models/LuisAppStats';
+import { CombinedLuisApp, EXAMPLE_COMBINED_LUIS_APP } from '../models/CombinedLuisApp';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,15 @@ export class PersistentService {
   private endpoint = "/luis/app";
 
   constructor(private httpClient: HttpClient) { }
+
+  public getCombinedApp(appName: string): Observable<CombinedLuisApp> {
+
+    if(!environment.production){
+      return of(EXAMPLE_COMBINED_LUIS_APP);
+    }
+
+    return this.httpClient.get<CombinedLuisApp>(this.buildUrl("/getAppData"), {params: {name: appName}});
+  }
 
   public getApp(appName: string): Promise<LuisApp>{
     return new Promise(resolve => {
