@@ -20,7 +20,12 @@
 ## Table of contents
 
 * [About the Project](#about-the-project)
+  * [What is Microsoft Luis?](#what-is-microsoft-luis?)
   * [Built With](#built-with)
+* [Development Setup](#development-setup)
+* [Prerequisites](#prerequisites)
+* [Getting Started](#getting-started)
+* [Build](#build)
 * [Services](#services)
 * [Components](#components)
   * [Dashboard](#dashboard)
@@ -28,80 +33,20 @@
   * [App Management](#app-management)
   * [App Statistics](#app-statistics)
   * [GroundTruth Editor](#groundtruth-editor)
-* [Development Setup](#development-setup)
-  * [Prerequisites](#prerequisites)
-  * [Getting Started](#getting-started)
-  * [Build](#build)
 * [Contributing](#contributing)
 * [License](#license)
 
 ## About The Project
 
+### What is Microsoft Luis?
+
+Language Understanding (LUIS) is a cloud-based conversational AI service that applies custom machine-learning intelligence to a user's conversational, natural language text to predict overall meaning, and pull out relevant, detailed information.
+
+More Information can be found under [Microsoft-Luis][luis].
+
 ### Built With
 * [Angular](https://angular.io)
 * [Clarity](https://clarity.design/)
-
-## Services
-- **LuisAppService:** Responsible for handling operations related to the luis-api by requesting the backend.
-- **PersistentService:** Responsible for retrieving presistent app information like AppData, AppStats and the GroundTruth from the backend.
-- **ConvertService:** Responsible for converting CSV-Files to LuisJson-Files and vica versa, by requesting the backend.
-- **NotificationService:** Responsible for handling standard and app-level alerts.
-
-## Components
-
-### Dashboard
-- Dark Mode ✅ <br/>
-- Switch between Card & List-View ✅ <br/>
-
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Light.png"/> 
-<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Dark.png" width="425"/>-->
-
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Light-List.png"/> 
-<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Dark-List.png" width="425"/>-->
-
-### App Deployment
-
-### App Management
-- View Name, Id, Status and Description for deployed App ✅ <br/>
-- Integrated Link to offical Microsoft Luis Dashboard ✅ <br/>
-- Publish deployed App ✅ <br/>
-- Train & Test deployed App ✅ <br/>
-- Edit deployed App e.g. add Intents, Utterances and Entities ✅ <br/>
-- Update deployed App to new version ✅ <br/>
-- View & Download LuisJSON from deployed LuisApp ✅ <br/>
-- Delete deyploved App ✅ <br/>
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light.png"/>
-<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark.png" width="425"/>-->
-
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Edit.png"/>
-<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Edit.png" width="425"/>-->
-
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Json.png"/>
-<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Json.png" width="425"/>-->
-
-### App Statistics
-- View History & Charts for teste LuisApp ✅ <br/>
-
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics.png"/>
-<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics.png" width="425"/>-->
-
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics-Table.png"/> 
-<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics-Table.png" width="425"/>-->
-
-### GroundTruth Editor
-- View and Edit GroundTruth ✅ <br/>
-- Extend GroundTruth by uploading CSV-File ✅ <br/>
-- Download GroundTruth as CSV-File ✅ <br/>
-- Deploy new LuisApp by selecting custom entries from GroundTruth ✅ <br/>
-
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light.png"/> 
-<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark.png" width="425"/>-->
-
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light-Merge.png"/> 
-<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark-Merge.png" width="425"/>-->
-
-<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light-NewLine.png"/> 
-<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark-NewLine.png" width="425"/>-->
 
 ## Development Setup
 
@@ -130,6 +75,79 @@ ng serve --open
 mvn clean install
 ```
 
+## Services
+- **LuisAppService:** Responsible for handling operations related to the luis-api by requesting the backend.
+- **PersistentService:** Responsible for retrieving presistent app information like AppData, AppStats and the GroundTruth from the backend.
+- **ConvertService:** Responsible for converting CSV-Files to LuisJson-Files and vica versa, by requesting the backend.
+- **NotificationService:** Responsible for handling standard and app-level alerts.
+
+## Components
+
+### Dashboard
+| Functionality  | Supported |
+| :---         |     :---:      |
+| Dark Mode  | ✅  |
+| Card & List-View  | ✅  |
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Light.png"/> 
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Dark.png" width="425"/>-->
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Light-List.png"/> 
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Dark-List.png" width="425"/>-->
+
+### App Deployment
+
+### App Management
+| Functionality  | Supported |
+| :---         |     :---:      |
+| View Name, Id, Status and Description  | ✅  |
+| Integrated Microsoft Luis Dashboard Link  | ✅  |
+| Publish deployed App  | ✅  |
+| Train published App  | ✅  |
+| Test published App  | ✅  |
+| Edit App (add Intents, Utterances or Entities)   | ✅  |
+| Update published App to new version | ✅  |
+| View & Download LuisJSON | ✅  |
+| Delete App  | ✅  |
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light.png"/>
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark.png" width="425"/>-->
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Edit.png"/>
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Edit.png" width="425"/>-->
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Json.png"/>
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Json.png" width="425"/>-->
+
+### App Statistics
+| Functionality  | Supported |
+| :---         |     :---:      |
+| View Test History  | ✅  |
+| View Charts  | ✅  |
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics.png"/>
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics.png" width="425"/>-->
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics-Table.png"/> 
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics-Table.png" width="425"/>-->
+
+### GroundTruth Editor
+| Functionality  | Supported |
+| :---         |     :---:      |
+| View GroundTruth  | ✅  |
+| Edit GroundTruth  | ✅  |
+| Extend GroundTruth via uploaded CSV-File  | ✅  |
+| Create new LuisApp by selecting custom GroundTruth Entries | ✅  |
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light.png"/> 
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark.png" width="425"/>-->
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light-Merge.png"/> 
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark-Merge.png" width="425"/>-->
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Light-NewLine.png"/> 
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/GroundTruthEditor-Dark-NewLine.png" width="425"/>-->
+
 ## Contributing
 
 1. Fork or clone the Project
@@ -155,3 +173,4 @@ Distributed under the Apache License. See `LICENSE` for more information.
 [node.js]: https://nodejs.org/
 [npm]: https://www.npmjs.com/get-npm
 [mvn]: https://maven.apache.org/index.html
+[luis]: https://www.luis.ai
