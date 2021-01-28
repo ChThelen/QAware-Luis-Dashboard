@@ -36,6 +36,7 @@
                                 </div>
                             </div>
                             <div class="card-footer">
+
                                 <button class="btn btn-sm btn-link" (click)="publishApp()"
                                     [disabled]="luisApp.status === 'published'"
                                     [class.btn-publish]="luisApp.status !== 'published'">Publish</button>
@@ -56,7 +57,9 @@
                                             (click)="deleteModal=true; appDropDown=false;">Delete</button>
                                     </div>
                                 </div>
-
+                                <div style="margin-top: 0.7em;"  class="progress loop" *ngIf="isLoading">
+                                    <progress></progress>
+                                </div>
                             </div>
                         </div>
                         <div class="card">

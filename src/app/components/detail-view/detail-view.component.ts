@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { LuisApp } from '../../models/LuisApp';
+import { LuisApp, LuisAppState } from '../../models/LuisApp';
 import { LuisAppService } from '../../services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 import { Location } from '@angular/common';
@@ -27,6 +27,8 @@ export class DetailViewComponent implements OnInit {
   luisAppStats: LuisAppStats[] = null;
   luisAppHits: number = 0;
   luisAppTestData: any;
+
+  isLoading: boolean = false;
 
   //Dropdown
   appDropDown = false;
@@ -90,7 +92,7 @@ export class DetailViewComponent implements OnInit {
     this.getCombinedAppData().then(k => {
       this.luisApp = k.appData;
       this.luisAppStats = k.statData;
-      this.luisApp.appJson = k.json; 
+      this.luisApp.appJson = k.json;
       this.generateChartData();
       this.getAppHits();
     });
@@ -177,27 +179,77 @@ export class DetailViewComponent implements OnInit {
   }
 
   deleteApp(): void {
-    this.luisAppService.deleteApp(this.luisApp.name).subscribe(response => {
-      this.luisApp = null;
+    this.luisAppService.deleteApp(this.luisApp.name).subscribe((response) => {
       this.deleteModal = false;
+      this.showNotification(`The app ${this.luisApp.name} has been successfully deleted.`, null, NotificationType.Info);
+      this.luisApp = null;
       this.location.back();
     },
-      err => {
-        this.showNotification("Failed while deleting App!", err, NotificationType.Danger);
+      (error) => {
+        switch (error.status) {
+          case 404: {
+            this.showNotification("The app cannot be deleted. The app was not found.  See details for more information.", error.message, NotificationType.Danger);
+            break;
+          }
+          default: {
+            this.showNotification("Error when deleting the app. Please contact an administrator. See details for more information.", error.message, NotificationType.Danger);
+            break;
+          }
+        }
+      }
+    );
+  }
+
+  trainApp(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.isLoading = true;
+    this.luisAppService.trainApp(name).subscribe(result => { },
+      (error) => {
+        this.isLoading = false;
+        switch (error.status) {
+          case 404: {
+            this.showNotification("The app cannot be trained. The app was not found.  See details for more information.", error.message, NotificationType.Danger);
+            break;
+          }
+          default: {
+            this.showNotification("Error when training the app. Please contact an administrator. See details for more information.", error.message, NotificationType.Danger);
+            break;
+          }
+        }
+      },
+      () => {
+        this.isLoading = false;
+        this.showNotification(`Training of app ${name} was successfully.`, null, NotificationType.Info);
       }
     );
   }
 
   publishApp(): void {
     const name = this.route.snapshot.paramMap.get('name');
-
-    this.luisAppService.publish(name, false).subscribe(response => {
-      window.location.reload();
+    this.isLoading = true;
+    this.luisAppService.publish(name, false).subscribe((response) => {
+      this.isLoading = false;
+      this.showNotification(`The app ${name} has been successfully published.`, null, NotificationType.Info);
+      this.luisApp.status = LuisAppState.published;
     },
-      err => {
-        this.showNotification("Failed while publishing App!", err, NotificationType.Danger);
+      (error) => {
+        this.isLoading = false;
+        switch (error.status) {
+          case 403: {
+            this.showNotification("The app cannot be published. The model must be trained before.", error.message, NotificationType.Warning);
+            break;
+          }
+          case 404: {
+            this.showNotification("The app cannot be published. The app was not found.  See details for more information.", error.message, NotificationType.Danger);
+            break;
+          }
+          default: {
+            this.showNotification("Error when publishing the app. Please contact an administrator. See details for more information.", error.message, NotificationType.Danger);
+            break;
+          }
+        }
       }
-    );
+    )
   }
 
   addUterance(): void {
@@ -211,20 +263,6 @@ export class DetailViewComponent implements OnInit {
     this.editWizard_selectedUtterances.forEach(selectedUtterance => {
       this.editWizard_utterances = this.editWizard_utterances.filter(utterance => utterance !== selectedUtterance);
     })
-  }
-
-  trainApp(): void {
-    const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.trainApp(name).subscribe(result => {
-      if ((<number>result.body) === 0) {
-        window.location.reload();
-        this.showNotification("Training was successfully.", null, NotificationType.Info);
-      }
-    },
-      err => {
-        this.showNotification("Failed while testing App!", null, NotificationType.Danger);
-      }
-    );
   }
 
   donwloadJsonFile(): void {
