@@ -263,7 +263,7 @@ export class DetailViewComponent implements OnInit {
 
   openTesWizard(): void {
     const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getTestData(name).subscribe(k => {
+    this.persistentService.getTestData(name).subscribe(k => {
       this.luisAppTestData = k;
     });
     this.testWizard_opened = true;
