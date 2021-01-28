@@ -2,14 +2,15 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - main
+      - develop
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [15.x]
 
     steps:
       - uses: actions/checkout@v1
@@ -30,4 +31,4 @@ jobs:
       - name: npm ci and npm run build
         run: |
           npm ci
-          npm run build:ci
+          npm run build
