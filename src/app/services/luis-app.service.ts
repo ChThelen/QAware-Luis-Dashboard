@@ -60,19 +60,6 @@ export class LuisAppService {
   public batchTestApp(appName: string, intent: string): Observable<Array<LuisAppStats>> {
     return this.httpClient.post<Array<LuisAppStats>>(this.buildUrl("/batchTest"),null, { params: { name: appName, intent: intent } });
   }
-
-  public getTestData(appName: string): Observable<Array<any>> {
-    return this.httpClient.get<any>(this.buildUrl("/getTestDataJSON"), { params: { name: appName } });
-  }
-
-  public testData(csv: string, name: string): Observable<string> {
-    return this.httpClient.post<string>(this.buildUrl("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": name } });
-  }
-  
-  public autoData(csv: string, name: string,version:string,desc:string, culture:string): Observable<string> {
-    return this.httpClient.post<string>(this.buildUrl("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }),
-     params: { "name": name , "version": version,"desc": desc, "culture":culture } });
-  }
   
   private buildUrl(uri: string): string {
     return this.baseUrl + this.endpoint + uri;
