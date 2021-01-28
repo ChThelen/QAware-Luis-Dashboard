@@ -11,6 +11,12 @@
 <p align="center">
 
   <h3 align="center">QAware Luis-Dashboard</h3>
+  
+  <span align="center">
+
+  ![Build](https://github.com/latzinger/QAware-Luis-Dashboard/workflows/Build/badge.svg?branch=main)
+
+  </span>
 
   <p align="center">
     This dashboard is used to interact with a separate backend service. With the help of the dashboard, various steps from creating to deploying a Microsoft LuisApp can be applied or automated.
