@@ -64,12 +64,26 @@
         <h3 style="text-align: center;"> Add Utterances</h3>
       </div>
       <div class="card-block">
-            
-        <clr-tabs>
+        <clr-radio-container clrInline>
+          <clr-radio-wrapper>
+            <input type="radio" clrRadio name="options" required value="train" [(ngModel)]="data.type" />
+            <label> Select your training data</label>
+          </clr-radio-wrapper>
+          <clr-radio-wrapper>
+            <input type="radio" clrRadio name="options" required value="test" [(ngModel)]="data.type" />
+            <label>Select your test data</label>
+          </clr-radio-wrapper>
+          <clr-control-helper>You need to select your traindata to go to the next step of the workflow. If you don't add any testdata the previously selected "training data" are automatically distributed to training and test data</clr-control-helper>
+          <clr-control-error>This field is required!</clr-control-error>
+        </clr-radio-container>
+        <h3 *ngIf="data.type=='train'"> Add Train data</h3>
+        <h3 *ngIf="data.type=='test'"> Add Test data</h3>
+        <clr-tabs *ngIf="data.type=='test'">
           <clr-tab>
               <button clrTabLink>Ground-Truth</button>
               <clr-tab-content *clrIfActive>
-                <clr-datagrid [(clrDgSelected)]="selectedUtterances" (clrDgSelectedChange)="selectionChanged($event)">
+                
+                <clr-datagrid [(clrDgSelected)]="selectedTestdata" (clrDgSelectedChange)="selectionChanged($event)" >
                   <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
                   <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
                   <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
@@ -84,8 +98,8 @@
                     
                     <div *ngFor="let intent of intents; let i = index" class="btn-group">
                       <div>
-                          <button *ngIf="!intentsSelection[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelection[i]=!intentsSelection[i];selectIntents(intent)">{{intent}}</button>
-                          <button *ngIf="intentsSelection[i]" class="btn btn-sm btn-primary" (click)="intentsSelection[i]=!intentsSelection[i]; deselectIntents(intent)">{{intent}}</button>
+                          <button *ngIf="!intentsSelectionTestdata[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i];selectIntents(intent,1)">{{intent}}</button>
+                          <button *ngIf="intentsSelectionTestdata[i]" class="btn btn-sm btn-primary" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i]; deselectIntents(intent,1)">{{intent}}</button>
         
                       </div>
                       
@@ -116,7 +130,7 @@
               
                           </clr-radio-wrapper>
                       </clr-dg-column-toggle>
-                  <clr-dg-pagination #pagination [clrDgPageSize]="13">
+                  <clr-dg-pagination #pagination [clrDgPageSize]="10">
                       <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>
                       {{pagination.firstItem + 1}} - {{pagination.lastItem}} of {{pagination.totalItems}} utterances
                   </clr-dg-pagination>
@@ -136,10 +150,84 @@
           </clr-tab>
       
       </clr-tabs>
+      <clr-tabs *ngIf="data.type=='train'">
+        <clr-tab>
+            <button clrTabLink>Ground-Truth</button>
+            <clr-tab-content *clrIfActive>
+              <clr-datagrid [(clrDgSelected)]="selectedTrainingsdata" (clrDgSelectedChange)="selectionChanged($event)" >
+                <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
+                <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
+                <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
+                <clr-dg-column [clrDgField]="'category'"><ng-container *clrDgHideableColumn="{hidden: false}">Category</ng-container></clr-dg-column>
+                <clr-dg-column [clrDgField]="'literal'"><ng-container *clrDgHideableColumn="{hidden: false}">Literal</ng-container> </clr-dg-column>
+                <clr-dg-column [clrDgField]="'startIndex'"><ng-container *clrDgHideableColumn="{hidden: false}">Start_Index</ng-container> </clr-dg-column>
+                <clr-dg-column [clrDgField]="'endIndex'"><ng-container *clrDgHideableColumn="{hidden: false}">End_Index</ng-container> </clr-dg-column>
+                <clr-dg-column [clrDgField]="'intent'"><ng-container *clrDgHideableColumn="{hidden: false}">Intent</ng-container> </clr-dg-column>
+                <clr-dg-column [clrDgField]="'tag'"> <ng-container *clrDgHideableColumn="{hidden: false}">Tag</ng-container></clr-dg-column>
+            
+                <clr-dg-action-bar>
+                  
+                  <div *ngFor="let intent of intents; let i = index" class="btn-group">
+                    <div>
+                        <button *ngIf="!intentsSelectionTraindata[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelectionTraindata[i]=!intentsSelectionTraindata[i];selectIntents(intent,0)">{{intent}}</button>
+                        <button *ngIf="intentsSelectionTraindata[i]" class="btn btn-sm btn-primary" (click)="intentsSelectionTraindata[i]=!intentsSelectionTraindata[i]; deselectIntents(intent,0)">{{intent}}</button>
+      
+                    </div>
+                    
+                  </div>
+                    
+                </clr-dg-action-bar>
+                <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance">
+                
+            
+                <ng-container >
+                    <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
+                    <clr-dg-cell>{{utterance.transcript}}</clr-dg-cell>
+                    <clr-dg-cell>{{utterance.category}}</clr-dg-cell>
+                    <clr-dg-cell>{{utterance.literal}}</clr-dg-cell>
+                    <clr-dg-cell>{{utterance.startIndex}} </clr-dg-cell>
+                    <clr-dg-cell>{{utterance.endIndex}} </clr-dg-cell>
+                    <clr-dg-cell>{{utterance.intent}} </clr-dg-cell>
+                    <clr-dg-cell>{{utterance.tag}}</clr-dg-cell>
+                </ng-container>
+            
+                </clr-dg-row>
+            
+                <clr-dg-footer>
+                    <clr-dg-column-toggle>
+                        <clr-dg-column-toggle-title>Show Columns</clr-dg-column-toggle-title>
+                        <clr-dg-column-toggle-button>Select All Button</clr-dg-column-toggle-button>
+                        <clr-radio-wrapper>
+            
+                        </clr-radio-wrapper>
+                    </clr-dg-column-toggle>
+                <clr-dg-pagination #pagination [clrDgPageSize]="10">
+                    <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>
+                    {{pagination.firstItem + 1}} - {{pagination.lastItem}} of {{pagination.totalItems}} utterances
+                </clr-dg-pagination>
+                </clr-dg-footer>
+              </clr-datagrid>
+             
+            </clr-tab-content>
+        </clr-tab>
+    
+        <clr-tab>
+            <button clrTabLink>Upload File</button>
+            <clr-tab-content *clrIfActive>
+              <br>
+              <label class="btn">
+                <input type="file"  accept=".csv,.json" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
+              </label>
+            </clr-tab-content>
+        </clr-tab>
+    
+    </clr-tabs>
         
       </div>
       <div class="card-footer">
-        <button class="btn btn-primary" [disabled]="selectedUtterances.length==0" (click)="closeStep(); timelineStyle.step1.open=true">Add Utterance<span *ngIf="selectedUtterances.length>=2">s</span></button>
+        <button class="btn btn-primary" *ngIf="addTrainData" [disabled]="selectedTrainingsdata.length==0" >Add Trainingsdata</button>
+        <button class="btn btn-primary" *ngIf="addTestData" [disabled]="selectedTrainingsdata.length==0" (click)="closeStep();  timelineStyle.step1.open=true;">Add Testdata</button>
+        <button class="btn btn-primary-outline" *ngIf="addTestData" [disabled]="selectedTrainingsdata.length==0" (click)="closeStep(); timelineStyle.step1.open=true;">Skip</button>
       </div>
     </div>
     <!-- STEP 1-->

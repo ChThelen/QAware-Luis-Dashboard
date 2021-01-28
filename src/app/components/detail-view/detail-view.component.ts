@@ -1,17 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LuisApp } from '../../models/LuisApp';
-import { DUMMY_APPS } from '../../models/LuisApp';
 import { LuisAppService } from '../../services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
-import { environment } from 'src/environments/runtime-environment';
 import { Location } from '@angular/common';
 import { LuisAppStats } from 'src/app/models/LuisAppStats';
-import { ChartDataSets } from 'chart.js';
 import { ClrWizard } from '@clr/angular';
 import { Intent } from 'src/app/models/Intent';
 import { Entity } from 'src/app/models/Entity';
 import { Utterance } from 'src/app/models/Utterance';
+import { PersistentService } from '../../services/persistent.service';
+import { ChartDataSets } from 'chart.js';
+import { CombinedLuisApp } from 'src/app/models/CombinedLuisApp';
 
 @Component({
   selector: 'app-detail-view',
@@ -20,11 +20,16 @@ import { Utterance } from 'src/app/models/Utterance';
 })
 export class DetailViewComponent implements OnInit {
   @ViewChild("editWizard") editWizard: ClrWizard;
+  @ViewChild("testWizard") testWizard: ClrWizard;
 
   //App Data
   luisApp: LuisApp = null;
   luisAppStats: LuisAppStats[] = null;
   luisAppHits: number = 0;
+  luisAppTestData: any;
+
+  //Dropdown
+  appDropDown = false;
 
   //App Delete Modal
   deleteModal: boolean = false;
@@ -41,24 +46,205 @@ export class DetailViewComponent implements OnInit {
   editWizard_intent: Intent;
   editWizard_entity: Entity;
 
+  //Test Wizard
+  testWizard_opened: boolean = false;
+
   //Chart Data
+  chartOptions = {
+    scaleShowVerticalLines: false,
+    responsive: true,
+    scales: {
+      yAxes: [{
+        scaleLabel: {
+          display: true,
+          labelString: 'Average (Intent Performance)',
+          fontStyle: 'bold'
+        },
+        ticks: {
+          max: 1,
+          min: 0,
+          stepSize: 0.01
+        }
+      }],
+      xAxes: [{
+        scaleLabel: {
+          display: true,
+          labelString: 'App-Version',
+          fontStyle: 'bold'
+        }
+      }]
+    }
+  }
+
   chartLabels: string[];
-  chartData: ChartDataSets[];
+  chartDataSets: ChartDataSets[];
 
   constructor(
     private location: Location,
     private route: ActivatedRoute,
     private luisAppService: LuisAppService,
+    private persistentService: PersistentService,
     private notificationService: NotificationService) { }
 
   ngOnInit(): void {
-    if (environment.production) {
-      this.getApp();
-      this.getAppStats();
+    this.getCombinedAppData().then(k => {
+      this.luisApp = k.appData;
+      this.luisAppStats = k.statData;
+      this.luisApp.appJson = k.json; 
+      this.generateChartData();
       this.getAppHits();
-    } else {
-      this.luisApp = DUMMY_APPS[0];
+    });
+
+    /* For loading Data separate
+    this.getApp().then(luisApp => {
+      this.luisApp = luisApp;
+      this.getAppJSON();
+    });
+    this.getAppStats();
+    this.getAppHits();
+    */
+  }
+
+  getCombinedAppData(): Promise<CombinedLuisApp> {
+    const name = this.route.snapshot.paramMap.get('name');
+    return new Promise(resolve => {
+      this.persistentService.getCombinedApp(name).subscribe(k => {
+        resolve(k);
+      });
+    })
+  }
+
+  /* For loading Data separate
+  getApp(): Promise<LuisApp> {
+    const name = this.route.snapshot.paramMap.get('name');
+    return new Promise(resolve => {
+      this.persistentService.getApp(name).then(luisApp => {
+        resolve(luisApp);
+      })
+    })
+  }
+
+  getAppJSON(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.persistentService.getAppJSON(name).subscribe(k => {
+      this.luisApp.appJson = k;
+    });
+  }
+
+  getAppStats(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.persistentService.getAppStats(name).subscribe(k => {
+      this.luisAppStats = k;
+    });
+  }
+
+  */
+
+  getAppHits(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.getHitCount(name).subscribe(k => {
+      this.luisAppHits = k;
+    })
+  }
+
+  generateChartData() {
+    let labels: string[] = [];
+    let datasets: Map<string, ChartDataSets> = new Map<string, ChartDataSets>();
+    this.luisAppStats.forEach(appStat => {
+      labels.push(appStat.version);
+
+      appStat.intents.forEach(intentStat => {
+
+        if (!datasets.has(intentStat.intent)) {
+          datasets.set(intentStat.intent, {
+            label: intentStat.intent,
+            data: [],
+            fill: false
+          })
+        }
+
+        let dataset: ChartDataSets = datasets.get(intentStat.intent);
+        dataset.data.push(intentStat.average);
+        datasets.set(intentStat.intent, dataset);
+
+      });
+
+    });
+
+    this.chartLabels = labels;
+    this.chartDataSets = new Array<ChartDataSets>();
+    datasets.forEach(k => this.chartDataSets.push(k));
+  }
+
+  deleteApp(): void {
+    this.luisAppService.deleteApp(this.luisApp.name).subscribe(response => {
+      this.luisApp = null;
+      this.deleteModal = false;
+      this.location.back();
+    },
+      err => {
+        this.showNotification("Failed while deleting App!", err, NotificationType.Danger);
+      }
+    );
+  }
+
+  publishApp(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+
+    this.luisAppService.publish(name, false).subscribe(response => {
+      window.location.reload();
+    },
+      err => {
+        this.showNotification("Failed while publishing App!", err, NotificationType.Danger);
+      }
+    );
+  }
+
+  addUterance(): void {
+    if (this.editWizard_utterance.text && this.editWizard_utterance.intentName) {
+      this.editWizard_utterances.push(this.editWizard_utterance);
+      this.editWizard_utterance = new Utterance();
     }
+  }
+
+  removeUtterance(): void {
+    this.editWizard_selectedUtterances.forEach(selectedUtterance => {
+      this.editWizard_utterances = this.editWizard_utterances.filter(utterance => utterance !== selectedUtterance);
+    })
+  }
+
+  trainApp(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.trainApp(name).subscribe(result => {
+      if ((<number>result.body) === 0) {
+        window.location.reload();
+        this.showNotification("Training was successfully.", null, NotificationType.Info);
+      }
+    },
+      err => {
+        this.showNotification("Failed while testing App!", null, NotificationType.Danger);
+      }
+    );
+  }
+
+  donwloadJsonFile(): void {
+    var hiddenElement = document.createElement('a');
+    hiddenElement.setAttribute('type', 'hidden');
+    hiddenElement.href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(JSON.stringify(this.luisApp.appJson, null, "\t"));
+    hiddenElement.target = '_blank';
+    hiddenElement.download = `${this.luisApp.name}.json`;
+    hiddenElement.click();
+    hiddenElement.remove();
+  }
+
+  showNotification(message: string, messageDetails: string, type: NotificationType) {
+    this.notificationService.add(
+      new Notification(
+        type,
+        message,
+        messageDetails
+      )
+    )
   }
 
   openEditWizard(): void {
@@ -75,6 +261,28 @@ export class DetailViewComponent implements OnInit {
     this.editWizard_opened = false;
   }
 
+  openTesWizard(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    this.luisAppService.getTestData(name).subscribe(k => {
+      this.luisAppTestData = k;
+    });
+    this.testWizard_opened = true;
+  }
+
+  closeTestWizard(): void {
+    this.testWizard.reset();
+    this.testWizard_opened = false;
+  }
+
+  finishTestWizard(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+
+    this.luisAppService.batchTestApp(name, "all").subscribe(k => {
+      this.closeTestWizard();
+    });
+
+  }
+
   finishEditWizard(): void {
 
     const name = this.route.snapshot.paramMap.get('name');
@@ -82,19 +290,19 @@ export class DetailViewComponent implements OnInit {
     switch (this.editWizard_option) {
       case "intent": {
         this.luisAppService.addIntent(name, this.editWizard_intent).subscribe(k => {
-          this.showNotification("Intent added successfully. Please reload page!", null);
+          this.showNotification("Intent added successfully. Please reload page!", null, NotificationType.Info);
         });
         break;
       }
       case "entity": {
         this.luisAppService.addEntity(name, this.editWizard_entity).subscribe(k => {
-          this.showNotification("Entity added successfully. Please reload page!", null);
+          this.showNotification("Entity added successfully. Please reload page!", null, NotificationType.Info);
         });
         break;
       }
       case "utterances": {
         this.luisAppService.addUtterances(name, this.editWizard_utterances).subscribe(k => {
-          this.showNotification("Utterances added successfully. Please reload page!", null);
+          this.showNotification("Utterances added successfully. Please reload page!", null, NotificationType.Info);
         });
         break;
       }
@@ -107,96 +315,6 @@ export class DetailViewComponent implements OnInit {
     }
 
     this.closeEditWizard();
-  }
-
-  addUterance(): void {
-    if (this.editWizard_utterance.text && this.editWizard_utterance.intentName) {
-      this.editWizard_utterances.push(this.editWizard_utterance);
-      this.editWizard_utterance = new Utterance();
-    }
-  }
-
-  removeUtterance(): void {
-    this.editWizard_selectedUtterances.forEach(selectedUtterance => {
-      this.editWizard_utterances = this.editWizard_utterances.filter(utterance => utterance !== selectedUtterance);
-    })
-  }
-
-  trainApp(): void{
-    const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.trainApp(name).subscribe(result => {
-      if((<number> result.body) === 0){
-        this.showNotification("Training was successfully. Please reload page!", null);
-      }
-    },
-      err => {
-        this.showNotification("Failed while testing App!", null);
-      }
-    )
-  }
-
-  getApp(): void {
-    const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getApps().subscribe(k => {
-      this.luisApp = k.filter((app: LuisApp) => app.name === name)[0];
-      this.getAppJSON();
-    });
-  }
-
-  getAppJSON(): void {
-    const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getAppJSON(name).subscribe(k => {
-      this.luisApp.appJson = k;
-    });
-  }
-
-  getAppHits(): void {
-    const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getHitCount(name).subscribe(k => {
-      this.luisAppHits = k;
-    })
-  }
-
-  getAppStats(): void {
-    const name = this.route.snapshot.paramMap.get('name');
-    this.luisAppService.getAppStats(name).subscribe(k => {
-      this.luisAppStats = k;
-      this.chartData = new Array();
-      this.chartData.push({ data: k.map((appStat: LuisAppStats) => appStat.average), label: name });
-      this.chartLabels = k.map((appStat: LuisAppStats) => appStat.version);
-    });
-  }
-
-  deleteApp() {
-    this.luisAppService.deleteApp(this.luisApp.name).subscribe(result => {
-      this.luisApp = null;
-      this.deleteModal = false;
-      this.location.back();
-    },
-      err => {
-        this.showNotification("Failed while deleting App!", null);
-      }
-    )
-  }
-
-  donwloadJsonFile(): void {
-    var hiddenElement = document.createElement('a');
-    hiddenElement.setAttribute('type', 'hidden');
-    hiddenElement.href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(JSON.stringify(this.luisApp.appJson, null, "\t"));
-    hiddenElement.target = '_blank';
-    hiddenElement.download = `${this.luisApp.name}.json`;
-    hiddenElement.click();
-    hiddenElement.remove();
-  }
-
-  showNotification(message: string, messageDetails: string) {
-    this.notificationService.add(
-      new Notification(
-        NotificationType.Info,
-        message,
-        messageDetails
-      )
-    )
   }
 
 }
