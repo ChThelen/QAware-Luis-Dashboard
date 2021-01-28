@@ -10,13 +10,13 @@ import { TilesComponent } from './components/tiles/tiles.component';
 import { DetailViewComponent } from './components/detail-view/detail-view.component';
 import { ManageViewComponent } from './components/manage-view/manage-view.component';
 import { DeployJsonComponent } from './components/deploy-json/deploy-json.component';
-import { GroundTruthComponent } from './ground-truth/ground-truth.component';
+import { GroundTruthComponent } from './components/ground-truth/ground-truth.component';
 import { EditableCellComponent } from './components/editable-cell/editable-cell.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChartsModule } from 'ng2-charts';
-import {ChartComponent} from './components/chart/chart.component';
+import { CdsModule } from '@cds/angular';
 
 @NgModule({
   declarations: [
@@ -28,8 +28,7 @@ import {ChartComponent} from './components/chart/chart.component';
     GroundTruthComponent,
     EditableCellComponent,
     NotificationComponent,
-    DashboardComponent,
-    ChartComponent
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -39,7 +38,8 @@ import {ChartComponent} from './components/chart/chart.component';
     FormsModule,
     HttpClientModule,
     HighlightModule,
-    ChartsModule
+    ChartsModule,
+    CdsModule
   ],
   providers: [
     {

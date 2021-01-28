@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HEADERS, CsvUtterance } from 'src/app/models/CsvUtterance';
+import { ConvertService } from 'src/app/services/convert.service';
 import { LuisAppService } from 'src/app/services/luis-app.service';
+import { PersistentService } from 'src/app/services/persistent.service';
 
 @Component({
   selector: 'app-deploy-json',
@@ -56,15 +58,18 @@ export class DeployJsonComponent implements OnInit {
       step4: { state: "not-started", open: false },
     };
   }
-  constructor(private luisService: LuisAppService) {
+  constructor(
+    private luisService: LuisAppService,
+    private persistentService: PersistentService,
+    private convertService: ConvertService) {
     this.createUtterances(this.groundTruth, this.result);
     this.intents = this.getIntents(0);
     this.intents = this.getIntents(1);
-    luisService.getGT().subscribe(data => this.groundTruth = data);
+    persistentService.getGT().subscribe(data => this.groundTruth = data);
   }
 
   ngOnInit(): void {
-    this.luisService.getGT().subscribe(data => { this.groundTruth = data;  this.createUtterances(this.groundTruth, this.result); this.intents = this.getIntents(0);this.intents = this.getIntents(1); });
+    this.persistentService.getGT().subscribe(data => { this.groundTruth = data;  this.createUtterances(this.groundTruth, this.result); this.intents = this.getIntents(0);this.intents = this.getIntents(1); });
 
   }
   createUtterances(file: string, result: CsvUtterance[]): void {
@@ -187,18 +192,6 @@ export class DeployJsonComponent implements OnInit {
       //TODO : User must be notify 
     }
   }
-  publish() {
-    this.luisService.publish(this.jsonString, this.luis.app.staging).subscribe(data => { this.luis.app.published = data });
-    this.luis.app.published = 0;
-    if (this.luis.app.published == 0) // App is published
-    {
-      this.manageTimeLineStyle();
-    }
-    else // App isn't published
-    {
-      //TODO : User must be notify 
-    }
-  }
 
   manageTimeLineStyle() {
     if (this.luis.app.created == 0 && this.luis.app.trained == 1 && this.luis.app.published == 1) {
@@ -238,14 +231,14 @@ export class DeployJsonComponent implements OnInit {
     if(this.selectedTrainingsdata.length!= 0)
     {
       let selectedTrainingsdata = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-      this.luisService.convertCsvToJson(selectedTrainingsdata, "MyJsonFile_" + new Date().toDateString())
+      this.convertService.convertCsvToJson(selectedTrainingsdata, "MyJsonFile_" + new Date().toDateString())
       .toPromise().then(data => { this.selectedTrainingsdataJson = JSON.stringify(data, null, 5); });
 
     }
     if(this.selectedTestdata.length!= 0)
     {
       let selectedTestdata = this.refreshUtterances(this.selectedTestdata).join("\n");
-      this.luisService.convertCsvToJson(selectedTestdata, "MyJsonFile_" + new Date().toDateString())
+      this.convertService.convertCsvToJson(selectedTestdata, "MyJsonFile_" + new Date().toDateString())
       .toPromise().then(data => { this.selectedTestdataJson = JSON.stringify(data, null, 5); });
     }
    

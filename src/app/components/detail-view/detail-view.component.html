@@ -1,3 +1,6 @@
+
+<clr-spinner [clrMedium]=true style="margin:0 auto; display: flex; justify-content: center; align-items: center;" *ngIf="!luisApp || !luisApp.appJson">Loading ...</clr-spinner>
+
 <div *ngIf="luisApp && luisApp.appJson">
     <clr-tabs>
         <clr-tab>
@@ -15,10 +18,6 @@
                             </div>
                             <div class="card-block">
                                 <div class="card-title">
-                                    <span style="float: right; margin-top: 1.2em;" class="p1 label label-blue">
-                                        Hits
-                                        <span class="badge">{{luisAppHits}}</span>
-                                    </span>
                                     <span class="p1 label label-info"
                                         style="float: right; margin-top: 1.2em;">v{{luisApp.version}}</span>
                                     <span class="p1 label label-success" style="float: right; margin-top: 1.2em;"
@@ -37,9 +36,27 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button class="btn btn-sm btn-link" (click)="openEditWizard()">Edit</button>
-                                <button class="btn btn-sm btn-link"(click)="trainApp()" >Test</button>
-                                <button class="btn btn-sm btn-link" (click)="deleteModal=true">Delete</button>
+                                <button class="btn btn-sm btn-link" (click)="publishApp()"
+                                    [disabled]="luisApp.status === 'published'"
+                                    [class.btn-publish]="luisApp.status !== 'published'">Publish</button>
+                                <button class="btn btn-sm btn-link" (click)="trainApp()">Train</button>
+                                <button class="btn btn-sm btn-link" (click)="openTesWizard()">Test</button>
+                                <div class="dropdown top-left" [class.open]="appDropDown">
+                                    <button class="dropdown-toggle btn btn-sm btn-link"
+                                        (click)="appDropDown = !appDropDown">
+                                        Other
+                                        <cds-icon shape="angle"></cds-icon>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <button class="btn btn-sm btn-link"
+                                            (click)="openEditWizard(); appDropDown=false;" disabled>Edit</button>
+                                        <button class="btn btn-sm btn-link"
+                                            (click)="trainApp(); appDropDown=false;">Update</button>
+                                        <button class="btn btn-sm btn-link"
+                                            (click)="deleteModal=true; appDropDown=false;">Delete</button>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                         <div class="card">
@@ -48,7 +65,8 @@
                             </div>
                             <div class="card-block">
                                 <div class="card-text">
-                                    <pre style="overflow-x: scroll;max-height: 270px;"><code [highlight]="luisApp.appJson | json"></code>
+                                    <pre
+                                        style="overflow-x: scroll;overflow-y: scroll;max-height: 270px;max-width: 585px;"><code [highlight]="luisApp.appJson | json"></code>
                                     </pre>
                                 </div>
                             </div>
@@ -57,44 +75,83 @@
                                 <button class="btn btn-sm btn-link" (click)="donwloadJsonFile()">Download</button>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-header">
-                                Test History
-                            </div>
-                            <div class="card-block">
-
-                                <clr-datagrid class="datagrid-compact">
-                                    <clr-dg-column [clrDgField]="'version'">Version</clr-dg-column>
-                                    <clr-dg-column [clrDgField]="'date'">Date</clr-dg-column>
-                                    <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
-                                    <clr-dg-column [clrDgField]="'average'">Average</clr-dg-column>
-                                    <clr-dg-column [clrDgField]="'difference'">Difference</clr-dg-column>
-
-                                    <clr-dg-row *clrDgItems="let appStat of luisAppStats">
-                                        <clr-dg-cell>{{appStat.version}}</clr-dg-cell>
-                                        <clr-dg-cell>{{appStat.date | date:"short"}}</clr-dg-cell>
-                                        <clr-dg-cell>{{appStat.intent}}</clr-dg-cell>
-                                        <clr-dg-cell>{{appStat.average | number:'1.2-3'}}</clr-dg-cell>
-                                        <clr-dg-cell>{{appStat.difference | number:'1.2-3'}}</clr-dg-cell>
-                                    </clr-dg-row>
-
-                                    <clr-dg-placeholder>Sorry. No test results was found.</clr-dg-placeholder>
-
-                                    <clr-dg-footer>
-                                        <clr-dg-pagination #pagination [clrDgPageSize]="10">
-                                        </clr-dg-pagination>
-                                    </clr-dg-footer>
-                                </clr-datagrid>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </clr-tab-content>
         </clr-tab>
         <clr-tab>
-            <button clrTabLink id="linkResults">Charts</button>
-            <clr-tab-content id="results">
-                <app-chart [chartData]="chartData" [chartLabels]="chartLabels"></app-chart>
+            <button clrTabLink id="linkResults">Statistics</button>
+            <clr-tab-content id="history">
+                <span>
+                    <p class="p6" style="color: hsl(198, 0%, 70%); margin: 2em 0 0 0.2em;">
+                        {{luisAppHits}} hits since last call
+                    </p>
+                </span>
+                <div class="clr-row clr-align-items-start clr-justify-content-start">
+                    <div class="clr-col-6">
+                        <div class="card">
+                            <div class="card-block">
+                                <div class="chart-wrapper">
+                                    <canvas baseChart [datasets]="chartDataSets" [labels]="chartLabels"
+                                        [chartType]="'line'" [options]="chartOptions">
+                                    </canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clr-col-6">
+                        <div class="card">
+                            <div class="card-block">
+                                <div class="chart-wrapper">
+                                    <canvas baseChart [datasets]="chartDataSets" [labels]="chartLabels"
+                                        [chartType]="'bar'" [options]="chartOptions">
+                                    </canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clr-col-12">
+                        <clr-datagrid>
+                            <clr-dg-column [clrDgField]="'version'">App-Version</clr-dg-column>
+                            <clr-dg-column [clrDgField]="'date'">Date</clr-dg-column>
+
+                            <clr-dg-row *clrDgItems="let appStat of luisAppStats" [clrDgItem]="appStat">
+                                <clr-dg-cell>{{appStat.version}}</clr-dg-cell>
+                                <clr-dg-cell>{{appStat.date | date:"short"}}</clr-dg-cell>
+                            </clr-dg-row>
+
+                            <clr-dg-placeholder>Sorry. No test results was found.</clr-dg-placeholder>
+
+                            <clr-dg-footer>
+                                <clr-dg-pagination #pagination [clrDgPageSize]="20">
+                                    <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Entries per page
+                                    </clr-dg-page-size>
+                                    {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of
+                                    {{pagination.totalItems}}
+                                    entries
+                                </clr-dg-pagination>
+                            </clr-dg-footer>
+
+                            <clr-dg-detail *clrIfDetail="let appStat">
+                                <clr-dg-detail-header>Intents</clr-dg-detail-header>
+                                <clr-dg-detail-body>
+                                    <clr-datagrid style="margin-bottom: 12px;">
+                                        <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
+                                        <clr-dg-column [clrDgField]="'average'">Average (Intent Performance)</clr-dg-column>
+
+                                        <clr-dg-row *clrDgItems="let intentStat of appStat.intents"
+                                            [clrDgItem]="intentStat">
+                                            <clr-dg-cell>{{intentStat.intent}}</clr-dg-cell>
+                                            <clr-dg-cell>{{intentStat.average | number:'1.2-3'}}</clr-dg-cell>
+                                        </clr-dg-row>
+
+                                        <clr-dg-placeholder>Sorry. No intents was found.</clr-dg-placeholder>
+                                    </clr-datagrid>
+                                </clr-dg-detail-body>
+                            </clr-dg-detail>
+                        </clr-datagrid>
+                    </div>
+                </div>
             </clr-tab-content>
         </clr-tab>
     </clr-tabs>
@@ -152,10 +209,6 @@
                 <input type="radio" clrRadio value="utterances" name="options" [(ngModel)]="editWizard_option" />
                 <label>Add Utterances</label>
             </clr-radio-wrapper>
-            <clr-radio-wrapper>
-                <input type="radio" clrRadio value="json" name="options" [(ngModel)]="editWizard_option" />
-                <label>Update App JSON</label>
-            </clr-radio-wrapper>
 
             <div *ngIf="editWizard_option === 'intent'">
                 <form clrForm clrLayout="vertical">
@@ -183,15 +236,20 @@
 
                     <clr-input-container>
                         <label>Intent Name</label>
-                        <input clrInput placeholder="e.g. TAXI_BOOK" name="name" [(ngModel)]="editWizard_utterance.intentName" />
+                        <input clrInput placeholder="e.g. TAXI_BOOK" name="name"
+                            [(ngModel)]="editWizard_utterance.intentName" />
                     </clr-input-container>
                 </form>
 
                 <clr-datagrid class="datagrid-compact" [(clrDgSelected)]="editWizard_selectedUtterances">
                     <clr-dg-action-bar>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-secondary" (click)="addUterance()"><clr-icon shape="plus"></clr-icon> Add</button>
-                            <button type="button" class="btn btn-sm btn-secondary" (click)="removeUtterance()" ><clr-icon shape="close"></clr-icon> Delete</button>
+                            <button type="button" class="btn btn-sm btn-secondary" (click)="addUterance()">
+                                <clr-icon shape="plus"></clr-icon> Add
+                            </button>
+                            <button type="button" class="btn btn-sm btn-secondary" (click)="removeUtterance()">
+                                <clr-icon shape="close"></clr-icon> Delete
+                            </button>
                         </div>
                     </clr-dg-action-bar>
 
@@ -205,11 +263,57 @@
 
                     <clr-dg-placeholder>No Utterances found!</clr-dg-placeholder>
 
+
                 </clr-datagrid>
             </div>
-            <div *ngIf="editWizard_option === 'json'">
-                <span>Function currently not supported!</span>
-            </div>
+        </clr-wizard-page>
+    </clr-wizard>
+
+    <clr-wizard #testWizard [(clrWizardOpen)]="testWizard_opened" clrWizardSize="xl"
+        (clrWizardOnCancel)="closeTestWizard()" (clrWizardOnFinish)="finishTestWizard()">
+
+        <clr-wizard-title>{{luisApp.name}}</clr-wizard-title>
+
+        <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+        <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+        <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+        <clr-wizard-button [type]="'finish'">Test</clr-wizard-button>
+
+        <clr-wizard-page>
+            <ng-template clrPageTitle>Test Data</ng-template>
+
+            <clr-datagrid>
+
+                <clr-dg-column>Text</clr-dg-column>
+                <clr-dg-column>Intent</clr-dg-column>
+
+                <clr-dg-row *ngFor="let utterance of luisAppTestData" [clrDgItem]="utterance">
+                    <clr-dg-cell>{{utterance.text}}</clr-dg-cell>
+                    <clr-dg-cell>{{utterance.intent}}</clr-dg-cell>
+                </clr-dg-row>
+
+                <clr-dg-placeholder>No Test Data found!</clr-dg-placeholder>
+
+                <clr-dg-detail *clrIfDetail="let utterance">
+                    <clr-dg-detail-header>Entities</clr-dg-detail-header>
+                    <clr-dg-detail-body>
+                        <clr-datagrid>
+                            <clr-dg-column>Entity</clr-dg-column>
+                            <clr-dg-column>StartPos</clr-dg-column>
+                            <clr-dg-column>EndPos</clr-dg-column>
+
+                            <clr-dg-row *clrDgItems="let entity of utterance.entities"
+                                [clrDgItem]="entity">
+                                <clr-dg-cell>{{entity.entity}}</clr-dg-cell>
+                                <clr-dg-cell>{{entity.startPos }}</clr-dg-cell>
+                                <clr-dg-cell>{{entity.endPos }}</clr-dg-cell>
+                            </clr-dg-row>
+
+                            <clr-dg-placeholder>No Entities found.</clr-dg-placeholder>
+                        </clr-datagrid>
+                    </clr-dg-detail-body>
+                </clr-dg-detail>
+            </clr-datagrid>
         </clr-wizard-page>
     </clr-wizard>
 
