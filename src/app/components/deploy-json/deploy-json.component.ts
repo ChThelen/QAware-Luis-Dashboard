@@ -64,7 +64,11 @@ export class DeployJsonComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.luisService.getGT().subscribe(data => { this.groundTruth = data;  this.createUtterances(this.groundTruth, this.result); this.intents = this.getIntents(0);this.intents = this.getIntents(1); });
+    this.luisService.getGT().subscribe(data => { this.groundTruth = data; 
+    this.createUtterances(this.groundTruth, this.result); 
+    this.intents = this.getIntents(0);
+    this.intents = this.getIntents(1); 
+  });
 
   }
   createUtterances(file: string, result: CsvUtterance[]): void {
