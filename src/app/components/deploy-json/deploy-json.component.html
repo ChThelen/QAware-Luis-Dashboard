@@ -144,7 +144,7 @@
               <clr-tab-content *clrIfActive="uploadedFile.exist">
                 <br>
                 <label class="btn">
-                  <input type="file"  accept=".csv,.json" placeholder="Upload File"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
+                  <input type="file"  accept=".csv,.json" placeholder="Upload File" (change)="readCsvFile($event)"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
                 </label>
               </clr-tab-content>
           </clr-tab>
