@@ -15,6 +15,7 @@ export class LuisAppService {
 
   private baseUrl = environment.backendUrl;
   private endpoint = "/luis/service";
+  private endpointApp = "/luis/app";
 
   constructor(private httpClient: HttpClient) { }
 
@@ -89,7 +90,7 @@ export class LuisAppService {
   }
 
   public getGT(): Observable<string> {
-    return this.httpClient.get<string>(this.buildUrl("/getGT"), { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
+    return this.httpClient.get<string>( this.baseUrl + this.endpointApp + "/getGT", { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
   }
 
   private buildUrl(uri: string): string {
