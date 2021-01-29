@@ -141,7 +141,7 @@
       
           <clr-tab>
               <button clrTabLink>Upload File</button>
-              <clr-tab-content *clrIfActive>
+              <clr-tab-content *clrIfActive="uploadedFile.exist">
                 <br>
                 <label class="btn">
                   <input type="file"  accept=".csv,.json" placeholder="Upload File"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
@@ -213,7 +213,7 @@
     
         <clr-tab>
             <button clrTabLink>Upload File</button>
-            <clr-tab-content *clrIfActive>
+            <clr-tab-content *clrIfActive="uploadedFile.exist">
               <br>
               <label class="btn">
                 <input type="file"  accept=".csv,.json" placeholder="Upload File"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
@@ -225,9 +225,9 @@
         
       </div>
       <div class="card-footer">
-        <button class="btn btn-primary" *ngIf="addTrainData" [disabled]="selectedTrainingsdata.length==0" >Add Trainingsdata</button>
-        <button class="btn btn-primary" *ngIf="addTestData" [disabled]="selectedTrainingsdata.length==0" (click)="closeStep();  timelineStyle.step1.open=true;">Add Testdata</button>
-        <button class="btn btn-primary-outline" *ngIf="addTestData" [disabled]="selectedTrainingsdata.length==0" (click)="closeStep(); timelineStyle.step1.open=true;">Skip</button>
+        
+        <button class="btn btn-primary" [disabled]="selectedTrainingsdata.length==0 || uploadedFile.exist" (click)="closeStep();  timelineStyle.step1.open=true;">Add Testdata</button>
+        <button class="btn btn-primary-outline" [disabled]="selectedTrainingsdata.length==0 || uploadedFile.exist" (click)="closeStep(); timelineStyle.step1.open=true;">Skip</button>
       </div>
     </div>
     <!-- STEP 1-->

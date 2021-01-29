@@ -141,9 +141,9 @@ export class DeployJsonComponent implements OnInit {
       this.selectedTestdata = this.selectedTestdata.filter(element => element.intent != intent);
     }
   }
-  deselectAllIntentButtons()
+  resetSelection(number)
   {
-    this.intentsSelectionTestdata.forEach(data => data=false);
+    
   }
   getIntents(trainOrTest:number): string[] 
   {
@@ -279,7 +279,6 @@ export class DeployJsonComponent implements OnInit {
     let file : File;
     let fileList: FileList = event.target.files;
     file = fileList.item(0);
-    
 
     if (!((file.name.endsWith(".csv")) || (file.name.endsWith('.json')))) {
       file = null;
