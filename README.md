@@ -134,6 +134,7 @@ mvn clean install
 | :---         |     :---:      |
 | View Test History  | ✅  |
 | View Charts  | ✅  |
+| False Intent Warning  | ✅  |
 
 <img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics.png"/>
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics.png" width="425"/>-->
