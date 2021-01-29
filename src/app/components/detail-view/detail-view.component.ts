@@ -91,11 +91,25 @@ export class DetailViewComponent implements OnInit {
   ngOnInit(): void {
     this.getCombinedAppData().then(k => {
       this.luisApp = k.appData;
+      k.statData.forEach(appStat => {
+        
+        let isBad = false;
+
+        appStat.intents.forEach(intent => {
+          if(intent.falseCounter > 50){
+            isBad = true;
+            intent.isBadIntent = true;
+          }
+        })
+
+        appStat.containsBadIntent = isBad;
+      });
+
       this.luisAppStats = k.statData;
       this.luisApp.appJson = k.json;
       this.generateChartData();
-      this.getAppHits();
     });
+    this.getAppHits();
 
     /* For loading Data separate
     this.getApp().then(luisApp => {
@@ -125,21 +139,21 @@ export class DetailViewComponent implements OnInit {
       })
     })
   }
-
+  
   getAppJSON(): void {
     const name = this.route.snapshot.paramMap.get('name');
     this.persistentService.getAppJSON(name).subscribe(k => {
       this.luisApp.appJson = k;
     });
   }
-
+  
   getAppStats(): void {
     const name = this.route.snapshot.paramMap.get('name');
     this.persistentService.getAppStats(name).subscribe(k => {
       this.luisAppStats = k;
     });
   }
-
+  
   */
 
   getAppHits(): void {
