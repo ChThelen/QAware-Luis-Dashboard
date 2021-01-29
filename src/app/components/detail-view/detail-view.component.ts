@@ -96,7 +96,7 @@ export class DetailViewComponent implements OnInit {
         let isBad = false;
 
         appStat.intents.forEach(intent => {
-          if(intent.falseCounter > 50){
+          if(intent.falseCounter >= 1){
             isBad = true;
             intent.isBadIntent = true;
           }
