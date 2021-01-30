@@ -271,22 +271,10 @@ export class DeployJsonComponent implements OnInit {
 
     let fileList: FileList = event.target.files;
     let file = fileList.item(0);
-
-    if (!((this.uploadedFile.name.endsWith(".csv")) || (this.uploadedFile.name.endsWith('.json')))) {
-      this.uploadedFile = {
-        exist : false,
-        json : false, 
-        csv : false,
-        content : '',
-        name : ''
-      }
-      console.log('Error occured while reading file. Please import valid .csv or .json file!');
-    }
-    else 
-    {
+    
       // Initialize Object properties
       this.uploadedFile = {
-        exist : true,
+        exist : false,
         json : false, 
         csv : false,
         content : '',
@@ -298,13 +286,15 @@ export class DeployJsonComponent implements OnInit {
       if ((file.name.endsWith(".csv"))) // Reading csv file
       {
         this.uploadedFile.csv = true;
+        this.uploadedFile.exist = true;
+        
         fileReader.onload = () => {
           let data = fileReader.result;
           this.uploadedFile.content = (<string>data);
          
           // convert in json
           this.luisService.convertCsvToJson(this.uploadedFile.content, "MyJsonFile_" + new Date().toDateString())
-               .toPromise().then(data => { this.selectedTrainingsdataJson = JSON.stringify(data, null, 5); });
+               .toPromise().then(data => { this.uploadedFile.content = JSON.stringify(data, null, 3); });
         }
         fileReader.onerror = () => {
           console.log('Error occured while reading file!');
@@ -314,10 +304,13 @@ export class DeployJsonComponent implements OnInit {
       else if ((file.name.endsWith(".json"))) // Reading csv file
       {
         this.uploadedFile.json = true;
+        this.uploadedFile.exist = true;
+
         fileReader.onload = () => {
           let data = fileReader.result;
           this.uploadedFile.content = (<string>data);
-    
+          this.uploadedFile.content = JSON.parse(this.uploadedFile.content);
+          this.uploadedFile.content = JSON.stringify(this.uploadedFile.content, null, 3); 
         }
         fileReader.onerror = () => {
           console.log('Error occured while reading file!');
@@ -325,7 +318,7 @@ export class DeployJsonComponent implements OnInit {
         };
       }
 
-    }
+  
   }
   
 }

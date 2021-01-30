@@ -76,8 +76,24 @@
           <clr-control-helper>You need to select your traindata to go to the next step of the workflow. If you don't add any testdata the previously selected "training data" are automatically distributed to training and test data</clr-control-helper>
           <clr-control-error>This field is required!</clr-control-error>
         </clr-radio-container>
-        <h3 *ngIf="data.type=='train'"> Add Train data</h3>
-        <h3 *ngIf="data.type=='test'"> Add Test data</h3>
+        <h3 *ngIf="data.type=='train'"> 
+          Add Train data
+              <clr-tooltip>
+                <clr-icon shape="info-circle" size="30" style="--color:hsl(282, 43%, 54%)" clrTooltipTrigger></clr-icon>
+                <clr-tooltip-content *clrIfOpen>
+                  Select Ground-Truth data or upload a json or csv file
+                </clr-tooltip-content>
+              </clr-tooltip>
+        </h3>
+        <h3 *ngIf="data.type=='test'"> 
+          Add Test data
+              <clr-tooltip>
+                <clr-icon shape="info-circle" size="30" style="--color:hsl(282, 43%, 54%)" clrTooltipTrigger></clr-icon>
+                <clr-tooltip-content *clrIfOpen>
+                  Select Ground-Truth data or upload a json or csv file
+                </clr-tooltip-content>
+              </clr-tooltip>
+        </h3>
         <clr-tabs *ngIf="data.type=='test'">
           <clr-tab>
               <button clrTabLink>Ground-Truth</button>
@@ -146,13 +162,17 @@
                 <label class="btn">
                   <input type="file"  accept=".csv,.json" placeholder="Upload File" (change)="readCsvFile($event)"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
                 </label>
+                <div class="card-text">
+                  <pre style="overflow-x: scroll;max-height: 270px;"><code [highlight]="uploadedFile.content | json"></code>
+                  </pre>
+              </div>
               </clr-tab-content>
           </clr-tab>
       
       </clr-tabs>
       <clr-tabs *ngIf="data.type=='train'">
         <clr-tab>
-            <button clrTabLink>Ground-Truth</button>
+            <button clrTabLink (click)="uploadedFile = {exist : false,json : false, csv : false,content : '',name : ''}">Ground-Truth</button>
             <clr-tab-content *clrIfActive>
               <clr-datagrid [(clrDgSelected)]="selectedTrainingsdata" (clrDgSelectedChange)="selectionChanged($event)" >
                 <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
@@ -212,12 +232,17 @@
         </clr-tab>
     
         <clr-tab>
-            <button clrTabLink>Upload File</button>
+            <button clrTabLink (click)="intentsSelectionTraindata = [];selectedTrainingsdata = []">Upload File</button>
             <clr-tab-content *clrIfActive="uploadedFile.exist">
               <br>
               <label class="btn">
-                <input type="file"  accept=".csv,.json" placeholder="Upload File"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
+                <input type="file"  accept=".csv,.json" placeholder="Upload File" (change)="readCsvFile($event) "  class="button-input"><clr-icon shape="upload"></clr-icon> upload
               </label>
+              <h4 *ngIf="uploadedFile.exist">{{uploadedFile.name}}</h4>
+              <div class="card-text" *ngIf="uploadedFile.exist">
+                <pre style="overflow-x: scroll;max-height: 400px;"><code [highlight]="uploadedFile.content"></code>
+                </pre>
+              </div>
             </clr-tab-content>
         </clr-tab>
     
@@ -225,9 +250,7 @@
         
       </div>
       <div class="card-footer">
-        
-        <button class="btn btn-primary" [disabled]="selectedTrainingsdata.length==0 || uploadedFile.exist" (click)="closeStep();  timelineStyle.step1.open=true;">Add Testdata</button>
-        <button class="btn btn-primary-outline" [disabled]="selectedTrainingsdata.length==0 || uploadedFile.exist" (click)="closeStep(); timelineStyle.step1.open=true;">Skip</button>
+        <button class="btn btn-primary" [disabled]="(selectedTrainingsdata.length==0 && !uploadedFile.exist)" (click)="closeStep();  timelineStyle.step1.open=true;">Next</button>
       </div>
     </div>
     <!-- STEP 1-->
