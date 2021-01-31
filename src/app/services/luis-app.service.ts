@@ -56,9 +56,11 @@ export class LuisAppService {
   }
 
   public trainApp(appName: string): Observable<HttpResponse<any>> {
-    return this.httpClient.post<any>(this.buildUrl("/train"), { params: { "name": appName }, observe: 'response' });
+    return this.httpClient.post<any>(this.buildUrl("/train?name="+appName), {observe: 'response' });
   }
-
+  public trainApp1(appName: string) {
+    return this.httpClient.post<string>(this.buildUrl("/train/?name="+appName), {observe: 'response', headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json'  });
+  }
   public convertCsvToJson(csv: string, name: string): Observable<string> {
     return this.httpClient.post<string>(this.baseUrl + "/luis/convert/convertToJSON", csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": name } });
   }
@@ -73,11 +75,14 @@ export class LuisAppService {
   }
 
   public publish(name: string, staging: boolean) {
-    return this.httpClient.post<number>(this.buildUrl("/publish"), name, { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), params: { "staging": String(staging) }, responseType: 'text' as 'json' });
+    return this.httpClient.post<string>(this.buildUrl("/publish/?name="+name+"&staging="+staging),{ headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), params: { "staging": String(staging) }, responseType: 'text' as 'json' });
   }
 
   public getPublishSettings(name: string) {
-    return this.httpClient.post<string>(this.buildUrl("/getPublishSettings"), name, { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
+    return this.httpClient.get<string>(this.buildUrl("/getPublishSettings/?name="+name), { observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
+  }
+  public getAppInfo(name: string) {
+    return this.httpClient.get<string>(this.buildUrl("/getAppInfo/?name="+name), { observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
   }
 
   public merge(csv: string): Observable<string> {

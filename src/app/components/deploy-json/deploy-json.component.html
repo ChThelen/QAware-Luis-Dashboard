@@ -1,8 +1,10 @@
 <div class="button-bar">
   <div></div>
   <span class="spacer"></span>
+  <button class="btn btn-sm btn-primary">Reset</button>
   <button class="btn btn-sm btn-primary" (click)="changeToHorizonTal()" *ngIf="layout.direction === 'vertical'">HorizonTal Layout</button>
   <button class="btn btn-sm btn-primary" (click)="changeToVertical()" *ngIf="layout.direction === 'horizontal'">Vertical Layout</button>
+  
 </div>
 
 <div class="clr-row" >
@@ -20,7 +22,7 @@
             <clr-timeline-step-title>Add Utterances</clr-timeline-step-title>
             <clr-timeline-step-description>In this quickstart, you build a new app in the LUIS portal. First, create the basic parts of an app, intents, and entities. </clr-timeline-step-description>
           </clr-timeline-step>
-          <clr-timeline-step class="gemini-ignore" [clrState]="luis.app.created == 0? 'success' : timelineStyle.step1.open? 'current' : 'not-started'">
+          <clr-timeline-step class="gemini-ignore" [clrState]="luis.app.created == 0? 'success' : timelineStyle.step1.open? 'current' :  timelineStyle.step1.failed? 'error' : 'not-started'">
             <clr-timeline-step-header>Step 1</clr-timeline-step-header>
             <clr-timeline-step-title>Create new app on Luis</clr-timeline-step-title>
             <clr-timeline-step-description>
@@ -30,19 +32,23 @@
                 <li>Description:	A description for your app. Optional.</li>
                 <li>Culture	The language that your app understands and speaks. Here German.</li>
               </ul>
+              <button class="btn btn-sm btn-danger" *ngIf="luis.app.created==0">Delete</button>
+
             </clr-timeline-step-description>
           </clr-timeline-step>
-          <clr-timeline-step [clrState]="luis.app.trained == 0? 'success' : luis.app.created == 0? 'current' : 'not-started'">
+          <clr-timeline-step [clrState]="trained? timelineStyle.step2.state : luis.app.trained == 0? 'success' :  luis.app.created == 0? 'current' : timelineStyle.step2.failed? 'error' : 'not-started'">
             <clr-timeline-step-header>Step 2</clr-timeline-step-header>
             <clr-timeline-step-title>Train the App</clr-timeline-step-title>
             <clr-timeline-step-description>
               
               If you changed the app since you trained it last, train the app.
+              <br><br>
               <button class="btn btn-sm btn-primary" (click)="train()" [disabled]="luis.app.created!=0">Train</button>
+              
             </clr-timeline-step-description>
           </clr-timeline-step>
           
-          <clr-timeline-step [clrState]="luis.app.published == 0? 'success' : timelineStyle.step3.open? 'current' : 'not-started'">
+          <clr-timeline-step [clrState]="luis.app.published == 0? 'success' : luis.app.trained == 0? 'current' : timelineStyle.step3.failed? 'error' : 'not-started'">
             <clr-timeline-step-header>Step 3</clr-timeline-step-header>
             <clr-timeline-step-title>Publish the App</clr-timeline-step-title>
             <clr-timeline-step-description>
@@ -50,6 +56,7 @@
                 <li> Publish the app to access it from the HTTP endpoint</li>
                 <li>In order to receive a LUIS prediction in a chat bot or other client application, you need to publish the app to the prediction endpoint.</li>
               </ul>
+              <button class="btn btn-sm btn-primary-outline" *ngIf="luis.app.published == 0">Update Settings</button>
             </clr-timeline-step-description>
           </clr-timeline-step>
           <clr-timeline-step [clrState]="timelineStyle.step4.state">
@@ -254,17 +261,17 @@
           
           <div >
             <clr-accordion clrAccordionMultiPanel="true">
-              <clr-accordion-panel clrAccordionPanelOpen="true">
+              <clr-accordion-panel  [clrAccordionPanelOpen]="luis.app.published == 1">
                 <clr-accordion-title>Create App</clr-accordion-title>
-                <clr-accordion-content clrIfExpanded="true">
-                
+                <clr-accordion-content [clrIfExpanded]="luis.app.published == 1">
+                  <form class="clr-form clr-form-horizontal">
                     <clr-input-container>
                       <label >App Name</label>
-                      <input clrInput placeholder="Name" name="input" [disabled]="luis.app.created==0" [(ngModel)]="luis.app.name" />
+                      <input clrInput placeholder="Name" name="appName" [disabled]="luis.app.created==0" [(ngModel)]="luis.app.name" />
                     </clr-input-container>
                     <clr-textarea-container>
                       <label>Description</label>
-                      <textarea placeholder="Description" clrTextarea  [disabled]="luis.app.created==0" [(ngModel)]="luis.app.description" ></textarea>
+                      <textarea placeholder="Description" clrTextarea  name="appDesc" [disabled]="luis.app.created==0" [(ngModel)]="luis.app.description" ></textarea>
                       <clr-control-helper>Optional</clr-control-helper>
                     </clr-textarea-container>
                     <clr-select-container>
@@ -273,39 +280,55 @@
                         <option value="one">de-de</option>
                       </select>
                     </clr-select-container>
+                  </form>
                 
                 </clr-accordion-content>
               </clr-accordion-panel>
               <clr-accordion-panel clrAccordionPanelOpen="true" [clrAccordionPanelDisabled]="luis.app.created==0">
                 <clr-accordion-title>App Settings</clr-accordion-title>
                 <clr-accordion-content clrIfExpanded="true">
-                <div class="settings-info">
-                  <div>
-                      <label >Status : &nbsp;</label>
-                      <span class="label label-danger" *ngIf="luis.app.created === 1"> NOT CREATED</span>
-                      <span class="label label-success" *ngIf="luis.app.created === 0 && luis.app.trained === 1">CREATED</span>
+               
+                <div  class="settings-info" >
+                  <div class="clr-row">
+                      <div class="clr-example-col-value clr-col-1"> <label >Status : &nbsp;</label></div>
+                      <div class="clr-example-col-value clr-col">
+                        <span class="label label-danger" *ngIf="luis.app.created === 1"> NOT CREATED</span>
+                        <span class="label label-warning" *ngIf="luis.app.created === 0 && luis.app.trained != 0">CREATED</span>
+                        <span class="label label-success" *ngIf="luis.app.trained === 0 && luis.app.published != 0"> TRAINED</span>
+                        <span class="label label-success" *ngIf="luis.app.published === 0">PUBLISHED</span>
+                      </div>
                   </div>
-                  <div>
-                    <label >App ID : &nbsp;</label>
-                      <span class="label label-warning" *ngIf="luis.app.created == 0">{{luis.app.id}}</span>
+                  <div class="clr-row">
+                    <div class="clr-example-col-value clr-col-1"><label >App Id : &nbsp;</label></div>
+                    <div class="clr-example-col-value clr-col"> <span class="label label-info clickable" *ngIf="luis.app.created == 0">{{luis.app.id}}</span></div>
                   </div>
-                  <div>
-                    <label >published : &nbsp;</label>
-                    <span class="label label-danger" *ngIf="luis.app.published === 1"> NOT PUBLISHED</span>
-                    <span class="label label-success" *ngIf="luis.app.published === 0 && luis.app.trained === 1">PUBLISHED</span>
+                  <div class="clr-row">
+                    <div class="clr-example-col-value clr-col-1"><label >Published : &nbsp;</label></div>
+                    <div class="clr-example-col-value clr-col"><span class="label label-danger"> NOT PUBLISHED</span></div>
                 </div>
-                  <div>
-                      <label >Version: &nbsp;</label>
-                      <span class="label label-success" *ngIf="luis.app.created == 0">{{luis.app.version}}</span>
-                  </div>
+                <div class="clr-row">
+                    <div class="clr-example-col-value clr-col-1"><label >Version : &nbsp;</label></div>
+                    <div class="clr-example-col-value clr-col"><span class="label label-blue" *ngIf="luis.app.created == 0">{{luis.app.version}}</span></div>
                 </div>
+              </div>
                 </clr-accordion-content>
               </clr-accordion-panel>
               <clr-accordion-panel clrAccordionPanelOpen="true" [clrAccordionPanelDisabled]="luis.app.published==1">
-                <clr-accordion-title>published Settings</clr-accordion-title>
+                <clr-accordion-title>Published Settings</clr-accordion-title>
                 <clr-accordion-content clrIfExpanded="false">
-                  <div>
-                    
+                  <div  class="settings-info" *ngIf="luis.app.published == 0">
+                      <div class="clr-row">
+                          <div class="clr-example-col-value clr-col-2"> <label >SentimentAnalysis : &nbsp;</label></div>
+                          <div class="clr-example-col-value clr-col"><span class="label label-blue"> {{luis.app.settings.sentimentAnalysis}}</span></div>
+                      </div>
+                      <div class="clr-row">
+                        <div class="clr-example-col-value clr-col-2"><label >Speech: &nbsp;</label></div>
+                        <div class="clr-example-col-value clr-col"><span class="label label-blue" *ngIf="luis.app.created == 0">{{luis.app.settings.speech}}</span></div>
+                      </div>
+                      <div class="clr-row">
+                        <div class="clr-example-col-value clr-col-2"><label >SpellChecker : &nbsp;</label></div>
+                        <div class="clr-example-col-value clr-col"><span class="label label-blue">{{luis.app.settings.spellChecker}}</span></div>
+                    </div>
                   </div>
                 </clr-accordion-content>
               </clr-accordion-panel>
@@ -313,7 +336,7 @@
           </div>
         </div>
         <div class="card-footer">
-          <button class="btn btn-success" *ngIf="luis.app.created==0">Publish</button>
+          <button class="btn btn-success" (click)="publish()" [disabled]="luis.app.trained == 1" *ngIf="luis.app.created==0">Publish</button>
           <button class="btn btn-primary" *ngIf="luis.app.created==1" [clrLoading]="submitBtnState" [disabled]="luis.app.name.trim() === ''" (click)="createApp()">create</button>
           <button class="btn btn-primary-outline"(click)="this.timelineStyle.step0 ={ state: 'current', open: true };this.timelineStyle.step1 ={ state: 'not-started', open: false };">Back</button>
       </div>

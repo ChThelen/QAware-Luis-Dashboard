@@ -37,8 +37,18 @@ export class GroundTruthComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.intents = this.getIntents();
-    this.luisService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result); });
+    
+    this.getGT();
+  }
+  getGT()
+  {
+    this.result = [];
+    this.luisService.getGT().subscribe(data => {
+       this.groundTruth = data; 
+       this.createUtterances(this.groundTruth, this.result); 
+       this.intents = this.getIntents();
+       });
+    this.newChange = false;
   }
 
   selectIntents(intent: string) {
@@ -48,6 +58,8 @@ export class GroundTruthComponent implements OnInit {
     this.selectedUtterances = this.selectedUtterances.filter(element => element.intent != intent);
   }
   getIntents(): string[] {
+    if(this.intentsSelection.length != 0)
+      this.intentsSelection = [];
     let temp = this.result.map(element => element.intent);
     temp = [...new Set(temp)];
     temp.forEach(element => this.intentsSelection.push(false));

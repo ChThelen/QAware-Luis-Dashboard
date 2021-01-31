@@ -10,7 +10,7 @@ import { ClrLoadingState } from '@clr/angular';
 })
 export class DeployJsonComponent implements OnInit {
   
-  appCreated = false;
+  trained = false;
   intents: string[] = [];
   intentsSelectionTestdata: boolean[] = [];
   intentsSelectionTraindata: boolean[] = [];
@@ -44,11 +44,11 @@ export class DeployJsonComponent implements OnInit {
   };
 
   timelineStyle = {
-    step0: { state: "current", open: true },
-    step1: { state: "not-started", open: false },
-    step2: { state: "not-started", open: false },
-    step3: { state: "not-started", open: false },
-    step4: { state: "not-started", open: false },
+    step0: { state: "current", open: true ,failed: false},
+    step1: { state: "not-started", open: false , failed: false},
+    step2: { state: "not-started", open: false,failed: false },
+    step3: { state: "not-started", open: false,failed: false },
+    step4: { state: "not-started", open: false,failed: false },
   };
   luis = {
     app:
@@ -57,24 +57,18 @@ export class DeployJsonComponent implements OnInit {
       description: '',
       culture:'de-de',
       id: '',
+      url : '',
       version: '1.0',
       created: 1,
+      region:'',
+      publishedDateTime: '',
       trained: 1,
       published: 1,
-      staging: true,
-      production: false
+      settings:{sentimentAnalysis:false,speech:false,spellChecker:false},
+      isStaging: false,
     }
   };
   
-  closeStep() {
-    this.timelineStyle = {
-      step0: { state: "current", open: false },
-      step1: { state: "not-started", open: false },
-      step2: { state: "not-started", open: false },
-      step3: { state: "not-started", open: false },
-      step4: { state: "not-started", open: false },
-    };
-  }
   constructor(private luisService: LuisAppService) {
     this.createUtterances(this.groundTruth, this.result);
     this.intents = this.getIntents(0);
@@ -175,6 +169,10 @@ export class DeployJsonComponent implements OnInit {
   {
     this.intentsSelectionTestdata.forEach(data => data=false);
   }
+  /**
+   *  To generate Intents Buttons 
+   * @param trainOrTest 
+   */
   getIntents(trainOrTest:number): string[] 
   {
     if(trainOrTest)
@@ -199,7 +197,6 @@ export class DeployJsonComponent implements OnInit {
   }
   createApp() 
   {
-    let appCreated = false;
     if (this.luis.app.created === 1) // App hasn't been created
     {
       let json = '';
@@ -220,12 +217,14 @@ export class DeployJsonComponent implements OnInit {
         this.luis.app.version = createdApp.version;
         this.luis.app.name = createdApp.name;
         this.luis.app.created = 0;
-          
+          //TODO : Notification Message  
       },
       err => {
-        
+        this.timelineStyle.step1.state = "error";
         let error = JSON.parse(err);
         console.log(error)
+        this.timelineStyle.step1.failed = true;
+        //TODO : Error Message
       });
  
     }
@@ -233,37 +232,79 @@ export class DeployJsonComponent implements OnInit {
   
   }
   train() {
-    this.luisService.trainApp("").subscribe(data => { 
-      this.luis.app.trained = <number> data.body;
-    });
-    
-    this.luis.app.trained = 0;
-    if (this.luis.app.trained == 0) // App is trained
-    {
-     
-    }
-    else // App isn't trained
-    {
+    this.trained = true;
+    this.timelineStyle.step2.state = "processing";
+    this.luisService.trainApp1(this.luis.app.name).subscribe(
+    data => { 
+     this.luis.app.trained = 0;
+      // NOTIFICATION 
 
-      //TODO : User must be notify 
+      this.trained = false;
+      this.timelineStyle.step2.state = "success";
+      this.timelineStyle.step3.state = "current";
+    },
+    err => {
+      this.timelineStyle.step2.failed = true;
+      // NOTIFICATION
     }
+
+    );
+    
   }
   publish() {
-    this.luisService.publish("this.jsonString", this.luis.app.staging).subscribe(data => { this.luis.app.published = data });
-    this.luis.app.published = 0;
-    if (this.luis.app.published == 0) // App is published
-    {
-      
-    }
-    else // App isn't published
-    {
-      //TODO : User must be notify 
-    }
+    this.luisService.publish(this.luis.app.name, this.luis.app.isStaging).subscribe(
+      data => {
+        this.luis.app.published = 0;
+        // NOTIFICATION
+        console.log(data)
+      /*  let app = JSON.parse(data);  
+        this.luis.app.region = app.region; 
+        this.luis.app.url = app.endpointUrl; 
+        this.luis.app.isStaging = app.isStaging; 
+        this.luis.app.publishedDateTime = app.publishedDateTime;
+        console.log(this.luis.app) */
+        this.timelineStyle.step4.state = 'current';
+       },
+       err => {
+        this.timelineStyle.step3.failed = true;
+         // NOTIFICATION
+       }
+    );
+    this.luisService.getAppInfo(this.luis.app.name).subscribe(
+      data => {
+        let info = data; 
+        console.log(data)
+        console.log("data")
+       },
+       err => {
+         // NOTIFICATION
+       }
+    );
+    this.luisService.getPublishSettings(this.luis.app.name)
+    .subscribe(
+      data => {
+        let settings = JSON.parse(data.body);
+        this.luis.app.settings.sentimentAnalysis = settings.sentimentAnalysis;
+        this.luis.app.settings.speech = settings.speech;
+        this.luis.app.settings.spellChecker = settings.spellChecker;
+        console.log(data.body)
+        // NOTIFICATION
+        
+       },
+       err => {
+         // NOTIFICATION
+       }
+    );
+ 
   }
-
+/**
+ * 
+ * @param jsonString 
+ * @returns the same json but with another name and description
+ */
   editNameAndDescription(jsonString) 
   {
-
+    
     if (this.luis.app.name.trim() != "") {
       let startIndex = jsonString.split(/\r\n|\n/).join("").lastIndexOf('\"name\"');
       let endIndex = jsonString.split(/\r\n|\n/).join("").indexOf(",", startIndex) + 1;
@@ -282,14 +323,17 @@ export class DeployJsonComponent implements OnInit {
   }
   addUtterances() 
   {
+    let json = "";
     if(!this.uploadedFile.exist)
     {
+     
       if(this.selectedTrainingsdata.length!= 0) // SELECT TRAIN DATA
       {
         let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
         this.luisService.convertCsvToJson(csv, this.luis.app.name)
-        .toPromise().then(data => { this.selectedTrainingsdataJson = JSON.stringify(data, null, 5); });
-  
+        .toPromise().then(data => { this.selectedTrainingsdataJson = JSON.stringify(data, null, 5);
+          console.log(this.selectedTrainingsdataJson); json = JSON.stringify(data, null, 5); });
+        console.log(this.selectedTrainingsdataJson)
       }
       if(this.selectedTestdata.length!= 0) // SELECT Test DATA
       {
@@ -297,7 +341,7 @@ export class DeployJsonComponent implements OnInit {
         this.luisService.testData(csv, "MyJsonFile_" + new Date().toDateString())
         .toPromise().then(data => { this.selectedTestdataJson = JSON.stringify(data, null, 5); });
       }
-      if(this.selectedTestdata.length == 0)
+      else if(this.selectedTestdata.length == 0) // SKIP
       {
         let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
         this.luisService.autoData(csv, this.luis.app.name,this.luis.app.version,this.luis.app.description,this.luis.app.culture)
@@ -305,7 +349,7 @@ export class DeployJsonComponent implements OnInit {
       }
      
     } 
-    return this.selectedTrainingsdataJson;
+    return json;
   }
 
   readCsvFile(event: any) 
