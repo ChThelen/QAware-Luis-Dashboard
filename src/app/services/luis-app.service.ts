@@ -14,41 +14,41 @@ import { Entity } from '../models/Entity';
 export class LuisAppService {
 
   private baseUrl = environment.backendUrl;
-  private endpoint = "/luis/service";
-  private endpointApp = "/luis/app";
+  private endpoint = "/luis/app";
+  private endpointService = "/luis/service";
 
   constructor(private httpClient: HttpClient) { }
 
   public getApps(): Observable<Array<LuisApp>> {
-    return this.httpClient.get<Array<LuisApp>>(this.buildUrl("/getApps"));
+    return this.httpClient.get<Array<LuisApp>>(this.buildUrlApp("/getApps"));
   }
 
   public addIntent(appName: string, intent: Intent): Observable<HttpResponse<any>> {
-    return this.httpClient.post<any>(this.buildUrl("/addIntent"), intent, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response' });
+    return this.httpClient.post<any>(this.buildUrlApp("/addIntent"), intent, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response' });
   }
 
   public addUtterances(appName: string, utterances: Array<Utterance>): Observable<HttpResponse<any>> {
-    return this.httpClient.post<any>(this.buildUrl("/addUtterances"), utterances, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response' });
+    return this.httpClient.post<any>(this.buildUrlApp("/addUtterances"), utterances, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response' });
   }
 
   public addEntity(appName: string, entity: Entity): Observable<HttpResponse<any>> {
-    return this.httpClient.post<any>(this.buildUrl("/addEntity"), entity, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response' });
+    return this.httpClient.post<any>(this.buildUrlApp("/addEntity"), entity, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": appName }, observe: 'response' });
   }
 
   public getAppJSON(appName: string): Observable<string> {
-    return this.httpClient.get<string>(this.buildUrl("/getJSON"), { params: { "name": appName } });
+    return this.httpClient.get<string>(this.buildUrlApp("/getJSON"), { params: { "name": appName } });
   }
 
   public getHitCount(appName: string): Observable<number> {
-    return this.httpClient.get<number>(this.buildUrl("/getHitCount"), { params: { "name": appName } });
+    return this.httpClient.get<number>(this.buildUrlApp("/getHitCount"), { params: { "name": appName } });
   }
 
   public getSimpleHit(appName: string, utterance: string): Observable<string> {
-    return this.httpClient.get<string>(this.buildUrl("/simpleHit"), { params: { "name": appName, utterance: utterance } });
+    return this.httpClient.get<string>(this.buildUrlApp("/simpleHit"), { params: { "name": appName, utterance: utterance } });
   }
 
   public getAppStats(appName: string): Observable<Array<LuisAppStats>> {
-    return this.httpClient.get<Array<LuisAppStats>>(this.buildUrl("/getAppStats"), { params: { "name": appName } });
+    return this.httpClient.get<Array<LuisAppStats>>(this.buildUrlApp("/getAppStats"), { params: { "name": appName } });
   }
 
   public deleteApp(appName: string, force: boolean = true): Observable<HttpResponse<any>> {
@@ -69,7 +69,7 @@ export class LuisAppService {
   }
 
   public createApp(json: string) {
-    return this.httpClient.post<string>(this.baseUrl + "/luis/service/createApp", json, { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
+    return this.httpClient.post<string>(this.baseUrl + "/luis/service/createApp", json, { observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
   }
 
   public publish(name: string, staging: boolean) {
@@ -82,26 +82,29 @@ export class LuisAppService {
 
   public merge(csv: string): Observable<string> {
     const body = { title: csv }
-    return this.httpClient.put<string>(this.buildUrl("/addRecords"), body, { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
+    return this.httpClient.put<string>(this.buildUrlApp("/addRecords"), body, { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
   }
 
   public changeGT(csv: string): Observable<string> {
-    return this.httpClient.put<string>(this.buildUrl("/changeGT"), csv, { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
+    return this.httpClient.put<string>(this.buildUrlApp("/changeGT"), csv, { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
   }
 
   public getGT(): Observable<string> {
-    return this.httpClient.get<string>( this.baseUrl + this.endpointApp + "/getGT", { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
+    return this.httpClient.get<string>(this.buildUrlApp("/getGT"), { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
   }
 
-  private buildUrl(uri: string): string {
+  private buildUrlApp(uri: string): string {
     return this.baseUrl + this.endpoint + uri;
+  }
+  private buildUrl(uri: string): string {
+    return this.baseUrl + this.endpointService + uri;
   }
   
   public testData(csv: string, name: string): Observable<string> {
-    return this.httpClient.post<string>(this.buildUrl("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": name } });
+    return this.httpClient.post<string>(this.buildUrlApp("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": name } });
   }
   public autoData(csv: string, name: string,version:string,desc:string, culture:string): Observable<string> {
-    return this.httpClient.post<string>(this.buildUrl("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }),
+    return this.httpClient.post<string>(this.buildUrlApp("/autoData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }),
      params: { "name": name , "version": version,"desc": desc, "culture":culture } });
   }
 }
