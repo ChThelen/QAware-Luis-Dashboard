@@ -1,5 +1,5 @@
-
-<clr-spinner [clrMedium]=true style="margin:0 auto; display: flex; justify-content: center; align-items: center;" *ngIf="!luisApp || !luisApp.appJson">Loading ...</clr-spinner>
+<clr-spinner [clrMedium]=true style="margin:0 auto; display: flex; justify-content: center; align-items: center;"
+    *ngIf="!luisApp || !luisApp.appJson">Loading ...</clr-spinner>
 
 <div *ngIf="luisApp && luisApp.appJson">
     <clr-tabs>
@@ -42,7 +42,8 @@
                                     [class.btn-publish]="luisApp.status !== 'published'">Publish</button>
                                 <button class="btn btn-sm btn-link" (click)="trainApp()">Train</button>
                                 <button class="btn btn-sm btn-link" (click)="openTesWizard()">Test</button>
-                                <div class="dropdown top-left" [class.open]="appDropDown">
+                                <div class="dropdown top-left" [class.open]="appDropDown" appClickOutside
+                                    (clickOutside)="appDropDown=false">
                                     <button class="dropdown-toggle btn btn-sm btn-link"
                                         (click)="appDropDown = !appDropDown">
                                         Other
@@ -51,13 +52,12 @@
                                     <div class="dropdown-menu">
                                         <button class="btn btn-sm btn-link"
                                             (click)="openEditWizard(); appDropDown=false;" disabled>Edit</button>
-                                        <button class="btn btn-sm btn-link"
-                                            (click)="trainApp(); appDropDown=false;">Update</button>
+                                        <button class="btn btn-sm btn-link" routerLink="/deploy" appDropDown="false;">Update</button>
                                         <button class="btn btn-sm btn-link"
                                             (click)="deleteModal=true; appDropDown=false;">Delete</button>
                                     </div>
                                 </div>
-                                <div style="margin-top: 0.7em;"  class="progress loop" *ngIf="isLoading">
+                                <div style="margin-top: 0.7em;" class="progress loop" *ngIf="isLoading">
                                     <progress></progress>
                                 </div>
                             </div>
@@ -119,7 +119,13 @@
                             <clr-dg-column [clrDgField]="'date'">Date</clr-dg-column>
 
                             <clr-dg-row *clrDgItems="let appStat of luisAppStats" [clrDgItem]="appStat">
-                                <clr-dg-cell>{{appStat.version}}</clr-dg-cell>
+                                <clr-dg-cell>
+                                    <span>
+                                    {{appStat.version}}
+                                    <cds-icon *ngIf="appStat.containsBadIntent" shape="exclamation-triangle"
+                                        status="danger" solid></cds-icon>
+                                    </span>
+                                </clr-dg-cell>
                                 <clr-dg-cell>{{appStat.date | date:"short"}}</clr-dg-cell>
                             </clr-dg-row>
 
@@ -140,11 +146,18 @@
                                 <clr-dg-detail-body>
                                     <clr-datagrid style="margin-bottom: 12px;">
                                         <clr-dg-column [clrDgField]="'intent'">Intent</clr-dg-column>
-                                        <clr-dg-column [clrDgField]="'average'">Average (Intent Performance)</clr-dg-column>
+                                        <clr-dg-column [clrDgField]="'average'">Average (Intent Performance)
+                                        </clr-dg-column>
 
                                         <clr-dg-row *clrDgItems="let intentStat of appStat.intents"
                                             [clrDgItem]="intentStat">
-                                            <clr-dg-cell>{{intentStat.intent}}</clr-dg-cell>
+                                            <clr-dg-cell>
+                                                <span>
+                                                    {{intentStat.intent}}
+                                                    <cds-icon *ngIf="intentStat.isBadIntent"
+                                                        shape="exclamation-triangle" status="danger" solid></cds-icon>
+                                                </span>
+                                            </clr-dg-cell>
                                             <clr-dg-cell>{{intentStat.average | number:'1.2-3'}}</clr-dg-cell>
                                         </clr-dg-row>
 
@@ -305,8 +318,7 @@
                             <clr-dg-column>StartPos</clr-dg-column>
                             <clr-dg-column>EndPos</clr-dg-column>
 
-                            <clr-dg-row *clrDgItems="let entity of utterance.entities"
-                                [clrDgItem]="entity">
+                            <clr-dg-row *clrDgItems="let entity of utterance.entities" [clrDgItem]="entity">
                                 <clr-dg-cell>{{entity.entity}}</clr-dg-cell>
                                 <clr-dg-cell>{{entity.startPos }}</clr-dg-cell>
                                 <clr-dg-cell>{{entity.endPos }}</clr-dg-cell>

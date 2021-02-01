@@ -17,6 +17,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChartsModule } from 'ng2-charts';
 import { CdsModule } from '@cds/angular';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { CdsModule } from '@cds/angular';
     GroundTruthComponent,
     EditableCellComponent,
     NotificationComponent,
-    DashboardComponent
+    DashboardComponent,
+    ClickOutsideDirective
   ],
   imports: [
     BrowserModule,

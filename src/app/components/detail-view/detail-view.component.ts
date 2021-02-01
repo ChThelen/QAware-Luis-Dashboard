@@ -91,11 +91,25 @@ export class DetailViewComponent implements OnInit {
   ngOnInit(): void {
     this.getCombinedAppData().then(k => {
       this.luisApp = k.appData;
+      k.statData.forEach(appStat => {
+
+        let isBad = false;
+
+        appStat.intents.forEach(intent => {
+          if (intent.falseCounter >= 1) {
+            isBad = true;
+            intent.isBadIntent = true;
+          }
+        })
+
+        appStat.containsBadIntent = isBad;
+      });
+
       this.luisAppStats = k.statData;
       this.luisApp.appJson = k.json;
       this.generateChartData();
-      this.getAppHits();
     });
+    this.getAppHits();
 
     /* For loading Data separate
     this.getApp().then(luisApp => {
@@ -125,21 +139,21 @@ export class DetailViewComponent implements OnInit {
       })
     })
   }
-
+  
   getAppJSON(): void {
     const name = this.route.snapshot.paramMap.get('name');
     this.persistentService.getAppJSON(name).subscribe(k => {
       this.luisApp.appJson = k;
     });
   }
-
+  
   getAppStats(): void {
     const name = this.route.snapshot.paramMap.get('name');
     this.persistentService.getAppStats(name).subscribe(k => {
       this.luisAppStats = k;
     });
   }
-
+  
   */
 
   getAppHits(): void {
@@ -315,10 +329,18 @@ export class DetailViewComponent implements OnInit {
   finishTestWizard(): void {
     const name = this.route.snapshot.paramMap.get('name');
 
+    this.isLoading = true;
     this.luisAppService.batchTestApp(name, "all").subscribe(k => {
-      this.closeTestWizard();
-    });
-
+      this.luisAppStats = k;
+      this.isLoading = false;
+      this.showNotification("The test was successful. You can find your results under statistics.", null, NotificationType.Info);
+    },
+      (error) => {
+        this.isLoading = false;
+        this.showNotification("The test failed. See detail for more information!", error.message, NotificationType.Danger);
+      }
+    );
+    this.closeTestWizard();
   }
 
   finishEditWizard(): void {
