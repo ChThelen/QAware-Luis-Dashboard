@@ -1,5 +1,14 @@
+<div class="button-bar">
+  <div></div>
+  <span class="spacer"></span>
+  <button class="btn btn-sm btn-primary">Reset</button>
+  <button class="btn btn-sm btn-primary" (click)="changeToHorizonTal()" *ngIf="layout.direction === 'vertical'">HorizonTal Layout</button>
+  <button class="btn btn-sm btn-primary" (click)="changeToVertical()" *ngIf="layout.direction === 'horizontal'">Vertical Layout</button>
+  
+</div>
+
 <div class="clr-row" >
-  <div class="clr-col-lg-3 clr-col-12 " >
+  <div [class]="layout.block1" >
     <div class="card">
       <div class="card-header">
         <h3 style="text-align: center;"> STEPPER</h3>
@@ -7,13 +16,13 @@
       
       <div class=" card-block container">
 
-        <clr-timeline clrLayout="vertical" >
+        <clr-timeline [clrLayout]="layout.direction" >
           <clr-timeline-step [clrState]="timelineStyle.step0.state">
             <clr-timeline-step-header>Step 0</clr-timeline-step-header>
             <clr-timeline-step-title>Add Utterances</clr-timeline-step-title>
             <clr-timeline-step-description>In this quickstart, you build a new app in the LUIS portal. First, create the basic parts of an app, intents, and entities. </clr-timeline-step-description>
           </clr-timeline-step>
-          <clr-timeline-step class="gemini-ignore" [clrState]="timelineStyle.step1.state">
+          <clr-timeline-step class="gemini-ignore" [clrState]="luis.app.created == 0? 'success' : timelineStyle.step1.open? 'current' :  timelineStyle.step1.failed? 'error' : 'not-started'">
             <clr-timeline-step-header>Step 1</clr-timeline-step-header>
             <clr-timeline-step-title>Create new app on Luis</clr-timeline-step-title>
             <clr-timeline-step-description>
@@ -23,19 +32,23 @@
                 <li>Description:	A description for your app. Optional.</li>
                 <li>Culture	The language that your app understands and speaks. Here German.</li>
               </ul>
+              <button class="btn btn-sm btn-danger" *ngIf="luis.app.created==0">Delete</button>
+
             </clr-timeline-step-description>
           </clr-timeline-step>
-          <clr-timeline-step [clrState]="timelineStyle.step2.state">
+          <clr-timeline-step [clrState]="trained? timelineStyle.step2.state : luis.app.trained == 0? 'success' :  luis.app.created == 0? 'current' : timelineStyle.step2.failed? 'error' : 'not-started'">
             <clr-timeline-step-header>Step 2</clr-timeline-step-header>
             <clr-timeline-step-title>Train the App</clr-timeline-step-title>
             <clr-timeline-step-description>
               
               If you changed the app since you trained it last, train the app.
+              <br><br>
               <button class="btn btn-sm btn-primary" (click)="train()" [disabled]="luis.app.created!=0">Train</button>
+              
             </clr-timeline-step-description>
           </clr-timeline-step>
           
-          <clr-timeline-step [clrState]="timelineStyle.step3.state">
+          <clr-timeline-step [clrState]="luis.app.published == 0? 'success' : luis.app.trained == 0? 'current' : timelineStyle.step3.failed? 'error' : 'not-started'">
             <clr-timeline-step-header>Step 3</clr-timeline-step-header>
             <clr-timeline-step-title>Publish the App</clr-timeline-step-title>
             <clr-timeline-step-description>
@@ -43,6 +56,7 @@
                 <li> Publish the app to access it from the HTTP endpoint</li>
                 <li>In order to receive a LUIS prediction in a chat bot or other client application, you need to publish the app to the prediction endpoint.</li>
               </ul>
+              <button class="btn btn-sm btn-primary-outline" *ngIf="luis.app.published == 0">Update Settings</button>
             </clr-timeline-step-description>
           </clr-timeline-step>
           <clr-timeline-step [clrState]="timelineStyle.step4.state">
@@ -56,7 +70,7 @@
       </div>
     </div>
   </div>
-  <div class="clr-col-lg-9 clr-col-12 " >
+  <div [class]="layout.block2" >
     
     <!--STEP 0-->
     <div class="card" *ngIf="timelineStyle.step0.open">
@@ -76,8 +90,24 @@
           <clr-control-helper>You need to select your traindata to go to the next step of the workflow. If you don't add any testdata the previously selected "training data" are automatically distributed to training and test data</clr-control-helper>
           <clr-control-error>This field is required!</clr-control-error>
         </clr-radio-container>
-        <h3 *ngIf="data.type=='train'"> Add Train data</h3>
-        <h3 *ngIf="data.type=='test'"> Add Test data</h3>
+        <h3 *ngIf="data.type=='train'"> 
+          Add Train data
+              <clr-tooltip>
+                <clr-icon shape="info-circle" size="35" style="--color:hsl(282, 43%, 54%)" clrTooltipTrigger></clr-icon>
+                <clr-tooltip-content *clrIfOpen>
+                  Select Ground-Truth data or upload a json or csv file
+                </clr-tooltip-content>
+              </clr-tooltip>
+        </h3>
+        <h3 *ngIf="data.type=='test'"> 
+          Add Test data
+              <clr-tooltip>
+                <clr-icon shape="info-circle" size="30" style="--color:hsl(282, 43%, 54%)" clrTooltipTrigger></clr-icon>
+                <clr-tooltip-content *clrIfOpen>
+                  Select Ground-Truth data or upload a json or csv file
+                </clr-tooltip-content>
+              </clr-tooltip>
+        </h3>
         <clr-tabs *ngIf="data.type=='test'">
           <clr-tab>
               <button clrTabLink>Ground-Truth</button>
@@ -96,7 +126,7 @@
               
                   <clr-dg-action-bar>
                     
-                    <div *ngFor="let intent of intents; let i = index" class="btn-group">
+                    <div *ngFor="let intent of intents; let i = index" class="btn-group" >
                       <div>
                           <button *ngIf="!intentsSelectionTestdata[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i];selectIntents(intent,1)">{{intent}}</button>
                           <button *ngIf="intentsSelectionTestdata[i]" class="btn btn-sm btn-primary" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i]; deselectIntents(intent,1)">{{intent}}</button>
@@ -138,21 +168,10 @@
                 </clr-datagrid>
               </clr-tab-content>
           </clr-tab>
-      
-          <clr-tab>
-              <button clrTabLink>Upload File</button>
-              <clr-tab-content *clrIfActive>
-                <br>
-                <label class="btn">
-                  <input type="file"  accept=".csv,.json" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
-                </label>
-              </clr-tab-content>
-          </clr-tab>
-      
       </clr-tabs>
       <clr-tabs *ngIf="data.type=='train'">
         <clr-tab>
-            <button clrTabLink>Ground-Truth</button>
+            <button clrTabLink (click)="uploadedFile = {exist : false,json : false, csv : false,content : '',name : ''}">Ground-Truth</button>
             <clr-tab-content *clrIfActive>
               <clr-datagrid [(clrDgSelected)]="selectedTrainingsdata" (clrDgSelectedChange)="selectionChanged($event)" >
                 <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
@@ -212,12 +231,17 @@
         </clr-tab>
     
         <clr-tab>
-            <button clrTabLink>Upload File</button>
-            <clr-tab-content *clrIfActive>
+            <button clrTabLink (click)="intentsSelectionTraindata = [];selectedTrainingsdata = []">Upload File</button>
+            <clr-tab-content *clrIfActive="uploadedFile.exist">
               <br>
               <label class="btn">
-                <input type="file"  accept=".csv,.json" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> upload
+                <input type="file"  accept=".csv,.json" placeholder="Upload File" (change)="readCsvFile($event) "  class="button-input"><clr-icon shape="upload"></clr-icon> upload
               </label>
+              <h4 *ngIf="uploadedFile.exist">{{uploadedFile.name}}</h4>
+              <div class="card-text" *ngIf="uploadedFile.exist">
+                <pre style="overflow-x: scroll;max-height: 400px;"><code [highlight]="uploadedFile.content"></code>
+                </pre>
+              </div>
             </clr-tab-content>
         </clr-tab>
     
@@ -225,100 +249,98 @@
         
       </div>
       <div class="card-footer">
-        <button class="btn btn-primary" *ngIf="addTrainData" [disabled]="selectedTrainingsdata.length==0" >Add Trainingsdata</button>
-        <button class="btn btn-primary" *ngIf="addTestData" [disabled]="selectedTrainingsdata.length==0" (click)="closeStep();  timelineStyle.step1.open=true;">Add Testdata</button>
-        <button class="btn btn-primary-outline" *ngIf="addTestData" [disabled]="selectedTrainingsdata.length==0" (click)="closeStep(); timelineStyle.step1.open=true;">Skip</button>
+        <button class="btn btn-primary" [disabled]="(selectedTrainingsdata.length==0 && !uploadedFile.exist)" (click)="this.timelineStyle.step0 ={ state: 'success', open: false };this.timelineStyle.step1 ={ state: 'current', open: true };">Next</button>
       </div>
     </div>
     <!-- STEP 1-->
     <div class="card" *ngIf="timelineStyle.step1.open" >
-      <div class="card-header">
-        <h3 style="text-align: center;"> Create new app on Luis</h3>
-      </div>
-      <div class="card-block">
-        
-        <div >
-          <clr-accordion clrAccordionMultiPanel="true">
-            <clr-accordion-panel >
-              <clr-accordion-title>See your Json</clr-accordion-title>
-              <clr-accordion-content clrIfExpanded="false">
-                <br>
-                <button class="btn btn-primary-outline">Open Json</button>
-              
-              </clr-accordion-content>
-            </clr-accordion-panel>
-            <clr-accordion-panel clrAccordionPanelOpen="true">
-              <clr-accordion-title>App Settings</clr-accordion-title>
-              <clr-accordion-content clrIfExpanded="true">
-               <div class="settings-info">
-                <div>
-                  <label >Status : &nbsp;</label>
-                  <span class="label label-danger" *ngIf="luis.app.created === 1"> NOT CREATED</span>
-                  <span class="label label-warning" *ngIf="luis.app.created === 0 && luis.app.trained === 1">CREATED</span>
-                  <span class="label label-success" *ngIf="luis.app.trained === 0">DEPLOYED</span>
-                </div>
+        <div class="card-header">
+          <h3 style="text-align: center;"> Create new app on Luis</h3>
+        </div>
+        <div class="card-block">
+          
+          <div >
+            <clr-accordion clrAccordionMultiPanel="true">
+              <clr-accordion-panel  [clrAccordionPanelOpen]="luis.app.published == 1">
+                <clr-accordion-title>Create App</clr-accordion-title>
+                <clr-accordion-content [clrIfExpanded]="luis.app.published == 1">
+                  <form class="clr-form clr-form-horizontal">
+                    <clr-input-container>
+                      <label >App Name</label>
+                      <input clrInput placeholder="Name" name="appName" [disabled]="luis.app.created==0" [(ngModel)]="luis.app.name" />
+                    </clr-input-container>
+                    <clr-textarea-container>
+                      <label>Description</label>
+                      <textarea placeholder="Description" clrTextarea  name="appDesc" [disabled]="luis.app.created==0" [(ngModel)]="luis.app.description" ></textarea>
+                      <clr-control-helper>Optional</clr-control-helper>
+                    </clr-textarea-container>
+                    <clr-select-container>
+                      <label>Culture</label>
+                      <select clrSelect  [disabled]="luis.app.created==0">
+                        <option value="one">de-de</option>
+                      </select>
+                    </clr-select-container>
+                  </form>
+                
+                </clr-accordion-content>
+              </clr-accordion-panel>
+              <clr-accordion-panel clrAccordionPanelOpen="true" [clrAccordionPanelDisabled]="luis.app.created==0">
+                <clr-accordion-title>App Settings</clr-accordion-title>
+                <clr-accordion-content clrIfExpanded="true">
                
-                <div>
-                  <label >App ID : &nbsp;</label>
-                   <span class="label label-success" *ngIf="luis.app.created == 0">{{luis.app.id}}</span>
+                <div  class="settings-info" >
+                  <div class="clr-row">
+                      <div class="clr-example-col-value clr-col-1"> <label >Status : &nbsp;</label></div>
+                      <div class="clr-example-col-value clr-col">
+                        <span class="label label-danger" *ngIf="luis.app.created === 1"> NOT CREATED</span>
+                        <span class="label label-warning" *ngIf="luis.app.created === 0 && luis.app.trained != 0">CREATED</span>
+                        <span class="label label-success" *ngIf="luis.app.trained === 0 && luis.app.published != 0"> TRAINED</span>
+                        <span class="label label-success" *ngIf="luis.app.published === 0">PUBLISHED</span>
+                      </div>
+                  </div>
+                  <div class="clr-row">
+                    <div class="clr-example-col-value clr-col-1"><label >App Id : &nbsp;</label></div>
+                    <div class="clr-example-col-value clr-col"> <span class="label label-info clickable" *ngIf="luis.app.created == 0">{{luis.app.id}}</span></div>
+                  </div>
+                  <div class="clr-row">
+                    <div class="clr-example-col-value clr-col-1"><label >Published : &nbsp;</label></div>
+                    <div class="clr-example-col-value clr-col"><span class="label label-danger"> NOT PUBLISHED</span></div>
                 </div>
-                <div>
-                  <label >Version: &nbsp;</label>
-                   <span class="label label-success" *ngIf="luis.app.created == 0">{{luis.app.version}}</span>
+                <div class="clr-row">
+                    <div class="clr-example-col-value clr-col-1"><label >Version : &nbsp;</label></div>
+                    <div class="clr-example-col-value clr-col"><span class="label label-blue" *ngIf="luis.app.created == 0">{{luis.app.version}}</span></div>
                 </div>
               </div>
-              </clr-accordion-content>
-            </clr-accordion-panel>
-            <clr-accordion-panel clrAccordionPanelOpen="true">
-              <clr-accordion-title>Create App</clr-accordion-title>
-              <clr-accordion-content clrIfExpanded="true">
-                <form clrForm>
-                  <clr-input-container>
-                    <label >App Name</label>
-                    <input clrInput placeholder="Name" name="input" [(ngModel)]="luis.app.name" />
-                  </clr-input-container>
-                  <clr-textarea-container>
-                    <label>Description</label>
-                     <textarea placeholder="Description" clrTextarea  [(ngModel)]="luis.app.description" ></textarea>
-                     <clr-control-helper>Optional</clr-control-helper>
-                  </clr-textarea-container>
-                  <clr-select-container>
-                    <label>Culture</label>
-                    <select clrSelect  >
-                      <option value="one">de-de</option>
-                    </select>
-                  </clr-select-container>
-                  
-                  <br><br>
-                  <button class="btn btn-primary-outline" (click)="editNameAndDescription(luis.app.name,luis.app.description);jsonStringValueChanged();createApp()">Create App</button>
-                </form>
-              </clr-accordion-content>
-            </clr-accordion-panel>
-          
-            
-            
-          </clr-accordion>
+                </clr-accordion-content>
+              </clr-accordion-panel>
+              <clr-accordion-panel clrAccordionPanelOpen="true" [clrAccordionPanelDisabled]="luis.app.published==1">
+                <clr-accordion-title>Published Settings</clr-accordion-title>
+                <clr-accordion-content clrIfExpanded="false">
+                  <div  class="settings-info" *ngIf="luis.app.published == 0">
+                      <div class="clr-row">
+                          <div class="clr-example-col-value clr-col-2"> <label >SentimentAnalysis : &nbsp;</label></div>
+                          <div class="clr-example-col-value clr-col"><span class="label label-blue"> {{luis.app.settings.sentimentAnalysis}}</span></div>
+                      </div>
+                      <div class="clr-row">
+                        <div class="clr-example-col-value clr-col-2"><label >Speech: &nbsp;</label></div>
+                        <div class="clr-example-col-value clr-col"><span class="label label-blue" *ngIf="luis.app.created == 0">{{luis.app.settings.speech}}</span></div>
+                      </div>
+                      <div class="clr-row">
+                        <div class="clr-example-col-value clr-col-2"><label >SpellChecker : &nbsp;</label></div>
+                        <div class="clr-example-col-value clr-col"><span class="label label-blue">{{luis.app.settings.spellChecker}}</span></div>
+                    </div>
+                  </div>
+                </clr-accordion-content>
+              </clr-accordion-panel>
+            </clr-accordion>
+          </div>
         </div>
+        <div class="card-footer">
+          <button class="btn btn-success" (click)="publish()" [disabled]="luis.app.trained == 1" *ngIf="luis.app.created==0">Publish</button>
+          <button class="btn btn-primary" *ngIf="luis.app.created==1" [clrLoading]="submitBtnState" [disabled]="luis.app.name.trim() === ''" (click)="createApp()">create</button>
+          <button class="btn btn-primary-outline"(click)="this.timelineStyle.step0 ={ state: 'current', open: true };this.timelineStyle.step1 ={ state: 'not-started', open: false };">Back</button>
       </div>
-      <div class="card-footer">
-        <button class="btn btn-primary"  (click)="closeStep(); timelineStyle.step2.open=true">Next</button>
-        <button class="btn btn-primary-outline" (click)="closeStep(); timelineStyle.step0.open=true">Back</button>
     </div>
-    </div>
-    <!--STEP 2-->
-    <div class="card" *ngIf="timelineStyle.step2.open" >
-      <div class="card-header">
-        <h3 style="text-align: center;"> STEP 2</h3>
-      </div>
-      <div class="card-block center">
-        <button class="btn btn-primary" [@rotateOut]="{ value: rotateOut, params: { timing: myTiming || 5, delay: myDelay || 2 } }">Train</button>
-      </div>
-      <div class="card-footer">
-        <button class="btn btn-primary">Next</button>
-        <button class="btn btn-primary-outline" (click)="closeStep(); timelineStyle.step1.open=true">Back</button>
-     </div>
-  </div>
-    
   </div>
 </div>
 

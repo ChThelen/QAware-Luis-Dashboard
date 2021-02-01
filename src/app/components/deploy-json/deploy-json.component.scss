@@ -1,6 +1,6 @@
 .container
 {
-    width: 80%;
+    width: 90%;
     margin-left : auto;
     margin-right: auto;
 }
@@ -45,4 +45,25 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.spacer
+{
+    flex: 1 1 auto;
+}
+.button-bar
+{
+    display: flex;
+    flex-wrap: wrap;
+    
+}
+.clr-col-12{
+    margin-bottom: 20px;
+}
+.clr-row
+{
+    margin-bottom: 50px;
+}
+.height
+{
+    max-height: 300px;
 }
