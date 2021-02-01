@@ -25,7 +25,7 @@
     <span class="spacer"></span>
    
     <div class="btn-group btn-primary">
-     <button class="btn btn-outline" *ngIf="newChange" ><clr-icon shape="refresh"></clr-icon>&nbsp;Undo </button>
+     <button class="btn btn-outline" *ngIf="newChange" (click)="getGT()"><clr-icon shape="refresh"></clr-icon>&nbsp;Undo </button>
       <button class="btn btn-success" [disabled]="!newChange"(click)="saveChanges()" ><clr-icon shape="floppy"></clr-icon>&nbsp;Save Changes</button>
       <label class="btn">
         <input type="file" (change)="readCsvFile($event)" accept=".csv" placeholder="Upload CSV"  class="button-input"><clr-icon shape="upload"></clr-icon> Extend
