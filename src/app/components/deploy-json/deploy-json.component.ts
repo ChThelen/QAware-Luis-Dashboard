@@ -71,7 +71,10 @@ export class DeployJsonComponent implements OnInit {
     }
   };
   
-  constructor(private luisService: LuisAppService) {
+  constructor(
+    private luisService: LuisAppService,
+    private persistentService: PersistentService,
+    private convertService: ConvertService) {
     this.createUtterances(this.groundTruth, this.result);
     this.intents = this.getIntents(0);
     this.intents = this.getIntents(1);
@@ -79,7 +82,7 @@ export class DeployJsonComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.luisService.getGT().subscribe(data => { this.groundTruth = data; 
+    this.persistentService.getGT().subscribe(data => { this.groundTruth = data; 
     this.createUtterances(this.groundTruth, this.result); 
     this.intents = this.getIntents(0);
     this.intents = this.getIntents(1); 
@@ -236,7 +239,7 @@ export class DeployJsonComponent implements OnInit {
   train() {
     this.trained = true;
     this.timelineStyle.step2.state = "processing";
-    this.luisService.trainApp1(this.luis.app.name).subscribe(
+    this.luisService.trainApp(this.luis.app.name).subscribe(
     data => { 
      this.luis.app.trained = 0;
       // NOTIFICATION 
@@ -332,7 +335,7 @@ export class DeployJsonComponent implements OnInit {
       if(this.selectedTrainingsdata.length!= 0) // SELECT TRAIN DATA
       {
         let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-        this.luisService.convertCsvToJson(csv, this.luis.app.name)
+        this.convertService.convertCsvToJson(csv, this.luis.app.name)
         .toPromise().then(data => { this.selectedTrainingsdataJson = JSON.stringify(data, null, 5);
           console.log(this.selectedTrainingsdataJson); json = JSON.stringify(data, null, 5); });
         console.log(this.selectedTrainingsdataJson)
@@ -340,13 +343,13 @@ export class DeployJsonComponent implements OnInit {
       if(this.selectedTestdata.length!= 0) // SELECT Test DATA
       {
         let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
-        this.luisService.testData(csv, "MyJsonFile_" + new Date().toDateString())
+        this.persistentService.testData(csv, "MyJsonFile_" + new Date().toDateString())
         .toPromise().then(data => { this.selectedTestdataJson = JSON.stringify(data, null, 5); });
       }
       else if(this.selectedTestdata.length == 0) // SKIP
       {
         let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-        this.luisService.autoData(csv, this.luis.app.name,this.luis.app.version,this.luis.app.description,this.luis.app.culture)
+        this.persistentService.autoData(csv, this.luis.app.name,this.luis.app.version,this.luis.app.description,this.luis.app.culture)
         .toPromise().then(data => { this.selectedTrainingsdataJson = JSON.stringify(data, null, 5); });
       }
      
@@ -380,7 +383,7 @@ export class DeployJsonComponent implements OnInit {
           this.uploadedFile.content = (<string>data);
          
           // convert in json
-          this.luisService.convertCsvToJson(this.uploadedFile.content, "MyJsonFile_" + new Date().toDateString())
+          this.convertService.convertCsvToJson(this.uploadedFile.content, "MyJsonFile_" + new Date().toDateString())
                .toPromise().then(data => { this.uploadedFile.content = JSON.stringify(data, null, 3); });
         }
         fileReader.onerror = () => {

@@ -43,7 +43,7 @@ export class LuisAppService {
   public trainApp(appName: string): Observable<HttpResponse<any>> {
     return this.httpClient.post<any>(this.buildUrl("/train?name="+appName), {observe: 'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json'  });
   }
-  
+
   public createApp(json: string) {
     return this.httpClient.post<string>(this.baseUrl + "/luis/service/createApp", json, { observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
   }

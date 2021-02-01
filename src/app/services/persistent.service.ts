@@ -75,12 +75,16 @@ export class PersistentService {
     return this.httpClient.get<string>(this.buildUrl("/getGT"), { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
   }
 
+  public getTestData(appName: string): Observable<Array<any>> {
+    return this.httpClient.get<any>(this.buildUrl("/getTestDataJSON"), { params: { name: appName } });
+  }
+
   public testData(csv: string, name: string): Observable<string> {
     return this.httpClient.post<string>(this.buildUrl("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": name } });
   }
   
   public autoData(csv: string, name: string,version:string,desc:string, culture:string): Observable<string> {
-    return this.httpClient.post<string>(this.buildUrl("/autoData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }),
+    return this.httpClient.post<string>(this.buildUrl("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }),
      params: { "name": name , "version": version,"desc": desc, "culture":culture } });
   }
 

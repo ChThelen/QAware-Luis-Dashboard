@@ -44,7 +44,7 @@ export class GroundTruthComponent implements OnInit {
 
   getGT() {
     this.result = [];
-    this.luisService.getGT().subscribe(data => {
+    this.persistentService.getGT().subscribe(data => {
       this.groundTruth = data;
       this.createUtterances(this.groundTruth, this.result);
       this.intents = this.getIntents();
@@ -264,7 +264,7 @@ export class GroundTruthComponent implements OnInit {
   cancelInsert() {
     this.newLine = new CsvUtterance();
   }
-  
+
   newChanges(change: boolean) {
     this.newChange = change;
     console.log(change);
