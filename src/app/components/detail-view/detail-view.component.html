@@ -136,7 +136,7 @@
                                 <clr-dg-cell>
                                     <span>
                                         {{appStat.version}}
-                                        <a *ngIf="appStat.containsBadIntent" role="tooltip" aria-haspopup="true"
+                                        <a *ngIf="appStat.containsWrongIntent" role="tooltip" aria-haspopup="true"
                                             class="tooltip tooltip-lg">
                                             <cds-icon shape="exclamation-triangle" status="danger" size="20" solid>
                                             </cds-icon>
@@ -172,11 +172,11 @@
                                             <clr-dg-cell>
                                                 <span>
                                                     {{intentStat.intent}}
-                                                    <a *ngIf="intentStat.falseIntents" role="tooltip"
+                                                    <a *ngIf="intentStat.wrongIntents" role="tooltip"
                                                         aria-haspopup="true" class="tooltip tooltip-lg">
                                                         <cds-icon shape="exclamation-triangle" status="danger" size="20"
                                                             solid></cds-icon>
-                                                        <span class="tooltip-content">Detected: {{intentStat.falseIntentsMessage}}</span>
+                                                        <span class="tooltip-content">The following intents was detected instead: {{intentStat.wrongIntents.toString()}}</span>
                                                     </a>
                                                 </span>
                                             </clr-dg-cell>

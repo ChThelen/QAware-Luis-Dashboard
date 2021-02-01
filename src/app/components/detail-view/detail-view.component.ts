@@ -91,29 +91,6 @@ export class DetailViewComponent implements OnInit {
   ngOnInit(): void {
     this.getCombinedAppData().then(k => {
       this.luisApp = k.appData;
-      k.statData.forEach(appStat => {
-
-        let isBad = false;
-
-        appStat.intents.forEach(intent => {
-
-          if (intent.falseIntents) {
-            isBad = true;
-
-            let message: string = "";
-
-            for (var key in intent.falseIntents) {
-              message += ` ${intent.falseIntents[key]}`;
-            }
-
-            intent.falseIntentsMessage = message;
-
-          }
-        })
-
-        appStat.containsBadIntent = isBad;
-      });
-
       this.luisAppStats = k.statData;
       this.luisApp.appJson = k.json;
       this.generateChartData();

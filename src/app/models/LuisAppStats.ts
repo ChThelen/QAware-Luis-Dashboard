@@ -1,21 +1,21 @@
 class IntentStats {
     intent: string;
     average: number;
-    falseIntents?: any;
-    falseIntentsMessage?: string;
+    wrongIntents?: string[];
 }
 
 export class LuisAppStats {
     version: string;
     date: Date;
+    containsWrongIntent: boolean;
     intents: IntentStats[];
-    containsBadIntent?: boolean = false;
 }
 
 export const DUMMY_STATS: LuisAppStats[] = [
     {
         version: "0.1",
         date: new Date("05.01.21"),
+        containsWrongIntent: false,
         intents: [
             {
                 intent: "TAXI_BOOK",
@@ -39,6 +39,7 @@ export const DUMMY_STATS: LuisAppStats[] = [
     {
         version: "0.2",
         date: new Date("05.01.21"),
+        containsWrongIntent: true,
         intents: [
             {
                 intent: "TAXI_BOOK",
@@ -55,7 +56,7 @@ export const DUMMY_STATS: LuisAppStats[] = [
             {
                 intent: "TAXI_CANCEL",
                 average: 0.8592530456666667,
-                falseIntents: { "Key2": "Value2", "Key1": "Value1", "Key3": "Value3" }
+                wrongIntents: ["TAXI__BOOK", "TAXI__CANCEL", "TAXI__TIME"]
             }
         ]
 
@@ -63,6 +64,7 @@ export const DUMMY_STATS: LuisAppStats[] = [
     {
         version: "0.3",
         date: new Date("06.01.21"),
+        containsWrongIntent: false,
         intents: [
             {
                 intent: "TAXI_BOOK",
@@ -86,6 +88,7 @@ export const DUMMY_STATS: LuisAppStats[] = [
     {
         version: "0.4",
         date: new Date("07.01.21"),
+        containsWrongIntent: true,
         intents: [
             {
                 intent: "TAXI_BOOK",
@@ -98,12 +101,12 @@ export const DUMMY_STATS: LuisAppStats[] = [
             {
                 intent: "TAXI_TIME",
                 average: 0.8665849,
-                falseIntents: { "Key2": "Value2", "Key1": "Value1", "Key3": "Value3" }
+                wrongIntents: ["TAXI__BOOK", "TAXI__CANCEL", "TAXI__TIME"]
             },
             {
                 intent: "TAXI_CANCEL",
                 average: 0.8665849,
-                falseIntents: { "Key2": "Value2", "Key1": "Value1", "Key3": "Value3" }
+                wrongIntents: ["TAXI__BOOK", "TAXI__CANCEL", "TAXI__TIME"]
             }
         ]
 
