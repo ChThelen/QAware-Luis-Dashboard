@@ -92,11 +92,11 @@ export class DetailViewComponent implements OnInit {
     this.getCombinedAppData().then(k => {
       this.luisApp = k.appData;
       k.statData.forEach(appStat => {
-        
+
         let isBad = false;
 
         appStat.intents.forEach(intent => {
-          if(intent.falseCounter >= 1){
+          if (intent.falseCounter >= 1) {
             isBad = true;
             intent.isBadIntent = true;
           }
@@ -329,11 +329,18 @@ export class DetailViewComponent implements OnInit {
   finishTestWizard(): void {
     const name = this.route.snapshot.paramMap.get('name');
 
+    this.isLoading = true;
     this.luisAppService.batchTestApp(name, "all").subscribe(k => {
       this.luisAppStats = k;
-      this.closeTestWizard();
-    });
-
+      this.isLoading = false;
+      this.showNotification("The test was successful. You can find your results under statistics.", null, NotificationType.Info);
+    },
+      (error) => {
+        this.isLoading = false;
+        this.showNotification("The test failed. See detail for more information!", error.message, NotificationType.Danger);
+      }
+    );
+    this.closeTestWizard();
   }
 
   finishEditWizard(): void {
