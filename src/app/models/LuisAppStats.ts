@@ -1,11 +1,11 @@
-class IntentStats{
+class IntentStats {
     intent: string;
     average: number;
-    falseCounter: number;
-    isBadIntent?: boolean = false;
+    falseIntents?: any;
+    falseIntentsMessage?: string;
 }
 
-export class LuisAppStats{
+export class LuisAppStats {
     version: string;
     date: Date;
     intents: IntentStats[];
@@ -19,23 +19,19 @@ export const DUMMY_STATS: LuisAppStats[] = [
         intents: [
             {
                 intent: "TAXI_BOOK",
-                average: 0.0,
-                falseCounter: 0
+                average: 0.0
             },
             {
                 intent: "TAXI_PRICE",
-                average: 0.0,
-                falseCounter: 0
+                average: 0.0
             },
             {
                 intent: "TAXI_TIME",
-                average: 0.0,
-                falseCounter: 0
+                average: 0.0
             },
             {
                 intent: "TAXI_CANCEL",
-                average: 0.0,
-                falseCounter: 0
+                average: 0.0
             }
         ]
 
@@ -46,23 +42,20 @@ export const DUMMY_STATS: LuisAppStats[] = [
         intents: [
             {
                 intent: "TAXI_BOOK",
-                average: 0.8665849,
-                falseCounter: 0
+                average: 0.8665849
             },
             {
                 intent: "TAXI_PRICE",
-                average: 0.8592530456666667,
-                falseCounter: 0
+                average: 0.8592530456666667
             },
             {
                 intent: "TAXI_TIME",
-                average: 0.8665849,
-                falseCounter: 0
+                average: 0.8665849
             },
             {
                 intent: "TAXI_CANCEL",
                 average: 0.8592530456666667,
-                falseCounter: 1
+                falseIntents: { "Key2": "Value2", "Key1": "Value1", "Key3": "Value3" }
             }
         ]
 
@@ -73,23 +66,19 @@ export const DUMMY_STATS: LuisAppStats[] = [
         intents: [
             {
                 intent: "TAXI_BOOK",
-                average: 0.0,
-                falseCounter: 0
+                average: 0.0
             },
             {
                 intent: "TAXI_PRICE",
-                average: 0.8665849,
-                falseCounter: 0
+                average: 0.8665849
             },
             {
                 intent: "TAXI_TIME",
-                average: 0.8592530456666667,
-                falseCounter: 0
+                average: 0.8592530456666667
             },
             {
                 intent: "TAXI_CANCEL",
-                average: 0.0,
-                falseCounter: 0
+                average: 0.0
             }
         ]
 
@@ -100,23 +89,21 @@ export const DUMMY_STATS: LuisAppStats[] = [
         intents: [
             {
                 intent: "TAXI_BOOK",
-                average: 0.8592530456666667,
-                falseCounter: 0
+                average: 0.8592530456666667
             },
             {
                 intent: "TAXI_PRICE",
-                average: 0.8592530456666667,
-                falseCounter: 0
+                average: 0.8592530456666667
             },
             {
                 intent: "TAXI_TIME",
                 average: 0.8665849,
-                falseCounter: 1
+                falseIntents: { "Key2": "Value2", "Key1": "Value1", "Key3": "Value3" }
             },
             {
                 intent: "TAXI_CANCEL",
                 average: 0.8665849,
-                falseCounter: 1
+                falseIntents: { "Key2": "Value2", "Key1": "Value1", "Key3": "Value3" }
             }
         ]
 

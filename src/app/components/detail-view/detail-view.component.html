@@ -172,11 +172,11 @@
                                             <clr-dg-cell>
                                                 <span>
                                                     {{intentStat.intent}}
-                                                    <a *ngIf="appStat.containsBadIntent" role="tooltip"
+                                                    <a *ngIf="intentStat.falseIntents" role="tooltip"
                                                         aria-haspopup="true" class="tooltip tooltip-lg">
                                                         <cds-icon shape="exclamation-triangle" status="danger" size="20"
                                                             solid></cds-icon>
-                                                        <span class="tooltip-content">Instead of {{intentStat.intent}} x was detected!</span>
+                                                        <span class="tooltip-content">Detected: {{intentStat.falseIntentsMessage}}</span>
                                                     </a>
                                                 </span>
                                             </clr-dg-cell>

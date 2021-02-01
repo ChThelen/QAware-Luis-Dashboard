@@ -96,9 +96,18 @@ export class DetailViewComponent implements OnInit {
         let isBad = false;
 
         appStat.intents.forEach(intent => {
-          if (intent.falseCounter >= 1) {
+
+          if (intent.falseIntents) {
             isBad = true;
-            intent.isBadIntent = true;
+
+            let message: string = "";
+
+            for (var key in intent.falseIntents) {
+              message += ` ${intent.falseIntents[key]}`;
+            }
+
+            intent.falseIntentsMessage = message;
+
           }
         })
 
