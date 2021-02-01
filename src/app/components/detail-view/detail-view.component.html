@@ -52,7 +52,8 @@
                                     <div class="dropdown-menu">
                                         <button class="btn btn-sm btn-link"
                                             (click)="openEditWizard(); appDropDown=false;" disabled>Edit</button>
-                                        <button class="btn btn-sm btn-link" routerLink="/deploy" appDropDown="false;">Update</button>
+                                        <button class="btn btn-sm btn-link" routerLink="/deploy"
+                                            appDropDown="false;">Update</button>
                                         <button class="btn btn-sm btn-link"
                                             (click)="deleteModal=true; appDropDown=false;">Delete</button>
                                     </div>
@@ -102,6 +103,18 @@
                             </div>
                         </div>
                     </div>
+                    <!--
+                    <div class="clr-col-6">
+                    <div class="card">
+                        <div class="card-block">
+                            <div class="chart-wrapper">
+                                <canvas baseChart [datasets]="chartDataSets" [labels]="chartLabels"
+                                    [chartType]="'line'" [options]="chartOptions">
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
                     <div class="clr-col-6">
                         <div class="card">
                             <div class="card-block">
@@ -113,6 +126,7 @@
                             </div>
                         </div>
                     </div>
+                    -->
                     <div class="clr-col-12">
                         <clr-datagrid>
                             <clr-dg-column [clrDgField]="'version'">App-Version</clr-dg-column>
@@ -121,9 +135,13 @@
                             <clr-dg-row *clrDgItems="let appStat of luisAppStats" [clrDgItem]="appStat">
                                 <clr-dg-cell>
                                     <span>
-                                    {{appStat.version}}
-                                    <cds-icon *ngIf="appStat.containsBadIntent" shape="exclamation-triangle"
-                                        status="danger" solid></cds-icon>
+                                        {{appStat.version}}
+                                        <a *ngIf="appStat.containsWrongIntent" role="tooltip" aria-haspopup="true"
+                                            class="tooltip tooltip-lg">
+                                            <cds-icon shape="exclamation-triangle" status="danger" size="20" solid>
+                                            </cds-icon>
+                                            <span class="tooltip-content">On or more intents was detected incorrectly!</span>
+                                        </a>
                                     </span>
                                 </clr-dg-cell>
                                 <clr-dg-cell>{{appStat.date | date:"short"}}</clr-dg-cell>
@@ -154,8 +172,12 @@
                                             <clr-dg-cell>
                                                 <span>
                                                     {{intentStat.intent}}
-                                                    <cds-icon *ngIf="intentStat.isBadIntent"
-                                                        shape="exclamation-triangle" status="danger" solid></cds-icon>
+                                                    <a *ngIf="intentStat.wrongIntents" role="tooltip"
+                                                        aria-haspopup="true" class="tooltip tooltip-lg">
+                                                        <cds-icon shape="exclamation-triangle" status="danger" size="20"
+                                                            solid></cds-icon>
+                                                        <span class="tooltip-content">The following intents was detected instead: {{intentStat.wrongIntents.toString()}}</span>
+                                                    </a>
                                                 </span>
                                             </clr-dg-cell>
                                             <clr-dg-cell>{{intentStat.average | number:'1.2-3'}}</clr-dg-cell>
