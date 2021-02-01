@@ -43,7 +43,9 @@
               
               If you changed the app since you trained it last, train the app.
               <br><br>
-              <button class="btn btn-sm btn-primary" (click)="train()" [disabled]="luis.app.created!=0">Train</button>
+
+              <button class="btn btn-sm btn-success" *ngIf="luis.app.trained == 0" (click)="train()" [disabled]="luis.app.created!=0">Train</button>
+              <button class="btn btn-sm btn-primary"  *ngIf="luis.app.trained == 1" (click)="train()" [disabled]="luis.app.created!=0">Train</button>
               
             </clr-timeline-step-description>
           </clr-timeline-step>
@@ -56,14 +58,19 @@
                 <li> Publish the app to access it from the HTTP endpoint</li>
                 <li>In order to receive a LUIS prediction in a chat bot or other client application, you need to publish the app to the prediction endpoint.</li>
               </ul>
-              <button class="btn btn-sm btn-primary-outline" *ngIf="luis.app.published == 0">Update Settings</button>
+              <clr-checkbox-wrapper *ngIf="luis.app.trained == 0 && luis.app.published == 1">
+                <input type="checkbox" clrCheckbox name="staging" required [checked]="luis.app.isStaging"  [(ngModel)]="luis.app.isStaging" />
+                <label>Staging</label>
+              </clr-checkbox-wrapper>
+              <button class="btn btn-sm btn-primary-outline" *ngIf="luis.app.published == 0" (click)="openModalUpdateSettings = true">Update Settings</button>
             </clr-timeline-step-description>
           </clr-timeline-step>
           <clr-timeline-step [clrState]="timelineStyle.step4.state">
             <clr-timeline-step-header>Step 4</clr-timeline-step-header>
             <clr-timeline-step-title>Test your new App</clr-timeline-step-title>
             <clr-timeline-step-description>
-              <!-- Use the interactive Test pane in the LUIS portal to validate that the entity is extracted from new utterances the app hasn't seen yet. -->
+              <button class="btn btn-sm btn-success" *ngIf="luis.app.tested == 0 && luis.app.published==0" (click)="test()">Test</button>
+              <button class="btn btn-sm btn-primary" *ngIf="luis.app.tested == 1 && luis.app.published==1" (click)="test()" >Test</button>
             </clr-timeline-step-description>
           </clr-timeline-step>
         </clr-timeline>
@@ -113,7 +120,7 @@
               <button clrTabLink>Ground-Truth</button>
               <clr-tab-content *clrIfActive>
                 
-                <clr-datagrid [(clrDgSelected)]="selectedTestdata" (clrDgSelectedChange)="selectionChanged($event)" >
+                <clr-datagrid [(clrDgSelected)]="selectedTestdata" >
                   <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
                   <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
                   <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
@@ -168,12 +175,26 @@
                 </clr-datagrid>
               </clr-tab-content>
           </clr-tab>
+          <clr-tab>
+            <button clrTabLink (click)="intentsSelectionTestdata = [];selectedTestdata = []">Upload File</button>
+            <clr-tab-content *clrIfActive="uploadedFile.exist">
+              <br>
+              <label class="btn">
+                <input type="file"  accept=".csv" placeholder="Upload File" (change)="readCsvFile($event) "  class="button-input"><clr-icon shape="upload"></clr-icon> upload
+              </label>
+              <h4 *ngIf="uploadedFile.exist">{{uploadedFile.name}}</h4>
+              <div class="card-text" *ngIf="uploadedFile.exist">
+                <pre style="overflow-x: scroll;max-height: 400px;"><code [highlight]="uploadedFile.content"></code>
+                </pre>
+              </div>
+            </clr-tab-content>
+        </clr-tab>
       </clr-tabs>
       <clr-tabs *ngIf="data.type=='train'">
         <clr-tab>
             <button clrTabLink (click)="uploadedFile = {exist : false,json : false, csv : false,content : '',name : ''}">Ground-Truth</button>
             <clr-tab-content *clrIfActive>
-              <clr-datagrid [(clrDgSelected)]="selectedTrainingsdata" (clrDgSelectedChange)="selectionChanged($event)" >
+              <clr-datagrid [(clrDgSelected)]="selectedTrainingsdata">
                 <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
                 <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
                 <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
@@ -229,21 +250,8 @@
              
             </clr-tab-content>
         </clr-tab>
-    
-        <clr-tab>
-            <button clrTabLink (click)="intentsSelectionTraindata = [];selectedTrainingsdata = []">Upload File</button>
-            <clr-tab-content *clrIfActive="uploadedFile.exist">
-              <br>
-              <label class="btn">
-                <input type="file"  accept=".csv,.json" placeholder="Upload File" (change)="readCsvFile($event) "  class="button-input"><clr-icon shape="upload"></clr-icon> upload
-              </label>
-              <h4 *ngIf="uploadedFile.exist">{{uploadedFile.name}}</h4>
-              <div class="card-text" *ngIf="uploadedFile.exist">
-                <pre style="overflow-x: scroll;max-height: 400px;"><code [highlight]="uploadedFile.content"></code>
-                </pre>
-              </div>
-            </clr-tab-content>
-        </clr-tab>
+        
+        
     
     </clr-tabs>
         
@@ -302,10 +310,6 @@
                     <div class="clr-example-col-value clr-col-1"><label >App Id : &nbsp;</label></div>
                     <div class="clr-example-col-value clr-col"> <span class="label label-info clickable" *ngIf="luis.app.created == 0">{{luis.app.id}}</span></div>
                   </div>
-                  <div class="clr-row">
-                    <div class="clr-example-col-value clr-col-1"><label >Published : &nbsp;</label></div>
-                    <div class="clr-example-col-value clr-col"><span class="label label-danger"> NOT PUBLISHED</span></div>
-                </div>
                 <div class="clr-row">
                     <div class="clr-example-col-value clr-col-1"><label >Version : &nbsp;</label></div>
                     <div class="clr-example-col-value clr-col"><span class="label label-blue" *ngIf="luis.app.created == 0">{{luis.app.version}}</span></div>
@@ -344,3 +348,28 @@
   </div>
 </div>
 
+<clr-modal [(clrModalOpen)]="openModalUpdateSettings">
+  <h3 class="modal-title">Update Published settings</h3>
+  <div class="modal-body">
+    <clr-toggle-container clrInline>
+     
+      <clr-toggle-wrapper>
+        <input type="checkbox" clrToggle name="Sentiment Analysis" required value="option1" [(ngModel)]="luis.app.settings.sentimentAnalysis" />
+        <label>Sentiment Analysis</label>
+      </clr-toggle-wrapper>
+      <clr-toggle-wrapper>
+        <input type="checkbox" clrToggle name="SpellChecker" required value="option2" [(ngModel)]="luis.app.settings.spellChecker" />
+        <label>SpellChecker</label>
+      </clr-toggle-wrapper>
+      <clr-toggle-wrapper>
+        <input type="checkbox" clrToggle name="Speech" required value="option3" [(ngModel)]="luis.app.settings.speech" />
+        <label>Speech</label>
+      </clr-toggle-wrapper>
+      <clr-control-helper>Helper for inline toggle control</clr-control-helper>
+    </clr-toggle-container>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="openModalUpdateSettings = false">Update</button>
+    <button type="button" class="btn btn-outline" (click)="openModalUpdateSettings = false">Cancel</button>
+  </div>
+</clr-modal>

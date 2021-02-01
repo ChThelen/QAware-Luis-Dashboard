@@ -14,6 +14,7 @@ export class LuisAppService {
 
   private baseUrl = environment.backendUrl;
   private endpoint = "/luis/service";
+  private endpointApp = "/luis/app";
 
   constructor(private httpClient: HttpClient) { }
 
@@ -64,7 +65,11 @@ export class LuisAppService {
   public batchTestApp(appName: string, intent: string): Observable<Array<LuisAppStats>> {
     return this.httpClient.post<Array<LuisAppStats>>(this.buildUrl("/batchTest"),null, { params: { name: appName, intent: intent } });
   }
-  
+
+  public getGT(): Observable<string> {
+    return this.httpClient.get<string>( this.baseUrl + this.endpointApp + "/getGT", { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
+  }
+
   private buildUrl(uri: string): string {
     return this.baseUrl + this.endpoint + uri;
   }
