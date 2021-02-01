@@ -330,6 +330,7 @@ export class DetailViewComponent implements OnInit {
     const name = this.route.snapshot.paramMap.get('name');
 
     this.luisAppService.batchTestApp(name, "all").subscribe(k => {
+      this.luisAppStats = k;
       this.closeTestWizard();
     });
 

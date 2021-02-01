@@ -326,6 +326,7 @@ export class DeployJsonComponent implements OnInit {
       let newDesc = '\"desc\":' + ' \"' + this.luis.app.description.trim() + "\",";
       jsonString = jsonString.replace(oldDesc, newDesc);
     }
+
     return jsonString;
   }
   
