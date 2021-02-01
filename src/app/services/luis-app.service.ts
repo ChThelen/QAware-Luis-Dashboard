@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Intent } from '../models/Intent';
 import { Utterance } from '../models/Utterance';
 import { Entity } from '../models/Entity';
+import { LuisAppStats } from '../models/LuisAppStats';
 
 @Injectable({
   providedIn: 'root'
@@ -58,6 +59,10 @@ export class LuisAppService {
 
   public getAppInfo(name: string) {
     return this.httpClient.get<string>(this.buildUrl("/getAppInfo/?name="+name), { observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
+  }
+
+  public batchTestApp(appName: string, intent: string): Observable<Array<LuisAppStats>> {
+    return this.httpClient.post<Array<LuisAppStats>>(this.buildUrl("/batchTest"),null, { params: { name: appName, intent: intent } });
   }
   
   private buildUrl(uri: string): string {

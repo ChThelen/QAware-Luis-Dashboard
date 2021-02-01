@@ -256,6 +256,7 @@ export class DeployJsonComponent implements OnInit {
     );
     
   }
+
   publish() {
     this.luisService.publish(this.luis.app.name, this.luis.app.isStaging).subscribe(
       data => {
@@ -302,6 +303,7 @@ export class DeployJsonComponent implements OnInit {
     );
  
   }
+
 /**
  * 
  * @param jsonString 
@@ -326,6 +328,7 @@ export class DeployJsonComponent implements OnInit {
     }
     return jsonString;
   }
+  
   addUtterances() 
   {
     let json = "";
