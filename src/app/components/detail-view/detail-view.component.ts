@@ -175,7 +175,9 @@ export class DetailViewComponent implements OnInit {
           datasets.set(intentStat.intent, {
             label: intentStat.intent,
             data: [],
-            fill: false
+            fill: false,
+            lineTension: 0,
+            steppedLine: true
           })
         }
 
