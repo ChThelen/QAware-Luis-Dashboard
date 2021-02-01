@@ -95,6 +95,7 @@ export class DeployJsonComponent implements OnInit {
     this.intentsSelectionTestdata = [];
     this.intentsSelectionTraindata = [];
     this.intents = this.getIntents(0);
+    this.intents = this.getIntents(1);
     this.timelineStyle = {
       step0: { state: "current", open: true ,failed: false},
       step1: { state: "not-started", open: false , failed: false},
@@ -103,12 +104,8 @@ export class DeployJsonComponent implements OnInit {
       step4: { state: "not-started", open: false,failed: false },
     };
   }
-  constructor(
-    private luisService: LuisAppService,
-    private persistentService: PersistentService,
-    private convertService: ConvertService) {
-   
-  }
+  constructor( private luisService: LuisAppService,private persistentService: PersistentService,private convertService: ConvertService) 
+  { }
 
   ngOnInit(): void {
     this.persistentService.getGT().subscribe(data => { this.groundTruth = data; 
@@ -205,6 +202,8 @@ export class DeployJsonComponent implements OnInit {
   }
   /**
    *  To generate Intents Buttons 
+   *  0 for Train data buttons
+   * 1 for Test data buttons
    * @param trainOrTest 
    */
   getIntents(trainOrTest:number): string[] 
