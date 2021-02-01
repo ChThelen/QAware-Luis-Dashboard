@@ -2,8 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CsvUtterance, HEADERS } from 'src/app/models/CsvUtterance';
 import { LuisAppService } from 'src/app/services/luis-app.service';
 import { ClrLoadingState } from '@clr/angular';
-
-
+import { PersistentService } from 'src/app/services/persistent.service';
+import { ConvertService } from 'src/app/services/convert.service';
 
 @Component({
   selector: 'app-ground-truth',
@@ -31,30 +31,45 @@ export class GroundTruthComponent implements OnInit {
   intents: string[] = [];
   intentsSelection: boolean[] = [];
 
+  groundTruth: string = ""
 
-  constructor(private luisService: LuisAppService) 
-  {
-  }
+  constructor(
+    private luisService: LuisAppService,
+    private persistentService: PersistentService,
+    private convertService: ConvertService) { }
 
   ngOnInit(): void {
-    this.intents = this.getIntents();
-    this.luisService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result); });
+    this.getGT();
+  }
+
+  getGT() {
+    this.result = [];
+    this.persistentService.getGT().subscribe(data => {
+      this.groundTruth = data;
+      this.createUtterances(this.groundTruth, this.result);
+      this.intents = this.getIntents();
+    });
+    this.newChange = false;
   }
 
   selectIntents(intent: string) {
     this.result.forEach(element => { if (element.intent == intent) { this.selectedUtterances.push(element) } });
   }
+
   deselectIntents(intent: string) {
     this.selectedUtterances = this.selectedUtterances.filter(element => element.intent != intent);
   }
+
   getIntents(): string[] {
+    if (this.intentsSelection.length != 0)
+      this.intentsSelection = [];
     let temp = this.result.map(element => element.intent);
     temp = [...new Set(temp)];
     temp.forEach(element => this.intentsSelection.push(false));
     return temp;
   }
-  createUtterances(file: string, result: CsvUtterance[]): void 
-  {
+
+  createUtterances(file: string, result: CsvUtterance[]): void {
 
     if (result.length != 0)
       result = [];
@@ -85,8 +100,8 @@ export class GroundTruthComponent implements OnInit {
       this.resetFile();
     }
   }
-  readCsvFile(event: any) 
-  {
+
+  readCsvFile(event: any) {
 
     let fileList: FileList = event.target.files;
     this.file = fileList.item(0);
@@ -114,8 +129,8 @@ export class GroundTruthComponent implements OnInit {
 
     }
   }
-  merge() 
-  {
+
+  merge() {
     this.uploadedUtterances.forEach(data => this.result.push(data));
     this.resetFile();
     this.result.sort((a, b) => { return (parseInt(a.id) < parseInt(b.id)) ? -1 : 1 })
@@ -123,15 +138,17 @@ export class GroundTruthComponent implements OnInit {
     this.createUtterances(this.groundTruth, this.result);
     this.newChange = true;
   }
+
   saveChanges() {
     if (this.newChange) {
-      this.luisService.changeGT(this.groundTruth).subscribe(data => console.log(data));
-      this.luisService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result); });
+      this.persistentService.changeGT(this.groundTruth).subscribe(data => console.log(data));
+      this.persistentService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result); });
     }
 
     this.newChange = false;
 
   }
+
   resetFile() {
 
     this.file = null;
@@ -139,6 +156,7 @@ export class GroundTruthComponent implements OnInit {
     this.uploadedUtterances = [];
     this.fileName = "";
   }
+
   selectionChanged(event: any) {
 
     if (this.selectedUtterances.length == 0) {
@@ -147,6 +165,7 @@ export class GroundTruthComponent implements OnInit {
 
 
   }
+
   deleteUtterance(csvUtterance: CsvUtterance): void {
     let j = this.uploadedUtterances.indexOf(csvUtterance);
     if (j > -1) {
@@ -160,6 +179,7 @@ export class GroundTruthComponent implements OnInit {
     this.newChange = true;
     this.intents = this.getIntents();
   }
+
   insertUtterance(csvUtterance: CsvUtterance): void {
     this.result.push(csvUtterance);
     this.result.sort((a, b) => { return (parseInt(a.id) < parseInt(b.id)) ? -1 : 1 })
@@ -167,6 +187,7 @@ export class GroundTruthComponent implements OnInit {
     this.newLine = new CsvUtterance();
     this.newChange = true;
   }
+
   /**
   * download currently csv file
   * 
@@ -180,6 +201,7 @@ export class GroundTruthComponent implements OnInit {
     hiddenElement.download = (fileName.endsWith(".csv")) ? fileName.substring(0, fileName.length - 3) + "csv" : fileName.substring(0, fileName.length - 4) + "csv";
     hiddenElement.click();
   }
+
   /**
    * download currently json file
    * 
@@ -187,7 +209,7 @@ export class GroundTruthComponent implements OnInit {
   downloadJson(): void {
     let fileAsJson = "";
     let content = this.refreshUtterances(this.selectedUtterances).join("\n");
-    this.luisService.convertCsvToJson(content, "MyJsonFile_" + new Date().toDateString())
+    this.convertService.convertCsvToJson(content, "MyJsonFile_" + new Date().toDateString())
       .toPromise().then(data => { fileAsJson = JSON.stringify(data, null, 5); });
 
     var hiddenElement = document.createElement('a');
@@ -196,6 +218,7 @@ export class GroundTruthComponent implements OnInit {
     hiddenElement.download = (this.fileName.endsWith(".csv")) ? this.fileName.substring(0, this.fileName.length - 3) + "json" : this.fileName.substring(0, this.fileName.length - 4) + "json";
     hiddenElement.click();
   }
+
   refreshUtterances(utterances: CsvUtterance[]) {
     let entriesArray = [];
     for (let i = 0; i < utterances.length; i++) {
@@ -224,6 +247,7 @@ export class GroundTruthComponent implements OnInit {
     this.newLine.startIndex = firstIndex == -1 ? "" : "" + firstIndex;
     return firstIndex == -1 ? "" : "" + firstIndex;
   }
+
   getLastIndexOf(literal: string, transcript: string): string {
     if (this.getFirstIndexOf(literal.trim(), transcript) != "") {
       let firstIndex = transcript.trim().indexOf(literal.trim());
@@ -236,14 +260,16 @@ export class GroundTruthComponent implements OnInit {
       return "";
     }
   }
+
   cancelInsert() {
     this.newLine = new CsvUtterance();
   }
+
   newChanges(change: boolean) {
     this.newChange = change;
     console.log(change);
   }
-  groundTruth: string = ""
+
 }
 
 function arrayEquals(a, b) {

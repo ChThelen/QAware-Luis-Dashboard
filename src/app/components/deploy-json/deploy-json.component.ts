@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HEADERS, CsvUtterance } from 'src/app/models/CsvUtterance';
+import { ConvertService } from 'src/app/services/convert.service';
 import { LuisAppService } from 'src/app/services/luis-app.service';
+import { PersistentService } from 'src/app/services/persistent.service';
+import { ClrLoadingState } from '@clr/angular';
 
 @Component({
   selector: 'app-deploy-json',
@@ -8,68 +11,128 @@ import { LuisAppService } from 'src/app/services/luis-app.service';
   styleUrls: ['./deploy-json.component.scss']
 })
 export class DeployJsonComponent implements OnInit {
-
-  jsonString: string;
+  
+  trained = false;
   intents: string[] = [];
   intentsSelectionTestdata: boolean[] = [];
   intentsSelectionTraindata: boolean[] = [];
+  /** */
   result: CsvUtterance[] = [];
   selectedTestdata: CsvUtterance[] = [];
   selectedTrainingsdata: CsvUtterance[] = [];
-  selectedTestdataJson : string = "";
-  selectedTrainingsdataJson :string = ""; 
+  openModalUpdateSettings = false;
   groundTruth: string = "";
-  addTrainData = true; 
-  addTestData = false;
-  skip = false;
+  json : string =""; 
+  layout = {
+    direction : "vertical", 
+    block1 : "clr-col-lg-3 clr-col-12 ",
+    block2 : "clr-col-lg-9 clr-col-12 ",
+  }
 
-  data =  {type:'train'};
+  uploadedFile = {
+    exist : false,
+    json : false, 
+    csv : false,
+    content : '',
+    name : ''
+  }
+
+  data =  {
+    type:'train',
+    uploadedFile:false
+  };
 
   timelineStyle = {
-    step0: { state: "current", open: true },
-    step1: { state: "not-started", open: false },
-    step2: { state: "not-started", open: false },
-    step3: { state: "not-started", open: false },
-    step4: { state: "not-started", open: false },
+    step0: { state: "current", open: true ,failed: false},
+    step1: { state: "not-started", open: false , failed: false},
+    step2: { state: "not-started", open: false,failed: false },
+    step3: { state: "not-started", open: false,failed: false },
+    step4: { state: "not-started", open: false,failed: false },
   };
+ 
   luis = {
     app:
     {
       name: '',
       description: '',
+      culture:'de-de',
       id: '',
-      version: '',
+      url : '',
+      version: '1.0',
       created: 1,
+      region:'',
+      publishedDateTime: '',
       trained: 1,
+      tested: 1,
       published: 1,
-      staging: true,
-      production: false
+      settings:{sentimentAnalysis:false,speech:false,spellChecker:false},
+      isStaging: false,
     }
   };
-  
-  closeStep() {
+  reset()
+  {
+    this.json = "";
+    this.luis = {
+      app:
+      {
+        name: '',
+        description: '',
+        culture:'de-de',
+        id: '',
+        url : '',
+        version: '1.0',
+        created: 1,
+        region:'',
+        publishedDateTime: '',
+        trained: 1,
+        tested: 1,
+        published: 1,
+        settings:{sentimentAnalysis:false,speech:false,spellChecker:false},
+        isStaging: false,
+      }
+    };
+    this.intents = [];
+    this.intentsSelectionTestdata = [];
+    this.intentsSelectionTraindata = [];
+    this.intents = this.getIntents(0);
     this.timelineStyle = {
-      step0: { state: "current", open: false },
-      step1: { state: "not-started", open: false },
-      step2: { state: "not-started", open: false },
-      step3: { state: "not-started", open: false },
-      step4: { state: "not-started", open: false },
+      step0: { state: "current", open: true ,failed: false},
+      step1: { state: "not-started", open: false , failed: false},
+      step2: { state: "not-started", open: false,failed: false },
+      step3: { state: "not-started", open: false,failed: false },
+      step4: { state: "not-started", open: false,failed: false },
     };
   }
-  constructor(private luisService: LuisAppService) {
-    this.createUtterances(this.groundTruth, this.result);
-    this.intents = this.getIntents(0);
-    this.intents = this.getIntents(1);
-    luisService.getGT().subscribe(data => this.groundTruth = data);
+  constructor(
+    private luisService: LuisAppService,
+    private persistentService: PersistentService,
+    private convertService: ConvertService) {
+   
   }
 
   ngOnInit(): void {
-    this.luisService.getGT().subscribe(data => { this.groundTruth = data; 
+    this.persistentService.getGT().subscribe(data => { this.groundTruth = data; 
     this.createUtterances(this.groundTruth, this.result); 
     this.intents = this.getIntents(0);
     this.intents = this.getIntents(1); 
   });
 
+  }
+  changeToHorizonTal()
+  {
+    this.layout = {
+      direction : "horizontal", 
+      block1 : "clr-col-lg-12 clr-col-12 height container",
+      block2 : "clr-col-lg-12 clr-col-12 container",
+    }
+  }
+  changeToVertical()
+  {
+    this.layout = {
+      direction : "vertical", 
+      block1 : "clr-col-lg-3 clr-col-12 ",
+      block2 : "clr-col-lg-9 clr-col-12 ",
+    }
   }
   createUtterances(file: string, result: CsvUtterance[]): void {
 
@@ -140,9 +203,13 @@ export class DeployJsonComponent implements OnInit {
   {
     this.intentsSelectionTestdata.forEach(data => data=false);
   }
+  /**
+   *  To generate Intents Buttons 
+   * @param trainOrTest 
+   */
   getIntents(trainOrTest:number): string[] 
   {
-    if(trainOrTest)
+    if(trainOrTest == 0)
     {
       let temp = this.result.map(element => element.intent);
       temp = [...new Set(temp)];
@@ -158,101 +225,208 @@ export class DeployJsonComponent implements OnInit {
     }
     
   }
-  selectionChanged(event: any) 
+ 
+  createApp() 
   {
+   
+      if(!this.uploadedFile.exist)
+      {
+       
+        if(this.selectedTrainingsdata.length!= 0) // SELECT TRAIN DATA
+        {     
+          let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
+          this.convertService.convertCsvToJson(csv, this.luis.app.name)
+          .toPromise().then(data => { 
+            this.json = JSON.stringify(data, null, 5);
+            this.json = this.editNameAndDescription(this.json);
+            this.luisService.createApp(this.json).subscribe(
+              data => { 
+              let createdApp = JSON.parse(data.body);
+              this.luis.app.id = createdApp.appID;
+              this.luis.app.version = createdApp.version;
+              this.luis.app.name = createdApp.name;
+              this.luis.app.created = 0;
+                //TODO : Notification Message  
+            },
+            err => {
+              this.timelineStyle.step1.failed = true;
+              this.timelineStyle.step1.state = "error";
+            
+              console.log(err)
+           
+              //TODO : Error Message
+            });
+            });
+        }
+        if(this.selectedTestdata.length!= 0) // SELECT Test DATA
+        {
+          let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
+          this.persistentService.testData(csv, this.luis.app.name )
+          .toPromise().then(data => { 
+            this.json = JSON.stringify(data, null, 5); 
+          });
+        }
+        else if(this.selectedTestdata.length == 0) // SKIP
+        {
+          let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
+          this.persistentService.autoData(csv, this.luis.app.name,this.luis.app.version,this.luis.app.description,this.luis.app.culture)
+          .toPromise().then(data => {
+             this.json = JSON.stringify(data, null, 5); 
+            
+            });
+        }
+      }
+      else
+      {
+        this.json = this.uploadedFile.content;
 
-  }
-  createApp() {
-    this.luisService.createApp(this.jsonString).subscribe(data => { this.luis.app.id = data; console.log(data) });
-    this.luis.app.created = 0;
-    if (this.luis.app.id.length > 5 || this.luis.app.created == 0) // App has been created
-    {
-      this.manageTimeLineStyle();
-
-    }
-    else // App isn't created or already existing
-    {
-      //TODO : User must be notify 
-    }
+      }
   }
   train() {
-    this.luisService.trainApp(this.jsonString).subscribe(data => { 
-      this.luis.app.trained = <number> data.body;
-    });
-    
-    this.luis.app.trained = 0;
-    if (this.luis.app.trained == 0) // App is trained
-    {
-      this.manageTimeLineStyle();
-    }
-    else // App isn't trained
-    {
+    this.trained = true;
+    this.timelineStyle.step2.state = "processing";
+    this.luisService.trainApp(this.luis.app.name).subscribe(
+    data => { 
+     this.luis.app.trained = 0;
+      // NOTIFICATION 
 
-      //TODO : User must be notify 
-    }
-  }
-  publish() {
-    this.luisService.publish(this.jsonString, this.luis.app.staging).subscribe(data => { this.luis.app.published = data });
-    this.luis.app.published = 0;
-    if (this.luis.app.published == 0) // App is published
-    {
-      this.manageTimeLineStyle();
-    }
-    else // App isn't published
-    {
-      //TODO : User must be notify 
-    }
-  }
-
-  manageTimeLineStyle() {
-    if (this.luis.app.created == 0 && this.luis.app.trained == 1 && this.luis.app.published == 1) {
-      this.timelineStyle.step1.state = "success";
-      this.timelineStyle.step2.state = "current";
-    }
-    else if (this.luis.app.trained == 0 && this.luis.app.published == 1) {
+      this.trained = false;
       this.timelineStyle.step2.state = "success";
       this.timelineStyle.step3.state = "current";
+    },
+    err => {
+      this.timelineStyle.step2.failed = true;
+      // NOTIFICATION
     }
-    if (this.luis.app.published == 0) {
-      this.timelineStyle.step3.state = "success";
-      this.timelineStyle.step4.state = "current";
-    }
-  }
-  editNameAndDescription(name: string, description: string) {
 
-    if (this.luis.app.name.trim() != "") {
-      let startIndex = this.jsonString.split(/\r\n|\n/).join("").lastIndexOf('\"name\"');
-      let endIndex = this.jsonString.split(/\r\n|\n/).join("").indexOf(",", startIndex) + 1;
-      let oldName = this.jsonString.split(/\r\n|\n/).join("").substring(startIndex, endIndex);
-      let newName = '\"name\":' + ' \"' + name.trim() + "\",";
-      this.jsonString = this.jsonString.replace(oldName, newName);
-    }
-    if (this.luis.app.description.trim() != "") {
-      let startIndex = this.jsonString.split(/\r\n|\n/).join("").lastIndexOf('\"desc\"');
-      let endIndex = this.jsonString.split(/\r\n|\n/).join("").indexOf(",", startIndex) + 1;
-      let oldDesc = this.jsonString.split(/\r\n|\n/).join("").substring(startIndex, endIndex);
-      let newDesc = '\"desc\":' + ' \"' + description.trim() + "\",";
-      this.jsonString = this.jsonString.replace(oldDesc, newDesc);
-    }
+    );
+    
   }
-
-  convertSelectedUtterancesToJson(): void 
+  publish() {
+    this.luisService.publish(this.luis.app.name, this.luis.app.isStaging).subscribe(
+      data => {
+        this.luis.app.published = 0;
+        // NOTIFICATION
+        console.log(data)
+       let app = JSON.parse(data);  
+        this.luis.app.region = app.region; 
+        this.luis.app.url = app.endpointUrl; 
+        this.luis.app.isStaging = app.isStaging; 
+        this.luis.app.publishedDateTime = app.publishedDateTime;
+        console.log(this.luis.app)
+        this.timelineStyle.step4.state = 'current';
+       },
+       err => {
+        this.timelineStyle.step3.failed = true;
+         // NOTIFICATION
+       }
+    );
+    this.luisService.getAppInfo(this.luis.app.name).subscribe(
+      data => {
+        let info = data; 
+        console.log(data)
+       },
+       err => {
+         // NOTIFICATION
+       }
+    );
+    this.luisService.getPublishSettings(this.luis.app.name)
+    .subscribe(
+      data => {
+        let settings = JSON.parse(data.body);
+        this.luis.app.settings.sentimentAnalysis = settings.sentimentAnalysis;
+        this.luis.app.settings.speech = settings.speech;
+        this.luis.app.settings.spellChecker = settings.spellChecker;
+        console.log(data.body)
+        // NOTIFICATION
+        
+       },
+       err => {
+         // NOTIFICATION
+       }
+    );
+ 
+  }
+  test()
   {
-   
-    if(this.selectedTrainingsdata.length!= 0)
+    this.intents.forEach(data => {
+      this.luisService.batchTestApp(this.luis.app.name, data);
+      this.timelineStyle.step4.state = 'success';
+      this.luis.app.tested = 0;
+    },
+    err => 
     {
-      let selectedTrainingsdata = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-      this.luisService.convertCsvToJson(selectedTrainingsdata, "MyJsonFile_" + new Date().toDateString())
-      .toPromise().then(data => { this.selectedTrainingsdataJson = JSON.stringify(data, null, 5); });
+      console.log(err)
+    }
+    )
+  }
 
-    }
-    if(this.selectedTestdata.length!= 0)
-    {
-      let selectedTestdata = this.refreshUtterances(this.selectedTestdata).join("\n");
-      this.luisService.convertCsvToJson(selectedTestdata, "MyJsonFile_" + new Date().toDateString())
-      .toPromise().then(data => { this.selectedTestdataJson = JSON.stringify(data, null, 5); });
-    }
-   
+/**
+ * 
+ * @param jsonString 
+ * @returns the same json but with another name and description
+ */
+  editNameAndDescription(jsonString) 
+  {
+    console.log(jsonString)
+    let jsonObject = JSON.parse(jsonString); 
+    jsonObject.name = this.luis.app.name; 
+    jsonObject.desc = this.luis.app.description; 
+    jsonString = JSON.stringify(jsonObject, null, 5);
+    return jsonString;
+  }
+  readCsvFile(event: any) 
+  {
+
+    let fileList: FileList = event.target.files;
+    let file = fileList.item(0);
+      // Initialize Object properties
+      this.uploadedFile = {
+        exist : false,
+        json : false, 
+        csv : false,
+        content : '',
+        name : fileList.item(0).name
+      }
+
+      let fileReader = new FileReader();
+      fileReader.readAsText(file);
+      if ((file.name.endsWith(".csv"))) // Reading csv file
+      {
+        this.uploadedFile.csv = true;
+        this.uploadedFile.exist = true;
+
+        fileReader.onload = () => {
+          let data = fileReader.result;
+          this.uploadedFile.content = (<string>data);
+         
+          // convert in json
+          this.convertService.convertCsvToJson(this.uploadedFile.content, this.luis.app.name)
+               .toPromise().then(data => { this.uploadedFile.content = JSON.stringify(data, null, 3); });
+        }
+        fileReader.onerror = () => {
+          console.log('Error occured while reading file!');
+           //TODO : NOTIFICATION
+        };
+      }
+      else if ((file.name.endsWith(".json"))) // Reading csv file
+      {
+        this.uploadedFile.json = true;
+        this.uploadedFile.exist = true;
+
+        fileReader.onload = () => {
+          let data = fileReader.result;
+          this.uploadedFile.content = (<string>data);
+          this.uploadedFile.content = JSON.parse(this.uploadedFile.content);
+          this.uploadedFile.content = JSON.stringify(this.uploadedFile.content, null, 3); 
+        }
+        fileReader.onerror = () => {
+          console.log('Error occured while reading file!');
+          //TODO : NOTIFICATION
+        };
+      }
+
+  
   }
   
 }

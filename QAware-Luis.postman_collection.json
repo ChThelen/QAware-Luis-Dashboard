@@ -1,0 +1,732 @@
+{
+	"info": {
+		"_postman_id": "0ce3d0b2-1e82-4839-aa89-ddfc33212469",
+		"name": "QAware-Luis",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "LuisServiceController",
+			"item": [
+				{
+					"name": "Create App",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"luis_schema_version\": \"7.0.0\",\n    \"intents\": [\n        {\n            \"name\": \"None\",\n            \"features\": []\n        },\n        {\n            \"name\": \"taxiRufen\",\n            \"features\": []\n        }\n    ],\n    \"entities\": [\n        {\n            \"name\": \"ort\",\n            \"children\": [\n                {\n                    \"name\": \"zielOrt\",\n                    \"children\": [],\n                    \"features\": []\n                },\n                {\n                    \"name\": \"vonOrt\",\n                    \"children\": [],\n                    \"features\": []\n                },\n                {\n                    \"name\": \"ueberOrt\",\n                    \"children\": [],\n                    \"features\": []\n                }\n            ],\n            \"roles\": [],\n            \"features\": []\n        }\n    ],\n    \"hierarchicals\": [],\n    \"composites\": [],\n    \"closedLists\": [],\n    \"prebuiltEntities\": [\n        {\n            \"name\": \"datetimeV2\",\n            \"roles\": []\n        }\n    ],\n    \"utterances\": [\n        {\n            \"text\": \"bestell mir ein taxi für morgen 8 uhr von zu hause über bingen nach mainz\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": [\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 42,\n                    \"endPos\": 49,\n                    \"children\": [\n                        {\n                            \"entity\": \"vonOrt\",\n                            \"startPos\": 42,\n                            \"endPos\": 49,\n                            \"children\": []\n                        }\n                    ]\n                },\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 56,\n                    \"endPos\": 61,\n                    \"children\": [\n                        {\n                            \"entity\": \"ueberOrt\",\n                            \"startPos\": 56,\n                            \"endPos\": 61,\n                            \"children\": []\n                        }\n                    ]\n                },\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 68,\n                    \"endPos\": 72,\n                    \"children\": [\n                        {\n                            \"entity\": \"zielOrt\",\n                            \"startPos\": 68,\n                            \"endPos\": 72,\n                            \"children\": []\n                        }\n                    ]\n                }\n            ]\n        },\n        {\n            \"text\": \"eine ganz andere aufgabe\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"hallo\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"hallo du, wie geht es dir\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"hallo du, wie geht es dir???\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"hallo ihr\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"hallo wie geht es dir\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"hallo, ruf mir doch bitte f\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"ich habe einen hund der ist jetzt in korb\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"ich hätte gerne ein taxi von hier nach mainz\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": [\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 29,\n                    \"endPos\": 32,\n                    \"children\": [\n                        {\n                            \"entity\": \"vonOrt\",\n                            \"startPos\": 29,\n                            \"endPos\": 32,\n                            \"children\": []\n                        }\n                    ]\n                },\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 39,\n                    \"endPos\": 43,\n                    \"children\": [\n                        {\n                            \"entity\": \"zielOrt\",\n                            \"startPos\": 39,\n                            \"endPos\": 43,\n                            \"children\": []\n                        }\n                    ]\n                }\n            ]\n        },\n        {\n            \"text\": \"ruf ein taxi für den 1. mai\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"ruf ein taxi für den 2. mai\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"ruf mir ein\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"ruf mir ein taxi\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"ruf mir ein taxi von zu hause über essen nach dortmund\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": [\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 21,\n                    \"endPos\": 28,\n                    \"children\": [\n                        {\n                            \"entity\": \"vonOrt\",\n                            \"startPos\": 21,\n                            \"endPos\": 28,\n                            \"children\": []\n                        }\n                    ]\n                },\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 35,\n                    \"endPos\": 39,\n                    \"children\": [\n                        {\n                            \"entity\": \"ueberOrt\",\n                            \"startPos\": 35,\n                            \"endPos\": 39,\n                            \"children\": []\n                        }\n                    ]\n                },\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 46,\n                    \"endPos\": 53,\n                    \"children\": [\n                        {\n                            \"entity\": \"zielOrt\",\n                            \"startPos\": 46,\n                            \"endPos\": 53,\n                            \"children\": []\n                        }\n                    ]\n                }\n            ]\n        },\n        {\n            \"text\": \"rufe taxi nach dresden\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"rufe taxi nach mainz\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": [\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 15,\n                    \"endPos\": 19,\n                    \"children\": [\n                        {\n                            \"entity\": \"zielOrt\",\n                            \"startPos\": 15,\n                            \"endPos\": 19,\n                            \"children\": []\n                        }\n                    ]\n                }\n            ]\n        },\n        {\n            \"text\": \"taxi 19 uhr\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"taxi nach bingen\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": [\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 10,\n                    \"endPos\": 15,\n                    \"children\": [\n                        {\n                            \"entity\": \"zielOrt\",\n                            \"startPos\": 10,\n                            \"endPos\": 15,\n                            \"children\": []\n                        }\n                    ]\n                }\n            ]\n        },\n        {\n            \"text\": \"taxi nach bingen jetzt\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": [\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 10,\n                    \"endPos\": 15,\n                    \"children\": [\n                        {\n                            \"entity\": \"zielOrt\",\n                            \"startPos\": 10,\n                            \"endPos\": 15,\n                            \"children\": []\n                        }\n                    ]\n                }\n            ]\n        },\n        {\n            \"text\": \"taxi von bad kreuznach nach bingen um 19 uhr\",\n            \"intent\": \"taxiRufen\",\n            \"entities\": [\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 9,\n                    \"endPos\": 21,\n                    \"children\": [\n                        {\n                            \"entity\": \"vonOrt\",\n                            \"startPos\": 9,\n                            \"endPos\": 21,\n                            \"children\": []\n                        }\n                    ]\n                },\n                {\n                    \"entity\": \"ort\",\n                    \"startPos\": 28,\n                    \"endPos\": 33,\n                    \"children\": [\n                        {\n                            \"entity\": \"zielOrt\",\n                            \"startPos\": 28,\n                            \"endPos\": 33,\n                            \"children\": []\n                        }\n                    ]\n                }\n            ]\n        },\n        {\n            \"text\": \"test\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"wann war das nochmal\",\n            \"intent\": \"None\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"your_query_here\",\n            \"intent\": \"None\",\n            \"entities\": []\n        }\n    ],\n    \"versionId\": \"0.1\",\n    \"name\": \"{{appName}}\",\n    \"desc\": \"Das ist eine Beispiel Anwendung\",\n    \"culture\": \"de-de\",\n    \"tokenizerVersion\": \"1.0.2\",\n    \"patternAnyEntities\": [],\n    \"regex_entities\": [],\n    \"phraselists\": [],\n    \"regex_features\": [],\n    \"patterns\": [],\n    \"settings\": []\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/luis/service/createApp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"createApp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Train App",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/service/train?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"train"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Simple Hit",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/service/simpleHit?name={{appName}}&utterance=Bestell mir ein Taxi.",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"simpleHit"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								},
+								{
+									"key": "utterance",
+									"value": "Bestell mir ein Taxi."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publish App",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/service/publish?name={{appName}}&staging=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"publish"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								},
+								{
+									"key": "staging",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Publish Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/service/getPublishSettings?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"getPublishSettings"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete App",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/service/deleteApp?name={{appName}}&force=true",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"deleteApp"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								},
+								{
+									"key": "force",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update App",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"luis_schema_version\": \"7.0.0\",\n  \"intents\": [\n    {\n      \"name\": \"None\",\n      \"features\": []\n    },\n    {\n      \"name\": \"taxiAbbestellen\",\n      \"features\": []\n    },\n    {\n      \"name\": \"taxiRufen\",\n      \"features\": []\n    }\n  ],\n  \"entities\": [\n    {\n      \"name\": \"ort\",\n      \"children\": [\n        {\n          \"name\": \"zielOrt\",\n          \"children\": [],\n          \"features\": []\n        },\n        {\n          \"name\": \"vonOrt\",\n          \"children\": [],\n          \"features\": []\n        },\n        {\n          \"name\": \"ueberOrt\",\n          \"children\": [],\n          \"features\": []\n        }\n      ],\n      \"roles\": [],\n      \"features\": []\n    }\n  ],\n  \"hierarchicals\": [],\n  \"composites\": [],\n  \"closedLists\": [],\n  \"prebuiltEntities\": [\n    {\n      \"name\": \"datetimeV2\",\n      \"roles\": []\n    }\n  ],\n  \"utterances\": [\n    {\n      \"text\": \"bestell mir ein taxi für morgen 8 uhr von zu hause über bingen nach mainz\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": [\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 42,\n          \"endPos\": 49,\n          \"children\": [\n            {\n              \"entity\": \"vonOrt\",\n              \"startPos\": 42,\n              \"endPos\": 49,\n              \"children\": []\n            }\n          ]\n        },\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 56,\n          \"endPos\": 61,\n          \"children\": [\n            {\n              \"entity\": \"ueberOrt\",\n              \"startPos\": 56,\n              \"endPos\": 61,\n              \"children\": []\n            }\n          ]\n        },\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 68,\n          \"endPos\": 72,\n          \"children\": [\n            {\n              \"entity\": \"zielOrt\",\n              \"startPos\": 68,\n              \"endPos\": 72,\n              \"children\": []\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"text\": \"eine ganz andere aufgabe\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"hallo\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"hallo du, wie geht es dir\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"hallo du, wie geht es dir???\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"hallo ihr\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"hallo wie geht es dir\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"hallo, ruf mir doch bitte f\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"ich habe einen hund der ist jetzt in korb\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"ich hätte gerne ein taxi von hier nach mainz\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": [\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 29,\n          \"endPos\": 32,\n          \"children\": [\n            {\n              \"entity\": \"vonOrt\",\n              \"startPos\": 29,\n              \"endPos\": 32,\n              \"children\": []\n            }\n          ]\n        },\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 39,\n          \"endPos\": 43,\n          \"children\": [\n            {\n              \"entity\": \"zielOrt\",\n              \"startPos\": 39,\n              \"endPos\": 43,\n              \"children\": []\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"text\": \"ich will kein taxi\",\n      \"intent\": \"taxiAbbestellen\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"ruf ein taxi für den 1. mai\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"ruf ein taxi für den 2. mai\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"ruf mir ein\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"ruf mir ein taxi\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"ruf mir ein taxi von zu hause über essen nach dortmund\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": [\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 21,\n          \"endPos\": 28,\n          \"children\": [\n            {\n              \"entity\": \"vonOrt\",\n              \"startPos\": 21,\n              \"endPos\": 28,\n              \"children\": []\n            }\n          ]\n        },\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 35,\n          \"endPos\": 39,\n          \"children\": [\n            {\n              \"entity\": \"ueberOrt\",\n              \"startPos\": 35,\n              \"endPos\": 39,\n              \"children\": []\n            }\n          ]\n        },\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 46,\n          \"endPos\": 53,\n          \"children\": [\n            {\n              \"entity\": \"zielOrt\",\n              \"startPos\": 46,\n              \"endPos\": 53,\n              \"children\": []\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"text\": \"rufe taxi nach dresden\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"rufe taxi nach mainz\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": [\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 15,\n          \"endPos\": 19,\n          \"children\": [\n            {\n              \"entity\": \"zielOrt\",\n              \"startPos\": 15,\n              \"endPos\": 19,\n              \"children\": []\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"text\": \"taxi 19 uhr\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"taxi nach bingen\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": [\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 10,\n          \"endPos\": 15,\n          \"children\": [\n            {\n              \"entity\": \"zielOrt\",\n              \"startPos\": 10,\n              \"endPos\": 15,\n              \"children\": []\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"text\": \"taxi nach bingen jetzt\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": [\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 10,\n          \"endPos\": 15,\n          \"children\": [\n            {\n              \"entity\": \"zielOrt\",\n              \"startPos\": 10,\n              \"endPos\": 15,\n              \"children\": []\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"text\": \"taxi von bad kreuznach nach bingen um 19 uhr\",\n      \"intent\": \"taxiRufen\",\n      \"entities\": [\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 9,\n          \"endPos\": 21,\n          \"children\": [\n            {\n              \"entity\": \"vonOrt\",\n              \"startPos\": 9,\n              \"endPos\": 21,\n              \"children\": []\n            }\n          ]\n        },\n        {\n          \"entity\": \"ort\",\n          \"startPos\": 28,\n          \"endPos\": 33,\n          \"children\": [\n            {\n              \"entity\": \"zielOrt\",\n              \"startPos\": 28,\n              \"endPos\": 33,\n              \"children\": []\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"text\": \"test\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"wann war das nochmal\",\n      \"intent\": \"None\",\n      \"entities\": []\n    },\n    {\n      \"text\": \"your_query_here\",\n      \"intent\": \"None\",\n      \"entities\": []\n    }\n  ],\n  \"versionId\": \"0.6\",\n  \"name\": \"TestMichael2\",\n  \"desc\": \"\",\n  \"culture\": \"de-de\",\n  \"tokenizerVersion\": \"1.0.2\",\n  \"patternAnyEntities\": [],\n  \"regex_entities\": [],\n  \"phraselists\": [],\n  \"regex_features\": [],\n  \"patterns\": [],\n  \"settings\": []\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/luis/service/updateApp?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"updateApp"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Publish Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/service/updatePublishSettings?name={{appName}}&sentimentAnalysis=false&speech=false&spellChecker=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"updatePublishSettings"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								},
+								{
+									"key": "sentimentAnalysis",
+									"value": "false"
+								},
+								{
+									"key": "speech",
+									"value": "false"
+								},
+								{
+									"key": "spellChecker",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Batch Testing",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "number;transcript;category;literal;start;end;intent;tags\n1;Wie lange dauert es mit dem Taxi von Ingelheim nach Wiesbaden;vonOrt;Ingelheim;36;45;TIME;\n2;Wie lange dauert es mit dem Taxi von Ingelheim nach Wiesbaden;zuOrt;Wiesbaden;51;60;TIME;\n3;Bestell mir was zu essen;;;;;NONE;\n4;Storniere das Taxi am Freitag fuer 16 Uhr;datetimeV2;Freitag fuer 16 Uhr;21;40;CANCEL;\n5;Hallo, wie gehts;;;;;NONE;\n6;Ich habe ein Taxi bestellt, bestell es ab;Anzahl;ein;8;11;CANCEL;\n7;Wann ist ein Taxi in Bingen;Anzahl;ein;8;11;TIME;\n8;Wann ist ein Taxi in Bingen;vonOrt;Bingen;20;26;TIME;\n9;Ich habe am 5. zwei Taxen bestellt, brauche aber drei;datetimeV2;5.;11;13;CHANGE;\n10;Ich habe am 5. zwei Taxen bestellt, brauche aber drei;Anzahl;zwei;14;18;CHANGE;\n11;Ich habe am 5. zwei Taxen bestellt, brauche aber drei;Anzahl;drei;48;52;CHANGE;\n12;Wie teuer ist das Benzin;;;;;NONE;\n13;Taxi, 12 Uhr;datetimeV2;12 Uhr;5;11;BOOK;\n14;Wie wird das Wetter morgen?;;;;;NONE;\n15;Bestell die beiden Taxen nach Dresden ab;Anzahl;beiden;11;17;CANCEL;\n16;Bestell die beiden Taxen nach Dresden ab;zuOrt;nach Dresden;24;36;CANCEL;\n17;Bestell mein Taxi ab;;;;;CANCEL;\n18;5550985 anrufen;;;;;NONE;\n19;Ich brauche morgen doch nur ein Taxi;Anzahl;ein;27;30;CHANGE;\n20;Ich brauche morgen doch nur ein Taxi;datetimeV2;morgen;11;17;CHANGE;\n21;Was kostet ein Taxi, wenn ich es nicht nehme;Anzahl;ein;10;13;NONE;\n22;Ruf mir ein Taxi von Wiesbaden ueber Frankfurt nach Dresden;Anzahl;ein;7;10;BOOK;\n23;Ruf mir ein Taxi von Wiesbaden ueber Frankfurt nach Dresden;vonOrt;Wiesbaden;20;29;BOOK;\n24;Ruf mir ein Taxi von Wiesbaden ueber Frankfurt nach Dresden;zuOrt;Dresden;51;58;BOOK;\n25;Ruf mir ein Taxi von Wiesbaden ueber Frankfurt nach Dresden;ueberOrt;Frankfurt;36;45;BOOK;\n26;Taxi um 3 weg;datetimeV2;um 3;4;8;CANCEL;\n27;Ruf mir ein Taxi zum Essen;Anzahl;ein;7;10;BOOK;\n28;Ruf mir ein Taxi zum Essen;datetimeV2;zum Essen;16;25;BOOK;\n29;Ich brauche um 14 Uhr ein Taxi zuhause;datetimeV2;14 Uhr;14;20;BOOK;\n30;Ich brauche um 14 Uhr ein Taxi zuhause;Anzahl;ein;21;24;BOOK;\n31;Ich brauche um 14 Uhr ein Taxi zuhause;vonOrt;zuhause;30;37;BOOK;\n32;Bestell mir ein Taxi fuer morgen zu meiner Freundin;Anzahl;ein;11;14;BOOK;\n33;Bestell mir ein Taxi fuer morgen zu meiner Freundin;datetimeV2;morgen;25;31;BOOK;\n34;Bestell mir ein Taxi fuer morgen zu meiner Freundin;vonOrt;zu meiner Freundin;32;50;BOOK;\n35;Wann ist das naechste Meeting;;;;;NONE;\n36;Ruf Mama an;;;;;NONE;\n37;Wann geht die Sonne auf;;;;;NONE;\n38;Bestell mein Taxi fuer den 20. November ab;datetimeV2;20. November;26;38;CANCEL;\n39;Was kostet es, sich in ein Taxi zu setzen;Anzahl;ein;22;25;PRICE;\n40;Bestell das Taxi fuer morgen zu meiner Freundin ab;datetimeV2;morgen;21;27;CANCEL;\n41;Bestell das Taxi fuer morgen zu meiner Freundin ab;vonOrt;zu meiner Freundin;28;46;CANCEL;\n42;Taxi umbuchen, nicht von zu Hause sondern vom Bahnhof;vonOrt;zu Hause;24;32;CHANGE;\n43;Taxi umbuchen, nicht von zu Hause sondern vom Bahnhof;vonOrt;Bahnhof;45;52;CHANGE;\n44;Ruf mir ein Taxi;Anzahl;ein;7;10;BOOK;\n45;Hol mir zwei Taxen um 22 Uhr;Anzahl;zwei;7;11;BOOK;\n46;Hol mir zwei Taxen um 22 Uhr;datetimeV2;22 Uhr;21;27;BOOK;\n47;Hol mir ein Taxi nach Essen und zurueck;Anzahl;ein;7;10;BOOK;\n48;Hol mir ein Taxi nach Essen und zurueck;zuOrt;Essen;21;26;BOOK;\n49;Hol mir ein Taxi nach Essen und zurueck;zuOrt;zurueck;31;38;BOOK;\n50;Ich brauche das Taxi zwei Stunden frueher;datetimeV2;zwei Stunden frueher;20;40;CHANGE;\n51;Taxi!;;;;;BOOK;\n52;Bestell mir ein Taxi fuer Freitag 16 Uhr;Anzahl;ein;11;14;BOOK;\n53;Bestell mir ein Taxi fuer Freitag 16 Uhr;datetimeV2;Freitag 16 Uhr;25;39;BOOK;\n54;Wie warm ist es in Berlin;;;;;NONE;\n55;Buch mir ein Taxi von Muenchen nach Berlin;vonOrt;Muenchen;21;29;BOOK;\n56;Buch mir ein Taxi von Muenchen nach Berlin;zuOrt;Berlin;35;41;BOOK;\n57;Buch mir ein Taxi von Muenchen nach Berlin;Anzahl;ein;8;11;BOOK;\n58;Ich brauche kein Taxi mehr;;;;;CANCEL;\n59;Hol mir ein Taxi nach Mainz;Anzahl;ein;7;10;BOOK;\n60;Hol mir ein Taxi nach Mainz;zuOrt;Mainz;21;26;BOOK;\n61;Was kostet ein Taxi von Mainz nach Bingen;Anzahl;ein;10;13;PRICE;\n62;Was kostet ein Taxi von Mainz nach Bingen;vonOrt;Mainz;23;28;PRICE;\n63;Was kostet ein Taxi von Mainz nach Bingen;zuOrt;Bingen;34;40;PRICE;\n64;Taxi am 8. abbestellen;datetimeV2;am 8.;4;9;CANCEL;\n65;Ich will nach Hause;zuOrt;nach Hause;8;18;NONE;\n66;Wann kann das naechste Taxi bei mir sein;vonOrt;bei mir;27;34;TIME;\n67;Bestell mir ein Taxi fuer den 20.11.2020 14 Uhr;Anzahl;ein;11;14;BOOK;\n68;Bestell mir ein Taxi fuer den 20.11.2020 14 Uhr;datetimeV2;20.11.2020 14 Uhr;29;46;BOOK;"
+						},
+						"url": {
+							"raw": "http://localhost:8080/luis/service/batchTesting?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"batchTesting"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Batch Test",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/service/batchTest?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"batchTest"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hit Count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/service/getHitCount?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"service",
+								"getHitCount"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LuisAppController",
+			"item": [
+				{
+					"name": "Get Apps",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/app/getApps",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"app",
+								"getApps"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get App Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/app/getAppStats?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"app",
+								"getAppStats"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add GT Records",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/luis/app/addRecords",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"app",
+								"addRecords"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change GT",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/luis/app/changeGT",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"app",
+								"changeGT"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get App JSON",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/app/getJSON?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"app",
+								"getJSON"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get GT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/app/getGT?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"app",
+								"getGT"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Test Data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/app/getTestData?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"app",
+								"getTestData"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Test Data as JSON",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/app/getTestDataJSON?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"app",
+								"getTestDataJSON"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get App Data Combined",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/luis/app/getAppData?name={{appName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"app",
+								"getAppData"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ConvertController",
+			"item": [
+				{
+					"name": "Convert to JSON",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "number;transcript;category;literal;start;end;intent\n1;Buch mir ein Taxi von Muenchen nach Berlin;vonOrt;Muenchen;21;29;BOOK\n2;Buch mir ein Taxi von Muenchen nach Berlin;zuOrt;Berlin;35;41;BOOK\n3;Buch mir ein Taxi von Muenchen nach Berlin;Anzahl;ein;8;11;BOOK\n4;Ich brauche um 14 Uhr ein Taxi zuhause;datetimeV2;14 Uhr;14;20;BOOK\n5;Ich brauche um 14 Uhr ein Taxi zuhause;Anzahl;ein;21;24;BOOK\n6;Ich brauche um 14 Uhr ein Taxi zuhause;vonOrt;zuhause;30;37;BOOK\n7;Ruf mir ein Taxi;Anzahl;ein;7;10;BOOK\n8;Bestell mir ein Taxi fuer Freitag 16 Uhr;Anzahl;ein;11;14;BOOK\n9;Bestell mir ein Taxi fuer Freitag 16 Uhr;datetimeV2;Freitag 16 Uhr;25;39;BOOK\n10;Bestell mir ein Taxi fuer den 20.11.2020 14 Uhr;Anzahl;ein;11;14;BOOK\n11;Bestell mir ein Taxi fuer den 20.11.2020 14 Uhr;datetimeV2;20.11.2020 14 Uhr;29;46;BOOK\n12;Hol mir ein Taxi nach Mainz;Anzahl;ein;7;10;BOOK\n13;Hol mir ein Taxi nach Mainz;zuOrt;Mainz;21;26;BOOK\n14;Taxi, 12 Uhr;datetimeV2;12 Uhr;5;11;BOOK\n15;Hol mir zwei Taxen um 22 Uhr;Anzahl;zwei;7;11;BOOK\n16;Hol mir zwei Taxen um 22 Uhr;datetimeV2;22 Uhr;21;27;BOOK\n17;Ruf mir ein Taxi von Wiesbaden ueber Frankfurt nach Dresden;Anzahl;ein;7;10;BOOK\n18;Ruf mir ein Taxi von Wiesbaden ueber Frankfurt nach Dresden;vonOrt;Wiesbaden;20;29;BOOK\n19;Ruf mir ein Taxi von Wiesbaden ueber Frankfurt nach Dresden;zuOrt;Dresden;51;58;BOOK\n20;Ruf mir ein Taxi von Wiesbaden ueber Frankfurt nach Dresden;ueberOrt;Frankfurt;36;45;BOOK\n21;Hol mir ein Taxi nach Essen und zurueck;Anzahl;ein;7;10;BOOK\n22;Hol mir ein Taxi nach Essen und zurueck;zuOrt;Essen;21;26;BOOK\n23;Hol mir ein Taxi nach Essen und zurueck;zuOrt;zurueck;31;38;BOOK\n24;Ruf mir ein Taxi zum Essen;Anzahl;ein;7;10;BOOK\n25;Ruf mir ein Taxi zum Essen;datetimeV2;zum Essen;16;25;BOOK\n26;Bestell mir ein Taxi fuer morgen zu meiner Freundin;Anzahl;ein;11;14;BOOK\n27;Bestell mir ein Taxi fuer morgen zu meiner Freundin;datetimeV2;morgen;25;31;BOOK\n28;Bestell mir ein Taxi fuer morgen zu meiner Freundin;vonOrt;zu meiner Freundin;32;50;BOOK\n29;Ich brauche kein Taxi mehr;;;;;CANCEL\n30;Storniere das Taxi am Freitag fuer 16 Uhr;datetimeV2;Freitag fuer 16 Uhr;21;40;CANCEL\n31;Bestell mein Taxi fuer den 20. November ab;datetimeV2;20. Nov;26;38;CANCEL\n32;Bestell mein Taxi ab;;;;;CANCEL\n33;Wann kann das naechste Taxi bei mir sein;vonOrt;bei mir;27;34;TIME\n34;Wie lange dauert es mit dem Taxi von Ingelheim nach Wiesbaden;vonOrt;Ingelheim;36;45;TIME\n35;Wie lange dauert es mit dem Taxi von Ingelheim nach Wiesbaden;zuOrt;Wiesbaden;51;60;TIME\n36;Wann ist ein Taxi in Bingen;Anzahl;ein;8;11;TIME\n37;Wann ist ein Taxi in Bingen;vonOrt;Bingen;20;26;TIME\n38;Was kostet ein Taxi von Mainz nach Bingen;Anzahl;ein;10;13;PRICE\n39;Was kostet ein Taxi von Mainz nach Bingen;vonOrt;Mainz;23;28;PRICE\n40;Was kostet ein Taxi von Mainz nach Bingen;zuOrt;Bingen;34;40;PRICE\n41;Book me a flight from Cairo to Redmond next Thursday;Location::From;Cairo;22;26;BookFlight\n42;Book me a flight from Cairo to Redmond next Thursday;Location::To;Redmond;31;37;BookFlight\n43;Book me a flight from Cairo to Redmond next Thursday;Location::From;Cairo;22;26;BookFlight\n44;Book me a flight from Cairo to Redmond next Thursday;Location::To;Redmond;31;37;BookFlight\n45;Hook ye a flight from Cairo to Redmond next Thursday;Location::From;Cairo;22;26;BookFlight\n46;Hook ye a flight from Cairo to Redmond next Thursday;Location::To;Redmond;31;37;BookFlight\n"
+						},
+						"url": {
+							"raw": "http://localhost:8080/luis/convert/convertToJSON?name={{appName}}&version=0.1&description=&culture=de-de",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"convert",
+								"convertToJSON"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{appName}}"
+								},
+								{
+									"key": "version",
+									"value": "0.1"
+								},
+								{
+									"key": "description",
+									"value": ""
+								},
+								{
+									"key": "culture",
+									"value": "de-de"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Convert to CSV",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"luis_schema_version\": \"7.0.0\",\n    \"intents\": [\n        {\n            \"name\": \"TAXI__BOOK\",\n            \"features\": []\n        },\n        {\n            \"name\": \"TAXI__CANCEL\",\n            \"features\": []\n        },\n        {\n            \"name\": \"TAXI__TIME\",\n            \"features\": []\n        },\n        {\n            \"name\": \"TAXI__PRICE\",\n            \"features\": []\n        },\n        {\n            \"name\": \"TAXI__BookFlight\",\n            \"features\": []\n        }\n    ],\n    \"entities\": [\n        {\n            \"name\": \"vonOrt\",\n            \"children\": [],\n            \"features\": [],\n            \"roles\": []\n        },\n        {\n            \"name\": \"zuOrt\",\n            \"children\": [],\n            \"features\": [],\n            \"roles\": []\n        },\n        {\n            \"name\": \"Anzahl\",\n            \"children\": [],\n            \"features\": [],\n            \"roles\": []\n        },\n        {\n            \"name\": \"ueberOrt\",\n            \"children\": [],\n            \"features\": [],\n            \"roles\": []\n        },\n        {\n            \"name\": \"Location::From\",\n            \"children\": [],\n            \"features\": [],\n            \"roles\": []\n        },\n        {\n            \"name\": \"Location::To\",\n            \"children\": [],\n            \"features\": [],\n            \"roles\": []\n        }\n    ],\n    \"hierarchicals\": [],\n    \"composites\": [],\n    \"closedLists\": [],\n    \"prebuiltEntities\": [\n        {\n            \"name\": \"datetimeV2\",\n            \"children\": [],\n            \"features\": [],\n            \"roles\": []\n        }\n    ],\n    \"utterances\": [\n        {\n            \"text\": \"Buch mir ein Taxi von Muenchen nach Berlin\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"vonOrt\",\n                    \"startPos\": 21,\n                    \"endPos\": 29,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"zuOrt\",\n                    \"startPos\": 35,\n                    \"endPos\": 41,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 8,\n                    \"endPos\": 11,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Ich brauche um 14 Uhr ein Taxi zuhause\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"datetimeV2\",\n                    \"startPos\": 14,\n                    \"endPos\": 20,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 21,\n                    \"endPos\": 24,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"vonOrt\",\n                    \"startPos\": 30,\n                    \"endPos\": 37,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Ruf mir ein Taxi\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 7,\n                    \"endPos\": 10,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Bestell mir ein Taxi fuer Freitag 16 Uhr\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 11,\n                    \"endPos\": 14,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"datetimeV2\",\n                    \"startPos\": 25,\n                    \"endPos\": 39,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Bestell mir ein Taxi fuer den 20.11.2020 14 Uhr\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 11,\n                    \"endPos\": 14,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"datetimeV2\",\n                    \"startPos\": 29,\n                    \"endPos\": 46,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Hol mir ein Taxi nach Mainz\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 7,\n                    \"endPos\": 10,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"zuOrt\",\n                    \"startPos\": 21,\n                    \"endPos\": 26,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Taxi, 12 Uhr\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"datetimeV2\",\n                    \"startPos\": 5,\n                    \"endPos\": 11,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Hol mir zwei Taxen um 22 Uhr\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 7,\n                    \"endPos\": 11,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"datetimeV2\",\n                    \"startPos\": 21,\n                    \"endPos\": 27,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Ruf mir ein Taxi von Wiesbaden ueber Frankfurt nach Dresden\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 7,\n                    \"endPos\": 10,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"vonOrt\",\n                    \"startPos\": 20,\n                    \"endPos\": 29,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"zuOrt\",\n                    \"startPos\": 51,\n                    \"endPos\": 58,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"ueberOrt\",\n                    \"startPos\": 36,\n                    \"endPos\": 45,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Hol mir ein Taxi nach Essen und zurueck\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 7,\n                    \"endPos\": 10,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"zuOrt\",\n                    \"startPos\": 21,\n                    \"endPos\": 26,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"zuOrt\",\n                    \"startPos\": 31,\n                    \"endPos\": 38,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Ruf mir ein Taxi zum Essen\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 7,\n                    \"endPos\": 10,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"datetimeV2\",\n                    \"startPos\": 16,\n                    \"endPos\": 25,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Bestell mir ein Taxi fuer morgen zu meiner Freundin\",\n            \"intent\": \"TAXI__BOOK\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 11,\n                    \"endPos\": 14,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"datetimeV2\",\n                    \"startPos\": 25,\n                    \"endPos\": 31,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"vonOrt\",\n                    \"startPos\": 32,\n                    \"endPos\": 50,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Ich brauche kein Taxi mehr\",\n            \"intent\": \"TAXI__CANCEL\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"Storniere das Taxi am Freitag fuer 16 Uhr\",\n            \"intent\": \"TAXI__CANCEL\",\n            \"entities\": [\n                {\n                    \"entity\": \"datetimeV2\",\n                    \"startPos\": 21,\n                    \"endPos\": 40,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Bestell mein Taxi fuer den 20. November ab\",\n            \"intent\": \"TAXI__CANCEL\",\n            \"entities\": [\n                {\n                    \"entity\": \"datetimeV2\",\n                    \"startPos\": 26,\n                    \"endPos\": 38,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Bestell mein Taxi ab\",\n            \"intent\": \"TAXI__CANCEL\",\n            \"entities\": []\n        },\n        {\n            \"text\": \"Wann kann das naechste Taxi bei mir sein\",\n            \"intent\": \"TAXI__TIME\",\n            \"entities\": [\n                {\n                    \"entity\": \"vonOrt\",\n                    \"startPos\": 27,\n                    \"endPos\": 34,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Wie lange dauert es mit dem Taxi von Ingelheim nach Wiesbaden\",\n            \"intent\": \"TAXI__TIME\",\n            \"entities\": [\n                {\n                    \"entity\": \"vonOrt\",\n                    \"startPos\": 36,\n                    \"endPos\": 45,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"zuOrt\",\n                    \"startPos\": 51,\n                    \"endPos\": 60,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Wann ist ein Taxi in Bingen\",\n            \"intent\": \"TAXI__TIME\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 8,\n                    \"endPos\": 11,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"vonOrt\",\n                    \"startPos\": 20,\n                    \"endPos\": 26,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Was kostet ein Taxi von Mainz nach Bingen\",\n            \"intent\": \"TAXI__PRICE\",\n            \"entities\": [\n                {\n                    \"entity\": \"Anzahl\",\n                    \"startPos\": 10,\n                    \"endPos\": 13,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"vonOrt\",\n                    \"startPos\": 23,\n                    \"endPos\": 28,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"zuOrt\",\n                    \"startPos\": 34,\n                    \"endPos\": 40,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Book me a flight from Cairo to Redmond next Thursday\",\n            \"intent\": \"TAXI__BookFlight\",\n            \"entities\": [\n                {\n                    \"entity\": \"Location::From\",\n                    \"startPos\": 22,\n                    \"endPos\": 26,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"Location::To\",\n                    \"startPos\": 31,\n                    \"endPos\": 37,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"Location::From\",\n                    \"startPos\": 22,\n                    \"endPos\": 26,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"Location::To\",\n                    \"startPos\": 31,\n                    \"endPos\": 37,\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Hook ye a flight from Cairo to Redmond next Thursday\",\n            \"intent\": \"TAXI__BookFlight\",\n            \"entities\": [\n                {\n                    \"entity\": \"Location::From\",\n                    \"startPos\": 22,\n                    \"endPos\": 26,\n                    \"children\": []\n                },\n                {\n                    \"entity\": \"Location::To\",\n                    \"startPos\": 31,\n                    \"endPos\": 37,\n                    \"children\": []\n                }\n            ]\n        }\n    ],\n    \"versionId\": \"0.1\",\n    \"name\": \"TaxiExampleApp\",\n    \"desc\": \"\",\n    \"culture\": \"de-de\",\n    \"tokenizerVersion\": \"1.0.0\",\n    \"patternAnyEntities\": [],\n    \"regex_entities\": [],\n    \"phraselists\": [],\n    \"regex_features\": [],\n    \"patterns\": [],\n    \"settings\": []\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/luis/convert/convertToCSV",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"luis",
+								"convert",
+								"convertToCSV"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "appName",
+			"value": "LuisExampleApp"
+		}
+	]
+}

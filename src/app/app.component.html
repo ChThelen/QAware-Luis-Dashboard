@@ -14,7 +14,7 @@
   <clr-header class="header header-6">
     <div class="branding">
       <a class="nav-link" routerLink="/dashboard">
-        <clr-icon shape="talk-bubbles" class="is-inverse is-solid" size="22"></clr-icon>
+        <clr-icon shape="talk-bubbles" class="is-inverse is-solid" size="22" style="margin: 0.5em;"></clr-icon>
         <span class="title">QAware Luis</span>
       </a>
     </div>
@@ -40,7 +40,7 @@
   </clr-header>
 
   <div class="content-container">
-    <div class="content-area" style="padding-bottom: 0;">
+    <div class="content-area">
       <app-notification *ngIf="shouldDisplayNotification" [notification]="notification"></app-notification>
       <router-outlet></router-outlet>
     </div>
