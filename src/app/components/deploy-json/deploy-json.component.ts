@@ -175,6 +175,18 @@ export class DeployJsonComponent implements OnInit {
     return temp;
   }
 
+  deleteApp()
+  {
+    this.luisService.deleteApp(this.deleteApp.name , true)
+    this.reset();
+  }
+  
+  createAppState()
+  {
+    this.luis.app.created == 0? this.timelineStyle.step1.state = 'success' :  this.timelineStyle.step1.failed? this.timelineStyle.step1.state = 'error' :  this.timelineStyle.step1.state = 'not-started'
+    return this.timelineStyle.step1.state;
+  }
+
   getTrainIntents(): string[] {
     let temp = this.result.map(element => element.intent);
     temp = [...new Set(temp)];
@@ -205,8 +217,6 @@ export class DeployJsonComponent implements OnInit {
                 this.timelineStyle.step1.failed = true;
                 this.timelineStyle.step1.state = "error";
 
-                console.log(err)
-
                 //TODO : Error Message
               });
           });
@@ -228,6 +238,9 @@ export class DeployJsonComponent implements OnInit {
 
           });
       }
+      
+      this.timelineStyle.step1.state = this.createAppState();
+
     }
     else {
       this.json = this.uploadedFile.content;
@@ -259,14 +272,11 @@ export class DeployJsonComponent implements OnInit {
     this.luisService.publish(this.luisApp.name, this.luisApp.isStaging).subscribe(
       data => {
         this.luisApp.published = 0;
-        // NOTIFICATION
-        console.log(data)
         let app = JSON.parse(data);
         this.luisApp.region = app.region;
         this.luisApp.url = app.endpointUrl;
         this.luisApp.isStaging = app.isStaging;
         this.luisApp.publishedDateTime = app.publishedDateTime;
-        console.log(this.luisApp)
         this.timelineStyle.step4.state = 'current';
       },
       err => {
@@ -276,10 +286,12 @@ export class DeployJsonComponent implements OnInit {
     );
     this.luisService.getAppInfo(this.luisApp.name).subscribe(
       data => {
-        let info = data;
-        console.log(data)
-      },
-      err => {
+        let app = JSON.parse(data.body);
+     
+        this.luisApp.isStaging = app.isStaging; 
+        this.luisApp.publishedDateTime = app.lastModifiedDateTime;
+       },
+       err => {
         // NOTIFICATION
       }
     );
@@ -290,7 +302,6 @@ export class DeployJsonComponent implements OnInit {
           this.luisApp.settings.sentimentAnalysis = settings.sentimentAnalysis;
           this.luisApp.settings.speech = settings.speech;
           this.luisApp.settings.spellChecker = settings.spellChecker;
-          console.log(data.body)
           // NOTIFICATION
 
         },
@@ -393,20 +404,22 @@ export class DeployJsonComponent implements OnInit {
         trained: 1,
         tested: 1,
         published: 1,
-        settings: { sentimentAnalysis: false, speech: false, spellChecker: false },
+        settings:{sentimentAnalysis:false,speech:false,spellChecker:false},
         isStaging: false,
-      };
+      }
+    };
+    this.trained = false;
     this.intents = [];
     this.intentsSelectionTestdata = [];
     this.intentsSelectionTraindata = [];
-    this.intents = this.getTestIntents();
-    this.intents = this.getTrainIntents();
+    this.intents = this.getIntents(0);
+    this.intents = this.getIntents(1);
     this.timelineStyle = {
-      step0: { state: "current", open: true, failed: false },
-      step1: { state: "not-started", open: false, failed: false },
-      step2: { state: "not-started", open: false, failed: false },
-      step3: { state: "not-started", open: false, failed: false },
-      step4: { state: "not-started", open: false, failed: false },
+      step0: { state: "current", open: true ,failed: false},
+      step1: { state: "not-started", open: false , failed: false},
+      step2: { state: "not-started", open: false,failed: false },
+      step3: { state: "not-started", open: false,failed: false },
+      step4: { state: "not-started", open: false,failed: false },
     };
   }
 
