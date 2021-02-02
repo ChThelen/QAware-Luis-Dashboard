@@ -24,7 +24,9 @@
                                         [ngClass]="{
                                     'label-info': luisApp.status === 'deployed',
                                     'label-success': luisApp.status === 'published',
+                                    'label-warning': luisApp.status === 'trained',
                                     'label-danger': luisApp.status === 'failed' }">{{luisApp.status}}
+                                    
                                     </span>
                                     <h2 style="margin-top: 0rem;">{{luisApp.name}}</h2>
                                     <h3 style="margin-top: 0; color: hsl(198, 0%, 70%);">
@@ -40,7 +42,7 @@
                                 <button class="btn btn-sm btn-link" (click)="publishApp()"
                                     [disabled]="luisApp.status === 'published'"
                                     [class.btn-publish]="luisApp.status !== 'published'">Publish</button>
-                                <button class="btn btn-sm btn-link" (click)="trainApp()">Train</button>
+                                <button class="btn btn-sm btn-link" (click)="trainApp()" [disabled]="luisApp.status === 'trained' || luisApp.status === 'published'">Train</button>
                                 <button class="btn btn-sm btn-link" (click)="openTesWizard()">Test</button>
                                 <div class="dropdown top-left" [class.open]="appDropDown" appClickOutside
                                     (clickOutside)="appDropDown=false">
@@ -126,8 +128,11 @@
                             </div>
                         </div>
                     </div>
-                    -->
-                    <div class="clr-col-12">
+                    -->  
+                    
+                    <div class="clr-break-row"></div>
+
+                    <div class="clr-col-6">
                         <clr-datagrid>
                             <clr-dg-column [clrDgField]="'version'">App-Version</clr-dg-column>
                             <clr-dg-column [clrDgField]="'date'">Date</clr-dg-column>
@@ -172,11 +177,11 @@
                                             <clr-dg-cell>
                                                 <span>
                                                     {{intentStat.intent}}
-                                                    <a *ngIf="intentStat.wrongIntents" role="tooltip"
+                                                    <a *ngIf="intentStat.falseIntents" role="tooltip"
                                                         aria-haspopup="true" class="tooltip tooltip-lg">
                                                         <cds-icon shape="exclamation-triangle" status="danger" size="20"
                                                             solid></cds-icon>
-                                                        <span class="tooltip-content">The following intents was detected instead: {{intentStat.wrongIntents.toString()}}</span>
+                                                        <span class="tooltip-content">The following intents was detected instead: {{intentStat.falseIntents | json}}</span>
                                                     </a>
                                                 </span>
                                             </clr-dg-cell>

@@ -14,6 +14,7 @@
                     <span class="label label-success p7" [ngClass]="{
                     'label-info': app.status === 'deployed',
                     'label-success': app.status === 'published',
+                    'label-warning': app.status === 'trained',
                     'label-danger': app.status === 'failed' }" style="margin-top: .4em;">Status: {{app.status}}</span>
                 </div>
             </a>

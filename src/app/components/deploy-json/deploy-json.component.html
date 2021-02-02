@@ -32,7 +32,7 @@
                 <li>Description:	A description for your app. Optional.</li>
                 <li>Culture:	The language that your app understands and speaks. Here German.</li>
               </ul>
-              <button class="btn btn-sm btn-danger" (click)="deleteApp()" *ngIf="luisApp.created==0">Delete</button>
+              <button class="btn btn-sm btn-warning-outline" (click)="deleteApp()" *ngIf="luisApp.created==0">Delete</button>
             </clr-timeline-step-description>
           </clr-timeline-step>
           <clr-timeline-step [clrState]="trained? timelineStyle.step2.state : luisApp.trained == 0? 'success' :  luisApp.created == 0? 'current' : timelineStyle.step2.failed? 'error' : 'not-started'">

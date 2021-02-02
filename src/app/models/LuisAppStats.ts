@@ -1,7 +1,7 @@
 class IntentStats {
     intent: string;
     average: number;
-    wrongIntents?: string[];
+    falseIntents?: any;
 }
 
 export class LuisAppStats {
@@ -19,7 +19,7 @@ export const DUMMY_STATS: LuisAppStats[] = [
         intents: [
             {
                 intent: "TAXI_BOOK",
-                average: 0.0
+                average: 0.0,
             },
             {
                 intent: "TAXI_PRICE",
@@ -56,7 +56,11 @@ export const DUMMY_STATS: LuisAppStats[] = [
             {
                 intent: "TAXI_CANCEL",
                 average: 0.8592530456666667,
-                wrongIntents: ["TAXI__BOOK", "TAXI__CANCEL", "TAXI__TIME"]
+                falseIntents: {
+                    "ruf mir ein taxi": "TAXI__BOOK",
+                    "taxi abbestellen": "TAXI__CANCEL",
+                    "taxi morgen 14Uhr": "TAXI__TIME"
+                }
             }
         ]
 
@@ -101,12 +105,20 @@ export const DUMMY_STATS: LuisAppStats[] = [
             {
                 intent: "TAXI_TIME",
                 average: 0.8665849,
-                wrongIntents: ["TAXI__BOOK", "TAXI__CANCEL", "TAXI__TIME"]
+                falseIntents: {
+                    "ruf mir ein taxi": "TAXI__BOOK",
+                    "taxi abbestellen": "TAXI__CANCEL",
+                    "taxi morgen 14Uhr": "TAXI__TIME"
+                }
             },
             {
                 intent: "TAXI_CANCEL",
                 average: 0.8665849,
-                wrongIntents: ["TAXI__BOOK", "TAXI__CANCEL", "TAXI__TIME"]
+                falseIntents: {
+                    "ruf mir ein taxi": "TAXI__BOOK",
+                    "taxi abbestellen": "TAXI__CANCEL",
+                    "taxi morgen 14Uhr": "TAXI__TIME"
+                }
             }
         ]
 

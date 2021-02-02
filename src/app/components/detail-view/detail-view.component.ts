@@ -12,6 +12,7 @@ import { Utterance } from 'src/app/models/Utterance';
 import { PersistentService } from '../../services/persistent.service';
 import { ChartDataSets } from 'chart.js';
 import { CombinedLuisApp } from 'src/app/models/CombinedLuisApp';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-detail-view',
@@ -21,6 +22,7 @@ import { CombinedLuisApp } from 'src/app/models/CombinedLuisApp';
 export class DetailViewComponent implements OnInit {
   @ViewChild("editWizard") editWizard: ClrWizard;
   @ViewChild("testWizard") testWizard: ClrWizard;
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective;
 
   //App Data
   luisApp: LuisApp = null;
@@ -221,6 +223,7 @@ export class DetailViewComponent implements OnInit {
       },
       () => {
         this.isLoading = false;
+        this.luisApp.status = LuisAppState.trained;
         this.showNotification(`Training of app ${name} was successfully.`, null, NotificationType.Info);
       }
     );
@@ -321,6 +324,8 @@ export class DetailViewComponent implements OnInit {
     this.luisAppService.batchTestApp(name, "all").subscribe(k => {
       this.luisAppStats = k;
       this.isLoading = false;
+      this.generateChartData();
+      this.chart.update();
       this.showNotification("The test was successful. You can find your results under statistics.", null, NotificationType.Info);
     },
       (error) => {
@@ -330,7 +335,7 @@ export class DetailViewComponent implements OnInit {
     );
     this.closeTestWizard();
   }
-
+  
   finishEditWizard(): void {
 
     const name = this.route.snapshot.paramMap.get('name');

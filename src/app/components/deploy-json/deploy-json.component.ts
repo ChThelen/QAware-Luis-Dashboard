@@ -200,14 +200,15 @@ export class DeployJsonComponent implements OnInit {
       if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
       {
         let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-        this.convertService.convertCsvToJson(csv, this.luisApp.name)
+        this.convertService.convertCsvToJson(csv, this.luisApp.name, this.luisApp.description)
           .subscribe(data => {
-            this.json = this.editNameAndDescription(data);
+            this.json = JSON.stringify(data, null, 5);;
             this.luisService.createApp(this.luisApp.name).subscribe(
               data => {
                 let createdApp = JSON.parse(data.body);
                 this.luisApp.id = createdApp.appID;
                 this.luisApp.version = createdApp.version;
+                this.luisApp.description = createdApp.description;
                 this.luisApp.name = createdApp.name;
                 this.luisApp.created = 0;
                 this.showNotification(`The app ${this.luisApp.name} has been successfully created.`, null, NotificationType.Info);
@@ -319,17 +320,6 @@ export class DeployJsonComponent implements OnInit {
       });
   }
 
-  /**
-   * 
-   * @param jsonString 
-   * @returns the same json but with another name and description
-   */
-  editNameAndDescription(luisAppJson: any): string {
-    luisAppJson.name = this.luisApp.name;
-    luisAppJson.desc = this.luisApp.description;
-    return JSON.stringify(luisAppJson, null, 5);;
-  }
-
   readCsvFile(event: any) {
 
     let fileList: FileList = event.target.files;
@@ -355,7 +345,7 @@ export class DeployJsonComponent implements OnInit {
         this.uploadedFile.content = (<string>data);
 
         // convert in json
-        this.convertService.convertCsvToJson(this.uploadedFile.content, this.luisApp.name)
+        this.convertService.convertCsvToJson(this.uploadedFile.content, this.luisApp.name, this.luisApp.description)
           .subscribe(data => { this.uploadedFile.content = JSON.stringify(data, null, 3); });
       }
       fileReader.onerror = () => {
