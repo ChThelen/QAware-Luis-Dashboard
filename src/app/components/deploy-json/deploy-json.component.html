@@ -191,7 +191,7 @@
       </clr-tabs>
       <clr-tabs *ngIf="data.type=='train'">
         <clr-tab>
-            <button clrTabLink (click)="uploadedFile = {exist : false,json : false, csv : false,content : '',name : ''}">Ground-Truth</button>
+            <button clrTabLink (click)="uploadedFile = {exist : false,content : '',name : ''}">Ground-Truth</button>
             <clr-tab-content *clrIfActive>
               <clr-datagrid [(clrDgSelected)]="selectedTrainingsdata">
                 <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
