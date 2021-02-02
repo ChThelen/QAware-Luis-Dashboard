@@ -1,7 +1,7 @@
 <div class="button-bar">
   <div></div>
   <span class="spacer"></span>
-  <button class="btn btn-sm btn-primary">Reset</button>
+  <button class="btn btn-sm btn-primary" (click)="reset()">Reset</button>
   <button class="btn btn-sm btn-primary" (click)="changeToHorizonTal()" *ngIf="layout.direction === 'vertical'">HorizonTal Layout</button>
   <button class="btn btn-sm btn-primary" (click)="changeToVertical()" *ngIf="layout.direction === 'horizontal'">Vertical Layout</button>
   
@@ -22,7 +22,7 @@
             <clr-timeline-step-title>Add Utterances</clr-timeline-step-title>
             <clr-timeline-step-description>In this quickstart, you build a new app in the LUIS portal. First, create the basic parts of an app, intents, and entities. </clr-timeline-step-description>
           </clr-timeline-step>
-          <clr-timeline-step class="gemini-ignore" [clrState]="luisApp.created == 0? 'success' : timelineStyle.step1.open? 'current' :  timelineStyle.step1.failed? 'error' : 'not-started'">
+          <clr-timeline-step class="gemini-ignore" [clrState]="luisApp.created == 0? 'success' : timelineStyle.step1.open && !timelineStyle.step1.failed? 'current' :  timelineStyle.step1.failed?  timelineStyle.step1.state : 'not-started'">
             <clr-timeline-step-header>Step 1</clr-timeline-step-header>
             <clr-timeline-step-title>Create new app on Luis</clr-timeline-step-title>
             <clr-timeline-step-description>
@@ -32,8 +32,7 @@
                 <li>Description:	A description for your app. Optional.</li>
                 <li>Culture	The language that your app understands and speaks. Here German.</li>
               </ul>
-              <button class="btn btn-sm btn-danger" *ngIf="luisApp.created==0">Delete</button>
-
+              <button class="btn btn-sm btn-danger" (click)="deleteApp()" *ngIf="luisApp.created==0">Delete</button>
             </clr-timeline-step-description>
           </clr-timeline-step>
           <clr-timeline-step [clrState]="trained? timelineStyle.step2.state : luisApp.trained == 0? 'success' :  luisApp.created == 0? 'current' : timelineStyle.step2.failed? 'error' : 'not-started'">
@@ -70,7 +69,7 @@
             <clr-timeline-step-title>Test your new App</clr-timeline-step-title>
             <clr-timeline-step-description>
               <button class="btn btn-sm btn-success" *ngIf="luisApp.tested == 0 && luisApp.published==0" (click)="test()">Test</button>
-              <button class="btn btn-sm btn-primary" *ngIf="luisApp.tested == 1 && luisApp.published==1" (click)="test()" >Test</button>
+              <button class="btn btn-sm btn-primary" *ngIf="luisApp.tested == 1 && luisApp.published==0" (click)="test()" >Test</button>
             </clr-timeline-step-description>
           </clr-timeline-step>
         </clr-timeline>
@@ -250,14 +249,11 @@
              
             </clr-tab-content>
         </clr-tab>
-        
-        
-    
-    </clr-tabs>
+      </clr-tabs>
         
       </div>
       <div class="card-footer">
-        <button class="btn btn-primary" [disabled]="(selectedTrainingsdata.length==0 && !uploadedFile.exist)" (click)="this.timelineStyle.step0 ={ state: 'success', open: false };this.timelineStyle.step1 ={ state: 'current', open: true };">Next</button>
+        <button class="btn btn-primary" [disabled]="(selectedTrainingsdata.length==0)"  (click)="this.timelineStyle.step0 ={ state: 'success', open: false };this.timelineStyle.step1 ={ state: 'current', open: true };">Next</button>
       </div>
     </div>
     <!-- STEP 1-->
@@ -314,6 +310,18 @@
                     <div class="clr-example-col-value clr-col-1"><label >Version : &nbsp;</label></div>
                     <div class="clr-example-col-value clr-col"><span class="label label-blue" *ngIf="luisApp.created == 0">{{luisApp.version}}</span></div>
                 </div>
+                <div class="clr-row" *ngIf="luis.app.published==0">
+                  <div class="clr-example-col-value clr-col-1"> <label >Last Change: &nbsp;</label></div>
+                  <div class="clr-example-col-value clr-col"><span class="label label-purple"> {{luis.app.publishedDateTime| date: "dd:MMM:yyyy hh-mm-ss z"}}</span></div>
+              </div>
+              <div class="clr-row" *ngIf="luis.app.published==0">
+                <div class="clr-example-col-value clr-col-1"><label >Region: &nbsp;</label></div>
+                <div class="clr-example-col-value clr-col"><span class="label label-purple" *ngIf="luis.app.created == 0">{{luis.app.region}}</span></div>
+              </div>
+              <div class="clr-row" *ngIf="luis.app.published==0">
+                <div class="clr-example-col-value clr-col-1"><label >Url : &nbsp;</label></div>
+                <div class="clr-example-col-value clr-col"><span class="label label-purple clickable">{{luis.app.url}}</span></div>
+            </div>
               </div>
                 </clr-accordion-content>
               </clr-accordion-panel>
@@ -340,9 +348,10 @@
           </div>
         </div>
         <div class="card-footer">
-          <button class="btn btn-success" (click)="publish()" [disabled]="luisApp.trained == 1" *ngIf="luisApp.created==0">Publish</button>
+          <button class="btn btn-success" (click)="publish()" [disabled]="luisApp.trained == 1" *ngIf="luisApp.published!=0 && luisApp.created == 0">Publish</button>
           <button class="btn btn-primary" *ngIf="luisApp.created==1" [clrLoading]="submitBtnState" [disabled]="luisApp.name.trim() === ''" (click)="createApp()">create</button>
-          <button class="btn btn-primary-outline"(click)="this.timelineStyle.step0 ={ state: 'current', open: true };this.timelineStyle.step1 ={ state: 'not-started', open: false };">Back</button>
+          <button class="btn btn-primary-outline" (click)="this.timelineStyle.step0 ={ state: 'current', open: true };this.timelineStyle.step1 ={ state: 'not-started', open: false };">Back</button>
+          <button class="btn btn-outline" *ngIf="luisApp.created==0" routerLink="{{'/apps/' + luisApp.name }}" routerLinkActive="actice"> Finish</button>
       </div>
     </div>
   </div>
@@ -354,18 +363,17 @@
     <clr-toggle-container clrInline>
      
       <clr-toggle-wrapper>
-        <input type="checkbox" clrToggle name="Sentiment Analysis" required value="option1" [(ngModel)]="luisApp.settings.sentimentAnalysis" />
+        <input type="checkbox" clrToggle name="Sentiment Analysis" value="{{luisApp.settings.sentimentAnalysis}}" [(ngModel)]="luisApp.settings.sentimentAnalysis" />
         <label>Sentiment Analysis</label>
       </clr-toggle-wrapper>
       <clr-toggle-wrapper>
-        <input type="checkbox" clrToggle name="SpellChecker" required value="option2" [(ngModel)]="luisApp.settings.spellChecker" />
+        <input type="checkbox" clrToggle name="SpellChecker"  value="{{luisApp.settings.spellChecker}}" [(ngModel)]="luisApp.settings.spellChecker" />
         <label>SpellChecker</label>
       </clr-toggle-wrapper>
       <clr-toggle-wrapper>
-        <input type="checkbox" clrToggle name="Speech" required value="option3" [(ngModel)]="luisApp.settings.speech" />
+        <input type="checkbox" clrToggle name="Speech"  value="{{luisApp.settings.speech}}" [(ngModel)]="luisApp.settings.speech" />
         <label>Speech</label>
       </clr-toggle-wrapper>
-      <clr-control-helper>Helper for inline toggle control</clr-control-helper>
     </clr-toggle-container>
   </div>
   <div class="modal-footer">

@@ -50,7 +50,7 @@ export class LuisAppService {
   }
 
   public publish(name: string, staging: boolean) {
-    return this.httpClient.post<string>(this.buildUrl("/publish/?name="+name+"&staging="+staging),{ headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), params: { "staging": String(staging) }, responseType: 'text' as 'json' });
+    return this.httpClient.post<string>(this.buildUrl("/publish/?name="+name+"&staging="+staging),{  observe:'response' ,headers: new HttpHeaders({ "Content-Type": 'application/json' }), responseType: 'text' as 'json' });
   }
 
   public getPublishSettings(name: string) {

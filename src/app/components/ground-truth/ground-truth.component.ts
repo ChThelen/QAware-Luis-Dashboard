@@ -13,8 +13,6 @@ import { ConvertService } from 'src/app/services/convert.service';
 export class GroundTruthComponent implements OnInit {
 
   @ViewChild('csvReader') csvReader: any;
-  validateBtnState: ClrLoadingState = ClrLoadingState.DEFAULT;
-  submitBtnState: ClrLoadingState = ClrLoadingState.DEFAULT;
 
   file: File = null;
   fileName = "";
@@ -131,12 +129,13 @@ export class GroundTruthComponent implements OnInit {
   }
 
   merge() {
-    this.uploadedUtterances.forEach(data => this.result.push(data));
-    this.resetFile();
-    this.result.sort((a, b) => { return (parseInt(a.id) < parseInt(b.id)) ? -1 : 1 })
-    this.groundTruth = this.refreshUtterances(this.result).join('\n');
-    this.createUtterances(this.groundTruth, this.result);
-    this.newChange = true;
+    let csvArray1 = this.uploadedFile.split(/\r\n|\n/); 
+    let csvArray2 = this.groundTruth.split(/\r\n|\n/); 
+    csvArray1.shift();
+   
+    this.persistentService.merge(this.uploadedFile).subscribe(data => {console.log(data)})
+    this.getGT();
+   // console.log(this.groundTruth)
   }
 
   saveChanges() {
