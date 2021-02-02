@@ -135,6 +135,12 @@ export class GroundTruthComponent implements OnInit {
    
     this.persistentService.merge(this.uploadedFile).subscribe(data => {console.log(data)})
     this.getGT();
+    // this.uploadedUtterances.forEach(data => this.result.push(data));
+    // this.resetFile();
+    // this.result.sort((a, b) => { return (parseInt(a.id) < parseInt(b.id)) ? -1 : 1 })
+    // this.groundTruth = this.refreshUtterances(this.result).join('\n');
+    // this.createUtterances(this.groundTruth, this.result);
+    // this.newChange = true;
    // console.log(this.groundTruth)
   }
 

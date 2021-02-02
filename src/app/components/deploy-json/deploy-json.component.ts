@@ -31,8 +31,6 @@ export class DeployJsonComponent implements OnInit {
 
   uploadedFile = {
     exist: false,
-    json: false,
-    csv: false,
     content: '',
     name: ''
   }
@@ -195,7 +193,7 @@ export class DeployJsonComponent implements OnInit {
 
   createApp() {
 
-    if (!this.uploadedFile.exist) {
+    
 
       if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
       {
@@ -220,7 +218,7 @@ export class DeployJsonComponent implements OnInit {
               });
           });
       }
-      if (this.selectedTestdata.length != 0) // SELECT Test DATA
+      if (this.selectedTestdata.length != 0 && !this.uploadedFile.exist) // SELECT Test DATA GT
       {
         let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
         this.persistentService.testData(csv, this.luisApp.name)
@@ -228,7 +226,15 @@ export class DeployJsonComponent implements OnInit {
             this.json = JSON.stringify(data, null, 5);
           });
       }
-      else if (this.selectedTestdata.length == 0) // SKIP
+      else if (this.selectedTestdata.length == 0 && this.uploadedFile.exist) // SELECT Uploaded Test DATA
+      {
+        console.log(this.uploadedFile.content)
+        this.persistentService.testData(this.uploadedFile.content, this.luisApp.name)
+          .subscribe(data => {
+            this.json = JSON.stringify(data, null, 5);
+          });
+      }
+      else if (this.selectedTestdata.length == 0 && !this.uploadedFile.exist) // SKIP
       {
         let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
         this.persistentService.autoData(csv, this.luisApp.name, this.luisApp.version, this.luisApp.description, this.luisApp.culture)
@@ -239,11 +245,6 @@ export class DeployJsonComponent implements OnInit {
       }
 
       this.timelineStyle.step1.state = this.createAppState();
-
-    }
-    else {
-      this.json = this.uploadedFile.content;
-    }
   }
 
   train() {
@@ -315,10 +316,15 @@ export class DeployJsonComponent implements OnInit {
       this.showNotification(`The app ${this.luisApp.name} has been tested successfully.`, null, NotificationType.Info);
     },
       (error) => {
+        this.timelineStyle.step4.state = 'error';
         this.showNotification("Error while testing app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
       });
   }
-
+  updatePublishSetting()
+  {
+    this.luisService.updatePublishSettings(this.luisApp.name, this.luisApp.settings.sentimentAnalysis, this.luisApp.settings.speech, this.luisApp.settings.spellChecker)
+    .subscribe(data =>{console.log(data)});
+  }
   /**
    * 
    * @param jsonString 
@@ -337,48 +343,31 @@ export class DeployJsonComponent implements OnInit {
     // Initialize Object properties
     this.uploadedFile = {
       exist: false,
-      json: false,
-      csv: false,
       content: '',
-      name: fileList.item(0).name
+      name: ''
     }
 
     let fileReader = new FileReader();
     fileReader.readAsText(file);
     if ((file.name.endsWith(".csv"))) // Reading csv file
     {
-      this.uploadedFile.csv = true;
       this.uploadedFile.exist = true;
 
       fileReader.onload = () => {
         let data = fileReader.result;
         this.uploadedFile.content = (<string>data);
+        this.uploadedFile.name = fileList.item(0).name; 
 
-        // convert in json
-        this.convertService.convertCsvToJson(this.uploadedFile.content, this.luisApp.name)
-          .subscribe(data => { this.uploadedFile.content = JSON.stringify(data, null, 3); });
       }
       fileReader.onerror = () => {
         this.showNotification("Error occured while reading file!", null, NotificationType.Danger);
+        this.uploadedFile = {
+          exist: false,
+          content: '',
+          name: fileList.item(0).name
+        }
       };
     }
-    else if ((file.name.endsWith(".json"))) // Reading csv file
-    {
-      this.uploadedFile.json = true;
-      this.uploadedFile.exist = true;
-
-      fileReader.onload = () => {
-        let data = fileReader.result;
-        this.uploadedFile.content = (<string>data);
-        this.uploadedFile.content = JSON.parse(this.uploadedFile.content);
-        this.uploadedFile.content = JSON.stringify(this.uploadedFile.content, null, 3);
-      }
-      fileReader.onerror = () => {
-        this.showNotification("Error occured while reading file!", null, NotificationType.Danger);
-      };
-    }
-
-
   }
 
   showNotification(message: string, messageDetails: string, type: NotificationType) {

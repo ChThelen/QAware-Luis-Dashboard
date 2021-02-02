@@ -56,10 +56,14 @@ export class LuisAppService {
   public getPublishSettings(name: string) {
     return this.httpClient.get<string>(this.buildUrl("/getPublishSettings/?name="+name), { observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
   }
+  public updatePublishSettings(name: string, sentimentAnalysis:boolean,speech:boolean, spellChecker:boolean) {
+    return this.httpClient.put<string>(this.buildUrl(`/updatePublishSettings/?name=${name}&sentimentAnalysis=${sentimentAnalysis}&speech=${speech}&spellChecker=${spellChecker}`),
+     { headers: new HttpHeaders({ "Content-Type": 'application/json' }), responseType: 'text' as 'json' });
+  }
 
   public getAppInfo(name: string) {
     return this.httpClient.get<string>(this.buildUrl("/getAppInfo/?name="+name), { observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
-  }
+  } 
 
   public batchTestApp(appName: string, intent: string): Observable<Array<LuisAppStats>> {
     return this.httpClient.post<Array<LuisAppStats>>(this.buildUrl("/batchTest"),null, { params: { name: appName, intent: intent } });

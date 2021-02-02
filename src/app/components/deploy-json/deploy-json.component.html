@@ -116,7 +116,7 @@
         </h3>
         <clr-tabs *ngIf="data.type=='test'">
           <clr-tab>
-              <button clrTabLink>Ground-Truth</button>
+              <button clrTabLink (click)="uploadedFile = {exist : false,content : '',name : ''}">Ground-Truth</button>
               <clr-tab-content *clrIfActive>
                 
                 <clr-datagrid [(clrDgSelected)]="selectedTestdata" >
@@ -191,7 +191,7 @@
       </clr-tabs>
       <clr-tabs *ngIf="data.type=='train'">
         <clr-tab>
-            <button clrTabLink (click)="uploadedFile = {exist : false,content : '',name : ''}">Ground-Truth</button>
+            <button clrTabLink >Ground-Truth</button>
             <clr-tab-content *clrIfActive>
               <clr-datagrid [(clrDgSelected)]="selectedTrainingsdata">
                 <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
@@ -377,7 +377,7 @@
     </clr-toggle-container>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="openModalUpdateSettings = false">Update</button>
+    <button type="button" class="btn btn-primary" (click)="updatePublishSetting();openModalUpdateSettings = false ">Update</button>
     <button type="button" class="btn btn-outline" (click)="openModalUpdateSettings = false">Cancel</button>
   </div>
 </clr-modal>
