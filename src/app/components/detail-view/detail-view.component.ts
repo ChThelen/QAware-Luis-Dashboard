@@ -91,20 +91,6 @@ export class DetailViewComponent implements OnInit {
   ngOnInit(): void {
     this.getCombinedAppData().then(k => {
       this.luisApp = k.appData;
-      k.statData.forEach(appStat => {
-
-        let isBad = false;
-
-        appStat.intents.forEach(intent => {
-          if (intent.falseCounter >= 1) {
-            isBad = true;
-            intent.isBadIntent = true;
-          }
-        })
-
-        appStat.containsBadIntent = isBad;
-      });
-
       this.luisAppStats = k.statData;
       this.luisApp.appJson = k.json;
       this.generateChartData();
@@ -175,7 +161,9 @@ export class DetailViewComponent implements OnInit {
           datasets.set(intentStat.intent, {
             label: intentStat.intent,
             data: [],
-            fill: false
+            fill: false,
+            lineTension: 0,
+            steppedLine: true
           })
         }
 
