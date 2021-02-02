@@ -268,8 +268,8 @@ export class DeployJsonComponent implements OnInit {
   publish() {
     this.luisService.publish(this.luisApp.name, this.luisApp.isStaging).subscribe(
       data => {
+        let app: any = data;
         this.luisApp.published = 0;
-        let app = JSON.parse(data);
         this.luisApp.region = app.region;
         this.luisApp.url = app.endpointUrl;
         this.luisApp.isStaging = app.isStaging;
@@ -308,15 +308,15 @@ export class DeployJsonComponent implements OnInit {
   }
 
   test() {
-    this.intents.forEach(intent => {
-      this.luisService.batchTestApp(this.luisApp.name, intent);
-      this.timelineStyle.step4.state = 'success';
+    this.timelineStyle.step4.state = 'processing';
+    this.luisService.batchTestApp(this.luisApp.name, 'all').subscribe(appStats => {
+      this.timelineStyle.step4.state = 'success'; ''
       this.luisApp.tested = 0;
+      this.showNotification(`The app ${this.luisApp.name} has been tested successfully.`, null, NotificationType.Info);
     },
       (error) => {
         this.showNotification("Error while testing app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
-      }
-    )
+      });
   }
 
   /**

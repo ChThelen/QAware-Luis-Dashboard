@@ -30,7 +30,7 @@
               <ul class="list">
                 <li>Name:	A name for your app. Required.</li>
                 <li>Description:	A description for your app. Optional.</li>
-                <li>Culture	The language that your app understands and speaks. Here German.</li>
+                <li>Culture:	The language that your app understands and speaks. Here German.</li>
               </ul>
               <button class="btn btn-sm btn-danger" (click)="deleteApp()" *ngIf="luisApp.created==0">Delete</button>
             </clr-timeline-step-description>
@@ -310,17 +310,17 @@
                     <div class="clr-example-col-value clr-col-1"><label >Version : &nbsp;</label></div>
                     <div class="clr-example-col-value clr-col"><span class="label label-blue" *ngIf="luisApp.created == 0">{{luisApp.version}}</span></div>
                 </div>
-                <div class="clr-row" *ngIf="luis.app.published==0">
+                <div class="clr-row" *ngIf="luisApp.published==0">
                   <div class="clr-example-col-value clr-col-1"> <label >Last Change: &nbsp;</label></div>
-                  <div class="clr-example-col-value clr-col"><span class="label label-purple"> {{luis.app.publishedDateTime| date: "dd:MMM:yyyy hh-mm-ss z"}}</span></div>
+                  <div class="clr-example-col-value clr-col"><span class="label label-purple"> {{luisApp.publishedDateTime| date: "dd:MMM:yyyy hh-mm-ss z"}}</span></div>
               </div>
-              <div class="clr-row" *ngIf="luis.app.published==0">
+              <div class="clr-row" *ngIf="luisApp.published==0">
                 <div class="clr-example-col-value clr-col-1"><label >Region: &nbsp;</label></div>
-                <div class="clr-example-col-value clr-col"><span class="label label-purple" *ngIf="luis.app.created == 0">{{luis.app.region}}</span></div>
+                <div class="clr-example-col-value clr-col"><span class="label label-purple" *ngIf="luisApp.created == 0">{{luisApp.region}}</span></div>
               </div>
-              <div class="clr-row" *ngIf="luis.app.published==0">
+              <div class="clr-row" *ngIf="luisApp.published==0">
                 <div class="clr-example-col-value clr-col-1"><label >Url : &nbsp;</label></div>
-                <div class="clr-example-col-value clr-col"><span class="label label-purple clickable">{{luis.app.url}}</span></div>
+                <div class="clr-example-col-value clr-col"><span class="label label-purple clickable">{{luisApp.url}}</span></div>
             </div>
               </div>
                 </clr-accordion-content>
