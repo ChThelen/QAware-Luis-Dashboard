@@ -69,41 +69,7 @@ export class DeployJsonComponent implements OnInit {
       isStaging: false,
     }
   };
-  reset()
-  {
-    this.json = "";
-    this.luis = {
-      app:
-      {
-        name: '',
-        description: '',
-        culture:'de-de',
-        id: '',
-        url : '',
-        version: '1.0',
-        created: 1,
-        region:'',
-        publishedDateTime: '',
-        trained: 1,
-        tested: 1,
-        published: 1,
-        settings:{sentimentAnalysis:false,speech:false,spellChecker:false},
-        isStaging: false,
-      }
-    };
-    this.intents = [];
-    this.intentsSelectionTestdata = [];
-    this.intentsSelectionTraindata = [];
-    this.intents = this.getIntents(0);
-    this.intents = this.getIntents(1);
-    this.timelineStyle = {
-      step0: { state: "current", open: true ,failed: false},
-      step1: { state: "not-started", open: false , failed: false},
-      step2: { state: "not-started", open: false,failed: false },
-      step3: { state: "not-started", open: false,failed: false },
-      step4: { state: "not-started", open: false,failed: false },
-    };
-  }
+  
   constructor( private luisService: LuisAppService,private persistentService: PersistentService,private convertService: ConvertService) 
   { }
 
@@ -224,62 +190,64 @@ export class DeployJsonComponent implements OnInit {
     }
     
   }
- 
-  createApp() 
+  deleteApp()
   {
-   
-      if(!this.uploadedFile.exist)
-      {
-       
-        if(this.selectedTrainingsdata.length!= 0) // SELECT TRAIN DATA
-        {     
-          let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-          this.convertService.convertCsvToJson(csv, this.luis.app.name)
-          .toPromise().then(data => { 
-            this.json = JSON.stringify(data, null, 5);
-            this.json = this.editNameAndDescription(this.json);
-            this.luisService.createApp(this.json).subscribe(
-              data => { 
-              let createdApp = JSON.parse(data.body);
-              this.luis.app.id = createdApp.appID;
-              this.luis.app.version = createdApp.version;
-              this.luis.app.name = createdApp.name;
-              this.luis.app.created = 0;
-                //TODO : Notification Message  
-            },
-            err => {
-              this.timelineStyle.step1.failed = true;
-              this.timelineStyle.step1.state = "error";
-            
-              console.log(err)
-           
-              //TODO : Error Message
-            });
-            });
-        }
-        if(this.selectedTestdata.length!= 0) // SELECT Test DATA
-        {
-          let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
-          this.persistentService.testData(csv, this.luis.app.name )
-          .toPromise().then(data => { 
-            this.json = JSON.stringify(data, null, 5); 
-          });
-        }
-        else if(this.selectedTestdata.length == 0) // SKIP
-        {
-          let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-          this.persistentService.autoData(csv, this.luis.app.name,this.luis.app.version,this.luis.app.description,this.luis.app.culture)
-          .toPromise().then(data => {
-             this.json = JSON.stringify(data, null, 5); 
-            
-            });
-        }
-      }
-      else
-      {
-        this.json = this.uploadedFile.content;
+    this.luisService.deleteApp(this.deleteApp.name , true)
+    this.reset();
+  }
+  createAppState()
+  {
+    this.luis.app.created == 0? this.timelineStyle.step1.state = 'success' :  this.timelineStyle.step1.failed? this.timelineStyle.step1.state = 'error' :  this.timelineStyle.step1.state = 'not-started'
+    return this.timelineStyle.step1.state;
+  }
+  createApp() 
+  { 
+      if(this.selectedTrainingsdata.length!= 0) // SELECT TRAIN DATA
+      {     
+        let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
+        this.convertService.convertCsvToJson(csv, this.luis.app.name)
+        .toPromise().then(data => { 
+          this.json = JSON.stringify(data, null, 5);
+          this.json = this.editNameAndDescription(this.json);
+          this.luisService.createApp(this.json).subscribe(
+            data => { 
+            let createdApp = JSON.parse(data.body);
+            this.luis.app.id = createdApp.appID;
+            this.luis.app.version = createdApp.version;
+            this.luis.app.name = createdApp.name;
+            this.luis.app.created = 0;
 
+              //TODO : Notification Message  
+          },
+          err => {
+            this.timelineStyle.step1.failed = true;
+            this.timelineStyle.step1.state = "error";
+            console.log("err")
+            console.log(err)
+          
+            //TODO : Error Message
+          });
+          });
       }
+      if(this.selectedTestdata.length!= 0) // SELECT Test DATA
+      {
+        let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
+        this.persistentService.testData(csv, this.luis.app.name )
+        .toPromise().then(data => { 
+          this.json = JSON.stringify(data, null, 5); 
+        });
+      }
+      else if(this.selectedTestdata.length == 0) // SKIP
+      {
+        let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
+        this.persistentService.autoData(csv, this.luis.app.name,this.luis.app.version,this.luis.app.description,this.luis.app.culture)
+        .toPromise().then(data => {
+            this.json = JSON.stringify(data, null, 5); 
+          
+          });
+      }
+    
+      this.timelineStyle.step1.state = this.createAppState();
   }
   train() {
     this.trained = true;
@@ -306,14 +274,13 @@ export class DeployJsonComponent implements OnInit {
       data => {
         this.luis.app.published = 0;
         // NOTIFICATION
+      //  let app = JSON.parse(data.body)
+       // console.log(app.body)
         console.log(data)
-       let app = JSON.parse(data);  
-        this.luis.app.region = app.region; 
+        let info = JSON.stringify(data);
+        let app = JSON.parse(info)
         this.luis.app.url = app.endpointUrl; 
-        this.luis.app.isStaging = app.isStaging; 
-        this.luis.app.publishedDateTime = app.publishedDateTime;
-        console.log(this.luis.app)
-        this.timelineStyle.step4.state = 'current';
+        this.luis.app.region = app.region; 
        },
        err => {
         this.timelineStyle.step3.failed = true;
@@ -322,8 +289,15 @@ export class DeployJsonComponent implements OnInit {
     );
     this.luisService.getAppInfo(this.luis.app.name).subscribe(
       data => {
-        let info = data; 
+        let app = JSON.parse(data.body); 
+        console.log(app)
+       
+     
+        this.luis.app.isStaging = app.isStaging; 
+        this.luis.app.publishedDateTime = app.lastModifiedDateTime;
+        console.log(this.luis.app)
         console.log(data)
+
        },
        err => {
          // NOTIFICATION
@@ -367,7 +341,6 @@ export class DeployJsonComponent implements OnInit {
  */
   editNameAndDescription(jsonString) 
   {
-    console.log(jsonString)
     let jsonObject = JSON.parse(jsonString); 
     jsonObject.name = this.luis.app.name; 
     jsonObject.desc = this.luis.app.description; 
@@ -426,6 +399,42 @@ export class DeployJsonComponent implements OnInit {
       }
 
   
+  }
+  reset()
+  {
+    this.json = "";
+    this.luis = {
+      app:
+      {
+        name: '',
+        description: '',
+        culture:'de-de',
+        id: '',
+        url : '',
+        version: '1.0',
+        created: 1,
+        region:'',
+        publishedDateTime: '',
+        trained: 1,
+        tested: 1,
+        published: 1,
+        settings:{sentimentAnalysis:false,speech:false,spellChecker:false},
+        isStaging: false,
+      }
+    };
+    this.trained = false;
+    this.intents = [];
+    this.intentsSelectionTestdata = [];
+    this.intentsSelectionTraindata = [];
+    this.intents = this.getIntents(0);
+    this.intents = this.getIntents(1);
+    this.timelineStyle = {
+      step0: { state: "current", open: true ,failed: false},
+      step1: { state: "not-started", open: false , failed: false},
+      step2: { state: "not-started", open: false,failed: false },
+      step3: { state: "not-started", open: false,failed: false },
+      step4: { state: "not-started", open: false,failed: false },
+    };
   }
   
 }
