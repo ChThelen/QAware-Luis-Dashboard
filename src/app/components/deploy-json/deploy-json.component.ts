@@ -3,7 +3,7 @@ import { HEADERS, CsvUtterance } from 'src/app/models/CsvUtterance';
 import { ConvertService } from 'src/app/services/convert.service';
 import { LuisAppService } from 'src/app/services/luis-app.service';
 import { PersistentService } from 'src/app/services/persistent.service';
-import { ClrLoadingState } from '@clr/angular';
+import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-deploy-json',
@@ -50,7 +50,7 @@ export class DeployJsonComponent implements OnInit {
     step4: { state: "not-started", open: false, failed: false },
   };
 
-  luisApp = 
+  luisApp =
     {
       name: '',
       description: '',
@@ -71,7 +71,8 @@ export class DeployJsonComponent implements OnInit {
   constructor(
     private luisService: LuisAppService,
     private persistentService: PersistentService,
-    private convertService: ConvertService) { }
+    private convertService: ConvertService,
+    private notificationService: NotificationService) { }
 
   ngOnInit(): void {
     this.persistentService.getGT().subscribe(data => {
@@ -175,15 +176,13 @@ export class DeployJsonComponent implements OnInit {
     return temp;
   }
 
-  deleteApp()
-  {
-    this.luisService.deleteApp(this.deleteApp.name , true)
+  deleteApp() {
+    this.luisService.deleteApp(this.deleteApp.name, true)
     this.reset();
   }
-  
-  createAppState()
-  {
-    this.luis.app.created == 0? this.timelineStyle.step1.state = 'success' :  this.timelineStyle.step1.failed? this.timelineStyle.step1.state = 'error' :  this.timelineStyle.step1.state = 'not-started'
+
+  createAppState() {
+    this.luisApp.created == 0 ? this.timelineStyle.step1.state = 'success' : this.timelineStyle.step1.failed ? this.timelineStyle.step1.state = 'error' : this.timelineStyle.step1.state = 'not-started'
     return this.timelineStyle.step1.state;
   }
 
@@ -211,13 +210,13 @@ export class DeployJsonComponent implements OnInit {
                 this.luisApp.version = createdApp.version;
                 this.luisApp.name = createdApp.name;
                 this.luisApp.created = 0;
-                //TODO : Notification Message  
+                this.showNotification(`The app ${this.luisApp.name} has been successfully created.`, null, NotificationType.Info);
               },
-              err => {
+              (error) => {
                 this.timelineStyle.step1.failed = true;
                 this.timelineStyle.step1.state = "error";
 
-                //TODO : Error Message
+                this.showNotification("Error while creating app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
               });
           });
       }
@@ -238,7 +237,7 @@ export class DeployJsonComponent implements OnInit {
 
           });
       }
-      
+
       this.timelineStyle.step1.state = this.createAppState();
 
     }
@@ -253,15 +252,13 @@ export class DeployJsonComponent implements OnInit {
     this.luisService.trainApp(this.luisApp.name).subscribe(
       data => {
         this.luisApp.trained = 0;
-        // NOTIFICATION 
-
         this.trained = false;
         this.timelineStyle.step2.state = "success";
         this.timelineStyle.step3.state = "current";
       },
-      err => {
+      (error) => {
         this.timelineStyle.step2.failed = true;
-        // NOTIFICATION
+        this.showNotification("Error while training app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
       }
 
     );
@@ -279,20 +276,20 @@ export class DeployJsonComponent implements OnInit {
         this.luisApp.publishedDateTime = app.publishedDateTime;
         this.timelineStyle.step4.state = 'current';
       },
-      err => {
+      (error) => {
         this.timelineStyle.step3.failed = true;
-        // NOTIFICATION
+        this.showNotification("Error while publishing app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
       }
     );
     this.luisService.getAppInfo(this.luisApp.name).subscribe(
       data => {
         let app = JSON.parse(data.body);
-     
-        this.luisApp.isStaging = app.isStaging; 
+
+        this.luisApp.isStaging = app.isStaging;
         this.luisApp.publishedDateTime = app.lastModifiedDateTime;
-       },
-       err => {
-        // NOTIFICATION
+      },
+      (error) => {
+        this.showNotification("Error while retieving app information. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
       }
     );
     this.luisService.getPublishSettings(this.luisApp.name)
@@ -302,11 +299,9 @@ export class DeployJsonComponent implements OnInit {
           this.luisApp.settings.sentimentAnalysis = settings.sentimentAnalysis;
           this.luisApp.settings.speech = settings.speech;
           this.luisApp.settings.spellChecker = settings.spellChecker;
-          // NOTIFICATION
-
         },
-        err => {
-          // NOTIFICATION
+        (error) => {
+          this.showNotification("Error while retieving PublishSettings. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
         }
       );
 
@@ -318,8 +313,8 @@ export class DeployJsonComponent implements OnInit {
       this.timelineStyle.step4.state = 'success';
       this.luisApp.tested = 0;
     },
-      err => {
-        console.log(err)
+      (error) => {
+        this.showNotification("Error while testing app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
       }
     )
   }
@@ -364,8 +359,7 @@ export class DeployJsonComponent implements OnInit {
           .subscribe(data => { this.uploadedFile.content = JSON.stringify(data, null, 3); });
       }
       fileReader.onerror = () => {
-        console.log('Error occured while reading file!');
-        //TODO : NOTIFICATION
+        this.showNotification("Error occured while reading file!", null, NotificationType.Danger);
       };
     }
     else if ((file.name.endsWith(".json"))) // Reading csv file
@@ -380,47 +374,53 @@ export class DeployJsonComponent implements OnInit {
         this.uploadedFile.content = JSON.stringify(this.uploadedFile.content, null, 3);
       }
       fileReader.onerror = () => {
-        console.log('Error occured while reading file!');
-        //TODO : NOTIFICATION
+        this.showNotification("Error occured while reading file!", null, NotificationType.Danger);
       };
     }
 
 
   }
 
+  showNotification(message: string, messageDetails: string, type: NotificationType) {
+    this.notificationService.add(
+      new Notification(
+        type,
+        message,
+        messageDetails
+      )
+    )
+  }
+
   reset() {
     this.json = "";
-    this.luisApp = 
-      {
-        name: '',
-        description: '',
-        culture: 'de-de',
-        id: '',
-        url: '',
-        version: '1.0',
-        created: 1,
-        region: '',
-        publishedDateTime: '',
-        trained: 1,
-        tested: 1,
-        published: 1,
-        settings:{sentimentAnalysis:false,speech:false,spellChecker:false},
-        isStaging: false,
-      }
+    this.luisApp =
+    {
+      name: '',
+      description: '',
+      culture: 'de-de',
+      id: '',
+      url: '',
+      version: '1.0',
+      created: 1,
+      region: '',
+      publishedDateTime: '',
+      trained: 1,
+      tested: 1,
+      published: 1,
+      settings: { sentimentAnalysis: false, speech: false, spellChecker: false },
+      isStaging: false,
     };
-    this.trained = false;
     this.intents = [];
     this.intentsSelectionTestdata = [];
     this.intentsSelectionTraindata = [];
-    this.intents = this.getIntents(0);
-    this.intents = this.getIntents(1);
+    this.intents = this.getTestIntents();
+    this.intents = this.getTrainIntents();
     this.timelineStyle = {
-      step0: { state: "current", open: true ,failed: false},
-      step1: { state: "not-started", open: false , failed: false},
-      step2: { state: "not-started", open: false,failed: false },
-      step3: { state: "not-started", open: false,failed: false },
-      step4: { state: "not-started", open: false,failed: false },
+      step0: { state: "current", open: true, failed: false },
+      step1: { state: "not-started", open: false, failed: false },
+      step2: { state: "not-started", open: false, failed: false },
+      step3: { state: "not-started", open: false, failed: false },
+      step4: { state: "not-started", open: false, failed: false },
     };
   }
-
 }
