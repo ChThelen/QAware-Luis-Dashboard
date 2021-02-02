@@ -3,7 +3,8 @@ export const EXAMPLE_JSON = { "intents": [{ "name": "TAXI__BOOK" }, { "name": "T
 export enum LuisAppState {
   deployed = "deployed",
   published = "published",
-  failed = "failed"
+  failed = "failed",
+  trained = "trained"
 }
 
 export class LuisApp {
@@ -23,7 +24,7 @@ export const DUMMY_APPS: LuisApp[] = [
     version: "1.0",
     dashboardUrl: "https://eu.luis.ai",
     description: "This is an Example App for Luis.",
-    status: LuisAppState.deployed,
+    status: LuisAppState.trained,
     appJson: EXAMPLE_JSON
   },
   {
@@ -41,7 +42,7 @@ export const DUMMY_APPS: LuisApp[] = [
     version: "1.0",
     dashboardUrl: "https://eu.luis.ai",
     description: "This is an Example App for Luis.",
-    status: LuisAppState.published,
+    status: LuisAppState.failed,
     appJson: EXAMPLE_JSON
   },
   {
@@ -50,7 +51,7 @@ export const DUMMY_APPS: LuisApp[] = [
     version: "1.0",
     dashboardUrl: "https://eu.luis.ai",
     description: "This is an Example App for Luis.",
-    status: LuisAppState.failed,
+    status: LuisAppState.deployed,
     appJson: EXAMPLE_JSON
   },
 ];
