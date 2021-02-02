@@ -200,7 +200,7 @@ export class DeployJsonComponent implements OnInit {
       if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
       {
         let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-        this.convertService.convertCsvToJson(csv, this.luisApp.name)
+        this.convertService.convertCsvToJson(csv, this.luisApp.name, this.luisApp.description)
           .subscribe(data => {
             this.json = this.editNameAndDescription(data);
             this.luisService.createApp(this.luisApp.name).subscribe(
@@ -208,6 +208,7 @@ export class DeployJsonComponent implements OnInit {
                 let createdApp = JSON.parse(data.body);
                 this.luisApp.id = createdApp.appID;
                 this.luisApp.version = createdApp.version;
+                this.luisApp.description = createdApp.description;
                 this.luisApp.name = createdApp.name;
                 this.luisApp.created = 0;
                 this.showNotification(`The app ${this.luisApp.name} has been successfully created.`, null, NotificationType.Info);
@@ -355,7 +356,7 @@ export class DeployJsonComponent implements OnInit {
         this.uploadedFile.content = (<string>data);
 
         // convert in json
-        this.convertService.convertCsvToJson(this.uploadedFile.content, this.luisApp.name)
+        this.convertService.convertCsvToJson(this.uploadedFile.content, this.luisApp.name, this.luisApp.description)
           .subscribe(data => { this.uploadedFile.content = JSON.stringify(data, null, 3); });
       }
       fileReader.onerror = () => {
