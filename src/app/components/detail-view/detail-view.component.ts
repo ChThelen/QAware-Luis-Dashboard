@@ -223,6 +223,7 @@ export class DetailViewComponent implements OnInit {
       },
       () => {
         this.isLoading = false;
+        this.luisApp.status = LuisAppState.trained;
         this.showNotification(`Training of app ${name} was successfully.`, null, NotificationType.Info);
       }
     );

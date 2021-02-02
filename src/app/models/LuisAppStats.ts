@@ -19,7 +19,7 @@ export const DUMMY_STATS: LuisAppStats[] = [
         intents: [
             {
                 intent: "TAXI_BOOK",
-                average: 0.0
+                average: 0.0,
             },
             {
                 intent: "TAXI_PRICE",

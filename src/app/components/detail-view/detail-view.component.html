@@ -42,7 +42,7 @@
                                 <button class="btn btn-sm btn-link" (click)="publishApp()"
                                     [disabled]="luisApp.status === 'published'"
                                     [class.btn-publish]="luisApp.status !== 'published'">Publish</button>
-                                <button class="btn btn-sm btn-link" (click)="trainApp()" [disabled]="luisApp.status === 'trained'">Train</button>
+                                <button class="btn btn-sm btn-link" (click)="trainApp()" [disabled]="luisApp.status === 'trained' || luisApp.status === 'published'">Train</button>
                                 <button class="btn btn-sm btn-link" (click)="openTesWizard()">Test</button>
                                 <div class="dropdown top-left" [class.open]="appDropDown" appClickOutside
                                     (clickOutside)="appDropDown=false">

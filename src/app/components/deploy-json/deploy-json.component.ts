@@ -202,7 +202,7 @@ export class DeployJsonComponent implements OnInit {
         let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
         this.convertService.convertCsvToJson(csv, this.luisApp.name, this.luisApp.description)
           .subscribe(data => {
-            this.json = this.editNameAndDescription(data);
+            this.json = JSON.stringify(data, null, 5);;
             this.luisService.createApp(this.luisApp.name).subscribe(
               data => {
                 let createdApp = JSON.parse(data.body);
@@ -318,17 +318,6 @@ export class DeployJsonComponent implements OnInit {
       (error) => {
         this.showNotification("Error while testing app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
       });
-  }
-
-  /**
-   * 
-   * @param jsonString 
-   * @returns the same json but with another name and description
-   */
-  editNameAndDescription(luisAppJson: any): string {
-    luisAppJson.name = this.luisApp.name;
-    luisAppJson.desc = this.luisApp.description;
-    return JSON.stringify(luisAppJson, null, 5);;
   }
 
   readCsvFile(event: any) {
