@@ -14,7 +14,6 @@ export class LuisAppService {
 
   private baseUrl = environment.backendUrl;
   private endpoint = "/luis/service";
-  private endpointApp = "/luis/app";
 
   constructor(private httpClient: HttpClient) { }
 
@@ -46,8 +45,8 @@ export class LuisAppService {
     return this.httpClient.post<any>(this.buildUrl("/train?name="+appName), {observe: 'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json'  });
   }
 
-  public createApp(json: string) {
-    return this.httpClient.post<string>(this.baseUrl + "/luis/service/createApp", json, { observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
+  public createApp(appName: string) {
+    return this.httpClient.post<string>(this.buildUrl("/createApp"), null, { params: {name: appName}, observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
   }
 
   public publish(name: string, staging: boolean) {
@@ -64,10 +63,6 @@ export class LuisAppService {
 
   public batchTestApp(appName: string, intent: string): Observable<Array<LuisAppStats>> {
     return this.httpClient.post<Array<LuisAppStats>>(this.buildUrl("/batchTest"),null, { params: { name: appName, intent: intent } });
-  }
-
-  public getGT(): Observable<string> {
-    return this.httpClient.get<string>( this.baseUrl + this.endpointApp + "/getGT", { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
   }
 
   private buildUrl(uri: string): string {
