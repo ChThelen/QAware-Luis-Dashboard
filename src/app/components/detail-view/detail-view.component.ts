@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LuisApp, LuisAppState } from '../../models/LuisApp';
 import { LuisAppService } from '../../services/luis-app.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
@@ -86,7 +86,8 @@ export class DetailViewComponent implements OnInit {
     private route: ActivatedRoute,
     private luisAppService: LuisAppService,
     private persistentService: PersistentService,
-    private notificationService: NotificationService) { }
+    private notificationService: NotificationService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.getCombinedAppData().then(k => {
@@ -148,6 +149,12 @@ export class DetailViewComponent implements OnInit {
       this.luisAppHits = k;
     })
   }
+
+  gotoDynamic()
+  {
+    this.router.navigateByUrl('/deploy', {state: this.luisApp} )
+  }
+  
 
   generateChartData() {
     let labels: string[] = [];

@@ -7,6 +7,7 @@ export class CsvUtterance {
     endIndex: string;
     intent: string;
     tag:string;
+    locked?:boolean; 
     constructor()
     {
       this.id           = "";
