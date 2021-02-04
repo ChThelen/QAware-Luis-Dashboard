@@ -4,6 +4,7 @@ import { ConvertService } from 'src/app/services/convert.service';
 import { LuisAppService } from 'src/app/services/luis-app.service';
 import { PersistentService } from 'src/app/services/persistent.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
+import { LuisApp, LuisAppState } from 'src/app/models/LuisApp';
 
 @Component({
   selector: 'app-deploy-json',
@@ -12,6 +13,9 @@ import { NotificationType, Notification, NotificationService } from 'src/app/ser
 })
 export class DeployJsonComponent implements OnInit {
 
+  
+  @Input() appToUpdate: LuisApp = null; 
+ 
   trained = false;
   intents: string[] = [];
   intentsSelectionTestdata: boolean[] = [];
@@ -78,10 +82,149 @@ export class DeployJsonComponent implements OnInit {
       this.createUtterances();
       this.intents = this.getTestIntents();
       this.intents = this.getTrainIntents();
+
+      if(this.appToUpdate)
+      {
+          this.getAppInfos();
+          this.findTrainingsDataUtterances();
+          this.findTestDataUtterances(); 
+      }
+
     });
-
+    
   }
+  getAppInfos()
+  {
+   
+      this.luisApp =
+      {
+        name: this.appToUpdate.name,
+        description: this.appToUpdate.description,
+        culture: 'de-de',
+        id: this.appToUpdate.appID,
+        url: '',
+        version: this.appToUpdate.version,
+        created: this.appToUpdate.status == LuisAppState.deployed? 0 : 1 ,
+        region: '',
+        publishedDateTime: '',
+        trained: this.appToUpdate.status == LuisAppState.published? 0 : 1 ,
+        tested: 1,
+        published: this.appToUpdate.status == LuisAppState.published? 0 : 1,
+        settings: { sentimentAnalysis: false, speech: false, spellChecker: false },
+        isStaging: false,
+      };
+      this.luisService.getAppInfo(this.luisApp.name).subscribe(
+        data => {
+          let app = JSON.parse(data.body);
+          this.luisApp.isStaging = app.isStaging;
+          this.luisApp.publishedDateTime = app.lastModifiedDateTime;
+          this.luisApp.region = app.endpointRegion; 
+        },
+        (error) => {
+          this.showNotification("Error while retieving app information. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
+        }
+      );
+      this.luisService.getPublishSettings(this.luisApp.name)
+      .subscribe(
+        data => {
+          let settings = JSON.parse(data.body);
+          this.luisApp.settings.sentimentAnalysis = settings.sentimentAnalysis;
+          this.luisApp.settings.speech = settings.speech;
+          this.luisApp.settings.spellChecker = settings.spellChecker;
+        },
+        (error) => {
+          this.showNotification("Error while retieving PublishSettings. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
+        }
+      );
+    
+  }
+  findTrainingsDataUtterances()
+  {
+    // Convert to CSV
+   
+    this.convertService.convertJsonToCSV(this.appToUpdate.appJson)
+    .subscribe(data => {
+      console.log(data); 
+      // Convert to Utterances 
+      let dataArray: string[] = data.split(/\r\n|\n/);
+      
+      let i = 1;
+      for (i = 1; i < dataArray.length; i++) {
+        let currentLine = dataArray[i].split(";");
 
+        let csvUtterance: CsvUtterance = new CsvUtterance();
+        csvUtterance.id = currentLine[0];
+        csvUtterance.transcript = currentLine[1];
+        csvUtterance.category = currentLine[2];
+        csvUtterance.literal = currentLine[3];
+        csvUtterance.startIndex = currentLine[4];
+        csvUtterance.endIndex = currentLine[5];
+        csvUtterance.intent = currentLine[6];
+        csvUtterance.tag = currentLine[7];
+       
+        // Compare Utterances
+       let foundedUtterance = this.result.find(element =>{
+                                    element.transcript == csvUtterance.transcript &&
+                                    element.endIndex == csvUtterance.endIndex &&
+                                    element.startIndex == csvUtterance.startIndex &&
+                                    element.intent == csvUtterance.intent &&
+                                    element.category == csvUtterance.category &&
+                                    element.tag == csvUtterance.tag &&
+                                    element.literal == csvUtterance.literal
+                                  });
+        // Select Utterances                                  
+        if(foundedUtterance)
+        {
+          this.selectedTrainingsdata.push(foundedUtterance); 
+        }                                  
+  
+      }
+      
+    }); 
+  }
+  findTestDataUtterances()
+  {
+    
+    this.persistentService.getTestDataCSV(this.luisApp.name )
+    .subscribe(data => {
+      // Convert to Utterances 
+      let dataArray: string[] = data.split(/\r\n|\n/);
+      
+      let i = 1;
+      for (i = 1; i < dataArray.length; i++) {
+        let currentLine = dataArray[i].split(";");
+
+        let csvUtterance: CsvUtterance = new CsvUtterance();
+        csvUtterance.id = currentLine[0];
+        csvUtterance.transcript = currentLine[1];
+        csvUtterance.category = currentLine[2];
+        csvUtterance.literal = currentLine[3];
+        csvUtterance.startIndex = currentLine[4];
+        csvUtterance.endIndex = currentLine[5];
+        csvUtterance.intent = currentLine[6];
+        csvUtterance.tag = currentLine[7];
+        
+
+        // Compare Utterances
+       let foundedUtterance = this.result.find(element =>{
+                                    element.transcript == csvUtterance.transcript &&
+                                    element.endIndex == csvUtterance.endIndex &&
+                                    element.startIndex == csvUtterance.startIndex &&
+                                    element.intent == csvUtterance.intent &&
+                                    element.category == csvUtterance.category &&
+                                    element.tag == csvUtterance.tag &&
+                                    element.literal == csvUtterance.literal
+                                  });
+        // Select Utterances                                  
+        if(foundedUtterance)
+        {
+          foundedUtterance.locked = true; 
+          this.selectedTestdata.push(foundedUtterance); 
+        }                                  
+  
+      }
+    })
+  }
   changeToHorizonTal() {
     this.layout = {
       direction: "horizontal",
@@ -192,9 +335,6 @@ export class DeployJsonComponent implements OnInit {
   }
 
   createApp() {
-
-    
-
       if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
       {
         let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
@@ -285,7 +425,6 @@ export class DeployJsonComponent implements OnInit {
     this.luisService.getAppInfo(this.luisApp.name).subscribe(
       data => {
         let app = JSON.parse(data.body);
-
         this.luisApp.isStaging = app.isStaging;
         this.luisApp.publishedDateTime = app.lastModifiedDateTime;
       },
