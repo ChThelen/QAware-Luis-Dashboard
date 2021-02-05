@@ -369,14 +369,12 @@ export class DeployJsonComponent implements OnInit {
         let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
         this.convertService.convertCsvToJson(csv, this.luisApp.name, this.luisApp.description, this.luisApp.version)
           .subscribe(data => {
-            
-          //  this.json = this.editNameAndDescription(data);
-            
             this.luisService.createApp(this.luisApp.name).subscribe(
               data => {
                 let createdApp = JSON.parse(data.body);
                 this.luisApp.id = createdApp.appID;
                 this.luisApp.version = createdApp.version;
+                this.luisApp.description = createdApp.description;
                 this.luisApp.name = createdApp.name;
                 this.luisApp.created = 0;
                 this.showNotification(`The app ${this.luisApp.name} has been successfully created.`, null, NotificationType.Info);
@@ -490,20 +488,11 @@ export class DeployJsonComponent implements OnInit {
         this.showNotification("Error while testing app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
       });
   }
+
   updatePublishSetting()
   {
     this.luisService.updatePublishSettings(this.luisApp.name, this.luisApp.settings.sentimentAnalysis, this.luisApp.settings.speech, this.luisApp.settings.spellChecker)
     .subscribe(data =>{console.log(data)});
-  }
-  /**
-   * 
-   * @param jsonString 
-   * @returns the same json but with another name and description
-   */
-  editNameAndDescription(luisAppJson: any): string {
-    luisAppJson.name = this.luisApp.name;
-    luisAppJson.desc = this.luisApp.description;
-    return JSON.stringify(luisAppJson, null, 5);;
   }
 
   readCsvFile(event: any) {
@@ -527,8 +516,8 @@ export class DeployJsonComponent implements OnInit {
         let data = fileReader.result;
         this.uploadedFile.content = (<string>data);
         this.uploadedFile.name = fileList.item(0).name; 
-
       }
+      
       fileReader.onerror = () => {
         this.showNotification("Error occured while reading file!", null, NotificationType.Danger);
         this.uploadedFile = {

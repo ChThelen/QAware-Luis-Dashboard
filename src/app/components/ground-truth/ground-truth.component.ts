@@ -210,23 +210,6 @@ export class GroundTruthComponent implements OnInit {
     hiddenElement.click();
   }
 
-  /**
-   * download currently json file
-   * 
-   */
-  downloadJson(): void {
-    let fileAsJson = "";
-    let content = this.refreshUtterances(this.selectedUtterances).join("\n");
-    this.convertService.convertCsvToJson(content, "MyJsonFile_" + new Date().toDateString())
-      .toPromise().then(data => { fileAsJson = JSON.stringify(data, null, 5); });
-
-    var hiddenElement = document.createElement('a');
-    hiddenElement.href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(fileAsJson);
-    hiddenElement.target = '_blank';
-    hiddenElement.download = (this.fileName.endsWith(".csv")) ? this.fileName.substring(0, this.fileName.length - 3) + "json" : this.fileName.substring(0, this.fileName.length - 4) + "json";
-    hiddenElement.click();
-  }
-
   refreshUtterances(utterances: CsvUtterance[]) {
     let entriesArray = [];
     for (let i = 0; i < utterances.length; i++) {

@@ -12,8 +12,9 @@ export class ConvertService {
   private endpoint = "/luis/convert";
 
   constructor(private httpClient: HttpClient) { }
+
   public convertCsvToJson(csv: string, name: string, description?: string, version?: string): Observable<string> {
-    return this.httpClient.post<string>(this.buildUrl("/convertToJSON"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": name, version: version, description: description } });
+    return this.httpClient.post<string>(this.buildUrl("/convertToJSON"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": name, version: version, desc: description } });
   }
 
   public convertJsonToCSV(json: string): Observable<string> {
