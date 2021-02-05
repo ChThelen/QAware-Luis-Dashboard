@@ -34,7 +34,7 @@ export class GroundTruthComponent implements OnInit {
   constructor(
     private luisService: LuisAppService,
     private persistentService: PersistentService,
-    private convertService: ConvertService) { }
+    private convertService: ConvertService) { this.getGT()}
 
   ngOnInit(): void {
     this.getGT();
@@ -45,6 +45,7 @@ export class GroundTruthComponent implements OnInit {
     this.persistentService.getGT().subscribe(data => {
       this.groundTruth = data;
       this.createUtterances(this.groundTruth, this.result);
+   
       this.intents = this.getIntents();
     });
     this.newChange = false;
@@ -95,6 +96,8 @@ export class GroundTruthComponent implements OnInit {
       }
     } else {
       console.log('Error occured while reading file. Found different Headers!');
+      console.log(headers)
+      console.log(HEADERS)
       this.resetFile();
     }
   }
@@ -135,6 +138,12 @@ export class GroundTruthComponent implements OnInit {
    
     this.persistentService.merge(this.uploadedFile).subscribe(data => {console.log(data)})
     this.getGT();
+    // this.uploadedUtterances.forEach(data => this.result.push(data));
+    // this.resetFile();
+    // this.result.sort((a, b) => { return (parseInt(a.id) < parseInt(b.id)) ? -1 : 1 })
+    // this.groundTruth = this.refreshUtterances(this.result).join('\n');
+    // this.createUtterances(this.groundTruth, this.result);
+    // this.newChange = true;
    // console.log(this.groundTruth)
   }
 
@@ -258,5 +267,5 @@ function arrayEquals(a, b) {
   return Array.isArray(a) &&
     Array.isArray(b) &&
     a.length === b.length
-  //  && a.every((val, index) => val === b[index]); // '#' != 'number' => error
+    && a.every((val, index) => val === b[index]); // '#' != 'number' => error
 }

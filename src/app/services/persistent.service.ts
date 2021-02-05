@@ -78,6 +78,9 @@ export class PersistentService {
   public getTestData(appName: string): Observable<Array<any>> {
     return this.httpClient.get<any>(this.buildUrl("/getTestDataJSON"), { params: { name: appName } });
   }
+  public getTestDataCSV(appName: string): Observable<string> {
+    return this.httpClient.get(this.buildUrl("/getTestData"), { params: { name: appName }, responseType: "text"});
+  }
 
   public testData(csv: string, name: string): Observable<string> {
     return this.httpClient.post<string>(this.buildUrl("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }), params: { "name": name } });
