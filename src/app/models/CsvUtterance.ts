@@ -22,14 +22,14 @@ export class CsvUtterance {
 }
 
 export const HEADERS: string[] = [
-    "#",
+    "number",
     "transcript",
     "category",
     "literal",
-    "start_index",
-    "end_index",
+    "start",
+    "end",
     "intent",
-    "tag"
+    "tags"
 ];
 
 export const BADGES: string[] =

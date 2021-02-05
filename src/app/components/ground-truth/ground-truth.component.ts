@@ -34,7 +34,7 @@ export class GroundTruthComponent implements OnInit {
   constructor(
     private luisService: LuisAppService,
     private persistentService: PersistentService,
-    private convertService: ConvertService) { }
+    private convertService: ConvertService) { this.getGT()}
 
   ngOnInit(): void {
     this.getGT();
@@ -45,6 +45,7 @@ export class GroundTruthComponent implements OnInit {
     this.persistentService.getGT().subscribe(data => {
       this.groundTruth = data;
       this.createUtterances(this.groundTruth, this.result);
+   
       this.intents = this.getIntents();
     });
     this.newChange = false;
@@ -95,6 +96,8 @@ export class GroundTruthComponent implements OnInit {
       }
     } else {
       console.log('Error occured while reading file. Found different Headers!');
+      console.log(headers)
+      console.log(HEADERS)
       this.resetFile();
     }
   }

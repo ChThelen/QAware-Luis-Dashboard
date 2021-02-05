@@ -6,6 +6,7 @@ import { PersistentService } from 'src/app/services/persistent.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 import { LuisApp, LuisAppState } from 'src/app/models/LuisApp';
 import { ActivatedRoute } from '@angular/router';
+import { Utterance } from 'src/app/models/Utterance';
 
 @Component({
   selector: 'app-deploy-json',
@@ -91,8 +92,6 @@ export class DeployJsonComponent implements OnInit {
 
       if((this.appToUpdate as LuisApp).appID)
       {
-        console.log(this.appToUpdate)
-
           this.getAppInfos();
           this.findTrainingsDataUtterances();
           this.findTestDataUtterances(); 
@@ -114,7 +113,7 @@ export class DeployJsonComponent implements OnInit {
         culture: 'de-de',
         id: this.appToUpdate.appID,
         url: '',
-        version: String( Number(this.appToUpdate.version)+Number(0.1)),  //  increment Version
+        version: String( Number(this.appToUpdate.version)+Number(0.1)).substring(0,3),  //  increment Version
         created: 1 ,
         region: '',
         publishedDateTime: '',
@@ -124,7 +123,7 @@ export class DeployJsonComponent implements OnInit {
         settings: { sentimentAnalysis: false, speech: false, spellChecker: false },
         isStaging: false,
       };
-      console.log(this.luisApp)    
+      
   }
   
   findTrainingsDataUtterances()
@@ -133,7 +132,6 @@ export class DeployJsonComponent implements OnInit {
    
     this.convertService.convertJsonToCSV(this.appToUpdate.appJson)
     .subscribe(data => {
-      console.log(data); 
       // Convert to Utterances 
       let dataArray: string[] = data.split(/\r\n|\n/);
       
@@ -160,8 +158,7 @@ export class DeployJsonComponent implements OnInit {
                                     element.category == csvUtterance.category &&
                                     element.literal == csvUtterance.literal
                                   );
-        console.log("result : " + this.result);
-        console.log("foundedUtterance : " + foundedUtterance);
+      
         // Select Utterances                                  
         if(foundedUtterance)
         {
@@ -206,8 +203,6 @@ export class DeployJsonComponent implements OnInit {
                                     element.literal == csvUtterance.literal
                                   );
 
-        console.log("result : " + this.result);
-        console.log("foundedUtterance : " + foundedUtterance);
         // Select Utterances                                  
         if(foundedUtterance)
         {
@@ -284,19 +279,19 @@ export class DeployJsonComponent implements OnInit {
 
   selectIntents(intent: string, trainOrTest: number) { // train = 0 , test = else
     if (trainOrTest == 0) {
-      this.result.forEach(element => { if (element.intent == intent) { this.selectedTrainingsdata.push(element) } });
+      this.result.forEach(element => { if (element.intent == intent && !this.isTestdata(element)) { this.selectedTrainingsdata.push(element) } });
     }
     else {
-      this.result.forEach(element => { if (element.intent == intent) { this.selectedTestdata.push(element) } });
+      this.result.forEach(element => { if (element.intent == intent && !this.isTraindata(element)) { this.selectedTestdata.push(element) } });
     }
   }
 
   deselectIntents(intent: string, trainOrTest: number) {
     if (trainOrTest == 0) {
-      this.selectedTrainingsdata = this.selectedTrainingsdata.filter(element => element.intent != intent);
+      this.selectedTrainingsdata = this.selectedTrainingsdata.filter(element => element.intent != intent || element.locked);
     }
     else {
-      this.selectedTestdata = this.selectedTestdata.filter(element => element.intent != intent);
+      this.selectedTestdata = this.selectedTestdata.filter(element => element.intent != intent || element.locked);
     }
   }
 
@@ -544,7 +539,15 @@ export class DeployJsonComponent implements OnInit {
       };
     }
   }
-
+  isTraindata(utterance: CsvUtterance)
+  {
+    return this.selectedTrainingsdata.indexOf(utterance) != -1
+  }
+  isTestdata(utterance: CsvUtterance)
+  {
+    return this.selectedTestdata.indexOf(utterance) != -1
+    
+  }
   showNotification(message: string, messageDetails: string, type: NotificationType) {
     this.notificationService.add(
       new Notification(

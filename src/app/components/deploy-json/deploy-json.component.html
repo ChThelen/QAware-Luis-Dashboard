@@ -120,7 +120,7 @@
               <button clrTabLink (click)="uploadedFile = {exist : false,content : '',name : ''}">Ground-Truth</button>
               <clr-tab-content *clrIfActive>
                 
-                <clr-datagrid [(clrDgSelected)]="selectedTestdata" >
+                <clr-datagrid [(clrDgSelected)]="selectedTestdata"  >
                   <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
                   <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
                   <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
@@ -143,7 +143,7 @@
                     </div>
                       
                   </clr-dg-action-bar>
-                  <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance">
+                  <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance"  [clrDgSelectable]="!utterance.locked && !isTraindata(utterance)">
                   
               
                   <ng-container >
@@ -215,7 +215,7 @@
                   </div>
                     
                 </clr-dg-action-bar>
-                <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance">
+                <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance" [clrDgSelectable]="!isTestdata(utterance)">
                   <ng-container >
                       <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
                       <clr-dg-cell>{{utterance.transcript}}</clr-dg-cell>
