@@ -15,9 +15,9 @@ import { Utterance } from 'src/app/models/Utterance';
 })
 export class DeployJsonComponent implements OnInit {
 
-  
-  appToUpdate: LuisApp = null; 
- 
+
+  appToUpdate: LuisApp = null;
+
   trained = false;
   intents: string[] = [];
   intentsSelectionTestdata: boolean[] = [];
@@ -80,9 +80,8 @@ export class DeployJsonComponent implements OnInit {
     private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
-    
+
     this.appToUpdate = history.state
-   
 
     this.persistentService.getGT().subscribe(data => {
       this.groundTruth = data;
@@ -90,129 +89,100 @@ export class DeployJsonComponent implements OnInit {
       this.intents = this.getTestIntents();
       this.intents = this.getTrainIntents();
 
-      if((this.appToUpdate as LuisApp).appID)
-      {
-          this.getAppInfos();
-          this.findTrainingsDataUtterances();
-          this.findTestDataUtterances(); 
+      if ((this.appToUpdate as LuisApp).appID) {
+        this.getAppInfos();
+        this.findTrainingsDataUtterances();
+        this.findTestDataUtterances();
       }
-      else
-      {
+      else {
         this.appToUpdate = null;
       }
 
     });
-    
+
   }
-  getAppInfos()
-  {
-      this.luisApp =
-      {
-        name: this.appToUpdate.name,
-        description: this.appToUpdate.description,
-        culture: 'de-de',
-        id: this.appToUpdate.appID,
-        url: '',
-        version: String( Number(this.appToUpdate.version)+Number(0.1)).substring(0,3),  //  increment Version
-        created: 1 ,
-        region: '',
-        publishedDateTime: '',
-        trained: 1 ,
-        tested: 1,
-        published: 1,
-        settings: { sentimentAnalysis: false, speech: false, spellChecker: false },
-        isStaging: false,
-      };
-      
+  getAppInfos() {
+    this.luisApp =
+    {
+      name: this.appToUpdate.name,
+      description: this.appToUpdate.description,
+      culture: 'de-de',
+      id: this.appToUpdate.appID,
+      url: '',
+      version: String(Number(this.appToUpdate.version) + Number(1.0)).substring(0, 3),  //  increment Version
+      created: 1,
+      region: '',
+      publishedDateTime: '',
+      trained: 1,
+      tested: 1,
+      published: 1,
+      settings: { sentimentAnalysis: false, speech: false, spellChecker: false },
+      isStaging: false,
+    };
+
   }
-  
-  findTrainingsDataUtterances()
-  {
+
+  findTrainingsDataUtterances() {
     // Convert to CSV
-   
+
     this.convertService.convertJsonToCSV(this.appToUpdate.appJson)
-    .subscribe(data => {
-      // Convert to Utterances 
-      let dataArray: string[] = data.split(/\r\n|\n/);
-      
-      let i = 1;
-      for (i = 1; i < dataArray.length; i++) {
-        let currentLine = dataArray[i].split(";");
+      .subscribe(data => {
+        // Convert to Utterances 
+        let dataArray: string[] = data.split(/\r\n|\n/);
 
-        let csvUtterance: CsvUtterance = new CsvUtterance();
-        csvUtterance.id = currentLine[0];
-        csvUtterance.transcript = currentLine[1];
-        csvUtterance.category = currentLine[2];
-        csvUtterance.literal = currentLine[3];
-        csvUtterance.startIndex = currentLine[4];
-        csvUtterance.endIndex = currentLine[5];
-        csvUtterance.intent = currentLine[6];
-        csvUtterance.tag = currentLine[7];
-       
-        // Compare Utterances
-       let foundedUtterance = this.result.find(element =>
-                                    element.transcript == csvUtterance.transcript &&
-                                    element.endIndex == csvUtterance.endIndex &&
-                                    element.startIndex == csvUtterance.startIndex &&
-                                    element.intent == csvUtterance.intent &&
-                                    element.category == csvUtterance.category &&
-                                    element.literal == csvUtterance.literal
-                                  );
-      
-        // Select Utterances                                  
-        if(foundedUtterance)
-        {
-          this.selectedTrainingsdata.push(foundedUtterance); 
-          
-        }                                  
-  
-      }
-      
-    }); 
+        let i = 1;
+        for (i = 1; i < dataArray.length; i++) {
+          let currentLine = dataArray[i].split(";");
+
+          // Compare Utterances
+          let foundedUtterance = this.result.find(element =>
+            element.transcript == currentLine[1] &&
+            element.endIndex == currentLine[5] &&
+            element.startIndex == currentLine[4] &&
+            element.intent == currentLine[6] &&
+            element.category == currentLine[2] &&
+            element.literal == currentLine[1]
+          );
+
+          // Select Utterances                                  
+          if (foundedUtterance) {
+            this.selectedTrainingsdata.push(foundedUtterance);
+          }
+
+        }
+
+      });
   }
-  findTestDataUtterances()
-  {
-    
-    this.persistentService.getTestDataCSV(this.luisApp.name )
-    .subscribe(data => {
-      // Convert to Utterances 
-      let dataArray: string[] = data.split(/\r\n|\n/);
-      
-      let i = 1;
-      for (i = 1; i < dataArray.length; i++) {
-        let currentLine = dataArray[i].split(";");
+  findTestDataUtterances() {
 
-        let csvUtterance: CsvUtterance = new CsvUtterance();
-        csvUtterance.id = currentLine[0];
-        csvUtterance.transcript = currentLine[1];
-        csvUtterance.category = currentLine[2];
-        csvUtterance.literal = currentLine[3];
-        csvUtterance.startIndex = currentLine[4];
-        csvUtterance.endIndex = currentLine[5];
-        csvUtterance.intent = currentLine[6];
-        csvUtterance.tag = currentLine[7];
-        
+    this.persistentService.getTestDataCSV(this.luisApp.name)
+      .subscribe(data => {
+        // Convert to Utterances 
+        let dataArray: string[] = data.split(/\r\n|\n/);
 
-        // Compare Utterances
-       let foundedUtterance = this.result.find(element =>
-                                    element.transcript == csvUtterance.transcript &&
-                                    element.endIndex == csvUtterance.endIndex &&
-                                    element.startIndex == csvUtterance.startIndex &&
-                                    element.intent == csvUtterance.intent &&
-                                    element.category == csvUtterance.category &&
-                                    element.literal == csvUtterance.literal
-                                  );
+        let i = 1;
+        for (i = 1; i < dataArray.length; i++) {
+          let currentLine = dataArray[i].split(";");
 
-        // Select Utterances                                  
-        if(foundedUtterance)
-        {
-          foundedUtterance.locked = true; 
-          this.selectedTestdata.push(foundedUtterance); 
-         
-        }                                  
-  
-      }
-    })
+          // Compare Utterances
+          let foundedUtterance = this.result.find(element =>
+            element.transcript == currentLine[1] &&
+            element.endIndex == currentLine[5] &&
+            element.startIndex == currentLine[4] &&
+            element.intent == currentLine[6] &&
+            element.category == currentLine[2] &&
+            element.literal == currentLine[1]
+          );
+
+          // Select Utterances                                  
+          if (foundedUtterance) {
+            foundedUtterance.locked = true;
+            this.selectedTestdata.push(foundedUtterance);
+
+          }
+
+        }
+      })
   }
   changeToHorizonTal() {
     this.layout = {
@@ -310,7 +280,7 @@ export class DeployJsonComponent implements OnInit {
     this.luisService.deleteApp(this.deleteApp.name, true)
     this.reset();
   }
-  
+
   createAppState() {
     this.luisApp.created == 0 ? this.timelineStyle.step1.state = 'success' : this.timelineStyle.step1.failed ? this.timelineStyle.step1.state = 'error' : this.timelineStyle.step1.state = 'not-started'
     return this.timelineStyle.step1.state;
@@ -322,14 +292,13 @@ export class DeployJsonComponent implements OnInit {
     temp.forEach(element => this.intentsSelectionTraindata.push(false));
     return temp;
   }
-  updateApp()
-  {
+  updateApp() {
     if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
     {
       let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-      this.convertService.convertCsvToJson(csv, this.luisApp.name,this.luisApp.description, this.luisApp.version)
+      this.convertService.convertCsvToJson(csv, this.luisApp.name, this.luisApp.description, this.luisApp.version)
         .subscribe(data => {
-       
+
           this.luisService.updateApp(this.luisApp.name).subscribe(
             data => {
               this.luisApp.created = 0;
@@ -343,7 +312,7 @@ export class DeployJsonComponent implements OnInit {
             });
         });
     }
-    if (this.selectedTestdata.length != 0 ) // SELECT Test DATA GT
+    if (this.selectedTestdata.length != 0) // SELECT Test DATA GT
     {
       let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
       this.persistentService.testData(csv, this.luisApp.name)
@@ -351,7 +320,7 @@ export class DeployJsonComponent implements OnInit {
           this.json = JSON.stringify(data, null, 5);
         });
     }
-    else if (this.selectedTestdata.length == 0 ) // SKIP
+    else if (this.selectedTestdata.length == 0) // SKIP
     {
       let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
       this.persistentService.autoData(csv, this.luisApp.name, this.luisApp.version, this.luisApp.description, this.luisApp.culture)
@@ -364,56 +333,56 @@ export class DeployJsonComponent implements OnInit {
     this.timelineStyle.step1.state = this.createAppState();
   }
   createApp() {
-      if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
-      {
-        let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-        this.convertService.convertCsvToJson(csv, this.luisApp.name, this.luisApp.description, this.luisApp.version)
-          .subscribe(data => {
-            this.luisService.createApp(this.luisApp.name).subscribe(
-              data => {
-                let createdApp = JSON.parse(data.body);
-                this.luisApp.id = createdApp.appID;
-                this.luisApp.version = createdApp.version;
-                this.luisApp.description = createdApp.description;
-                this.luisApp.name = createdApp.name;
-                this.luisApp.created = 0;
-                this.showNotification(`The app ${this.luisApp.name} has been successfully created.`, null, NotificationType.Info);
-              },
-              (error) => {
-                this.timelineStyle.step1.failed = true;
-                this.timelineStyle.step1.state = "error";
+    if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
+    {
+      let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
+      this.convertService.convertCsvToJson(csv, this.luisApp.name, this.luisApp.description, this.luisApp.version)
+        .subscribe(data => {
+          this.luisService.createApp(this.luisApp.name).subscribe(
+            data => {
+              let createdApp = JSON.parse(data.body);
+              this.luisApp.id = createdApp.appID;
+              this.luisApp.version = createdApp.version;
+              this.luisApp.description = createdApp.description;
+              this.luisApp.name = createdApp.name;
+              this.luisApp.created = 0;
+              this.showNotification(`The app ${this.luisApp.name} has been successfully created.`, null, NotificationType.Info);
+            },
+            (error) => {
+              this.timelineStyle.step1.failed = true;
+              this.timelineStyle.step1.state = "error";
 
-                this.showNotification("Error while creating app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
-              });
-          });
-      }
-      if (this.selectedTestdata.length != 0 && !this.uploadedFile.exist) // SELECT Test DATA GT
-      {
-        let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
-        this.persistentService.testData(csv, this.luisApp.name)
-          .subscribe(data => {
-            this.json = JSON.stringify(data, null, 5);
-          });
-      }
-      else if (this.selectedTestdata.length == 0 && this.uploadedFile.exist) // SELECT Uploaded Test DATA
-      {
-        console.log(this.uploadedFile.content)
-        this.persistentService.testData(this.uploadedFile.content, this.luisApp.name)
-          .subscribe(data => {
-            this.json = JSON.stringify(data, null, 5);
-          });
-      }
-      else if (this.selectedTestdata.length == 0 && !this.uploadedFile.exist) // SKIP
-      {
-        let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-        this.persistentService.autoData(csv, this.luisApp.name, this.luisApp.version, this.luisApp.description, this.luisApp.culture)
-          .subscribe(data => {
-            this.json = JSON.stringify(data, null, 5);
+              this.showNotification("Error while creating app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
+            });
+        });
+    }
+    if (this.selectedTestdata.length != 0 && !this.uploadedFile.exist) // SELECT Test DATA GT
+    {
+      let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
+      this.persistentService.testData(csv, this.luisApp.name)
+        .subscribe(data => {
+          this.json = JSON.stringify(data, null, 5);
+        });
+    }
+    else if (this.selectedTestdata.length == 0 && this.uploadedFile.exist) // SELECT Uploaded Test DATA
+    {
+      console.log(this.uploadedFile.content)
+      this.persistentService.testData(this.uploadedFile.content, this.luisApp.name)
+        .subscribe(data => {
+          this.json = JSON.stringify(data, null, 5);
+        });
+    }
+    else if (this.selectedTestdata.length == 0 && !this.uploadedFile.exist) // SKIP
+    {
+      let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
+      this.persistentService.autoData(csv, this.luisApp.name, this.luisApp.version, this.luisApp.description, this.luisApp.culture)
+        .subscribe(data => {
+          this.json = JSON.stringify(data, null, 5);
 
-          });
-      }
+        });
+    }
 
-      this.timelineStyle.step1.state = this.createAppState();
+    this.timelineStyle.step1.state = this.createAppState();
   }
 
   train() {
@@ -489,10 +458,9 @@ export class DeployJsonComponent implements OnInit {
       });
   }
 
-  updatePublishSetting()
-  {
+  updatePublishSetting() {
     this.luisService.updatePublishSettings(this.luisApp.name, this.luisApp.settings.sentimentAnalysis, this.luisApp.settings.speech, this.luisApp.settings.spellChecker)
-    .subscribe(data =>{console.log(data)});
+      .subscribe(data => { console.log(data) });
   }
 
   readCsvFile(event: any) {
@@ -515,9 +483,9 @@ export class DeployJsonComponent implements OnInit {
       fileReader.onload = () => {
         let data = fileReader.result;
         this.uploadedFile.content = (<string>data);
-        this.uploadedFile.name = fileList.item(0).name; 
+        this.uploadedFile.name = fileList.item(0).name;
       }
-      
+
       fileReader.onerror = () => {
         this.showNotification("Error occured while reading file!", null, NotificationType.Danger);
         this.uploadedFile = {
@@ -528,14 +496,12 @@ export class DeployJsonComponent implements OnInit {
       };
     }
   }
-  isTraindata(utterance: CsvUtterance)
-  {
+  isTraindata(utterance: CsvUtterance) {
     return this.selectedTrainingsdata.indexOf(utterance) != -1
   }
-  isTestdata(utterance: CsvUtterance)
-  {
+  isTestdata(utterance: CsvUtterance) {
     return this.selectedTestdata.indexOf(utterance) != -1
-    
+
   }
   showNotification(message: string, messageDetails: string, type: NotificationType) {
     this.notificationService.add(

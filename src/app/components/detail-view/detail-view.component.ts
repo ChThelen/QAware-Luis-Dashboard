@@ -154,7 +154,7 @@ export class DetailViewComponent implements OnInit {
 
   gotoDynamic()
   {
-    this.router.navigateByUrl('/deploy/'+this.luisApp.name, {state: this.luisApp} )
+    this.router.navigateByUrl('/deploy', {state: this.luisApp} )
   }
   
 
