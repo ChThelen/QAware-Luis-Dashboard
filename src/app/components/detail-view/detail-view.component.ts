@@ -377,4 +377,7 @@ export class DetailViewComponent implements OnInit {
     this.closeEditWizard();
   }
 
+  isEmpty(obj): boolean{
+    return Object.keys(obj).length === 0 && obj.constructor === Object
+  }
 }

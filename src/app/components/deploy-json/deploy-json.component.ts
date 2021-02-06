@@ -1,12 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HEADERS, CsvUtterance } from 'src/app/models/CsvUtterance';
 import { ConvertService } from 'src/app/services/convert.service';
 import { LuisAppService } from 'src/app/services/luis-app.service';
 import { PersistentService } from 'src/app/services/persistent.service';
 import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
-import { LuisApp, LuisAppState } from 'src/app/models/LuisApp';
-import { ActivatedRoute } from '@angular/router';
-import { Utterance } from 'src/app/models/Utterance';
+import { LuisApp } from 'src/app/models/LuisApp';
+import { Validators, FormGroup, FormControl, ValidatorFn } from '@angular/forms';
 
 @Component({
   selector: 'app-deploy-json',
@@ -15,8 +14,10 @@ import { Utterance } from 'src/app/models/Utterance';
 })
 export class DeployJsonComponent implements OnInit {
 
+  form: FormGroup;
 
   appToUpdate: LuisApp = null;
+  existingAppNames: string[];
 
   trained = false;
   intents: string[] = [];
@@ -76,12 +77,11 @@ export class DeployJsonComponent implements OnInit {
     private luisService: LuisAppService,
     private persistentService: PersistentService,
     private convertService: ConvertService,
-    private notificationService: NotificationService,
-    private activatedRoute: ActivatedRoute) { }
+    private notificationService: NotificationService) { }
 
   ngOnInit(): void {
 
-    this.appToUpdate = history.state
+    this.appToUpdate = history.state;
 
     this.persistentService.getGT().subscribe(data => {
       this.groundTruth = data;
@@ -97,6 +97,15 @@ export class DeployJsonComponent implements OnInit {
       else {
         this.appToUpdate = null;
       }
+
+      this.luisService.getAppNames().subscribe(appNames => {
+        this.existingAppNames = appNames;
+        this.form = new FormGroup({
+          appName: new FormControl({ value: '', disabled: this.luisApp.created == 0 }, [Validators.required, Validators.minLength(4), appNameValidator(this.existingAppNames)]),
+          appDesc: new FormControl({ value: '', disabled: this.luisApp.created == 0 }),
+          culture: new FormControl({ value: 'one', disabled: this.luisApp.created == 0 })
+        });
+      });
 
     });
 
@@ -292,6 +301,7 @@ export class DeployJsonComponent implements OnInit {
     temp.forEach(element => this.intentsSelectionTraindata.push(false));
     return temp;
   }
+
   updateApp() {
     if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
     {
@@ -545,4 +555,15 @@ export class DeployJsonComponent implements OnInit {
       step4: { state: "not-started", open: false, failed: false },
     };
   }
+}
+
+function appNameValidator(existingAppNames: string[]): ValidatorFn {
+  return (control: FormControl) => {
+    if (!control) {
+      return null;
+    }
+
+    return existingAppNames.includes(control.value) ? { exists: true } : null;
+  };
+
 }

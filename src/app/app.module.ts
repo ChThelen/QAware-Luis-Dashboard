@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +17,7 @@ import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChartsModule } from 'ng2-charts';
 import { CdsModule } from '@cds/angular';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -41,7 +41,9 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
     HttpClientModule,
     HighlightModule,
     ChartsModule,
-    CdsModule
+    CdsModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     {

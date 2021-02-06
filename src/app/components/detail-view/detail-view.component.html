@@ -177,7 +177,7 @@
                                             <clr-dg-cell>
                                                 <span>
                                                     {{intentStat.intent}}
-                                                    <a *ngIf="intentStat.falseIntents" role="tooltip"
+                                                    <a *ngIf="!isEmpty(intentStat.falseIntents)" role="tooltip"
                                                         aria-haspopup="true" class="tooltip tooltip-lg">
                                                         <cds-icon shape="exclamation-triangle" status="danger" size="20"
                                                             solid></cds-icon>

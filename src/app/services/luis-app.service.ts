@@ -68,12 +68,19 @@ export class LuisAppService {
   public batchTestApp(appName: string, intent: string): Observable<Array<LuisAppStats>> {
     return this.httpClient.post<Array<LuisAppStats>>(this.buildUrl("/batchTest"),null, { params: { name: appName, intent: intent } });
   }
+  
   public updateApp(appName: string) {
     return this.httpClient.post<string>(this.buildUrl("/updateApp"), null, { params: {name: appName}, observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
   }
+  
   public cancelUpdate(appName: string) {
     return this.httpClient.put<string>(this.buildUrl("/updateCancel"), null, { params: {name: appName}, observe:'response' , headers: new HttpHeaders({ "Content-Type": 'application/json'}), responseType: 'text' as 'json' });
   }
+
+  public getAppNames(): Observable<Array<string>> {
+    return this.httpClient.get<Array<string>>(this.buildUrl("/getAppNames"));
+  }
+
   private buildUrl(uri: string): string {
     return this.baseUrl + this.endpoint + uri;
   }
