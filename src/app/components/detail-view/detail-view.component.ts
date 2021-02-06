@@ -95,6 +95,7 @@ export class DetailViewComponent implements OnInit {
     this.getCombinedAppData().then(k => {
       this.luisApp = k.appData;
       this.luisAppStats = k.statData;
+      this.luisApp.versionTested = this.luisAppStats.map(appStat => appStat.version).includes(this.luisApp.version);
       this.luisApp.appJson = k.json;
       this.generateChartData();
     });
@@ -157,6 +158,13 @@ export class DetailViewComponent implements OnInit {
     this.router.navigateByUrl('/deploy', {state: this.luisApp} )
   }
   
+  removedChartData(): void{
+
+  }
+
+  addChartData(): void{
+
+  }
 
   generateChartData() {
     let labels: string[] = [];
@@ -330,6 +338,7 @@ export class DetailViewComponent implements OnInit {
     this.isLoading = true;
     this.luisAppService.batchTestApp(name, "all").subscribe(k => {
       this.luisAppStats = k;
+      this.luisApp.versionTested = true;
       this.isLoading = false;
       this.generateChartData();
       this.chart.update();

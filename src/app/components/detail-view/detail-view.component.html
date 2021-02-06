@@ -26,7 +26,7 @@
                                     'label-success': luisApp.status === 'published',
                                     'label-warning': luisApp.status === 'trained',
                                     'label-danger': luisApp.status === 'failed' }">{{luisApp.status}}
-                                    
+
                                     </span>
                                     <h2 style="margin-top: 0rem;">{{luisApp.name}}</h2>
                                     <h3 style="margin-top: 0; color: hsl(198, 0%, 70%);">
@@ -42,8 +42,9 @@
                                 <button class="btn btn-sm btn-link" (click)="publishApp()"
                                     [disabled]="luisApp.status === 'published'"
                                     [class.btn-publish]="luisApp.status !== 'published'">Publish</button>
-                                <button class="btn btn-sm btn-link" (click)="trainApp()" [disabled]="luisApp.status === 'trained' || luisApp.status === 'published'">Train</button>
-                                <button class="btn btn-sm btn-link" (click)="openTesWizard()">Test</button>
+                                <button class="btn btn-sm btn-link" (click)="trainApp()"
+                                    [disabled]="luisApp.status === 'trained' || luisApp.status === 'published'">Train</button>
+                                <button class="btn btn-sm btn-link" (click)="openTesWizard()" [disabled]="luisApp.versionTested">Test</button>
                                 <div class="dropdown top-left" [class.open]="appDropDown" appClickOutside
                                     (clickOutside)="appDropDown=false">
                                     <button class="dropdown-toggle btn btn-sm btn-link"
@@ -103,6 +104,17 @@
                                     </canvas>
                                 </div>
                             </div>
+                            <div class="card-footer" style="padding: 0;">
+                                <div class="btn-group btn-link">
+                                    <button class = "btn btn-icon">
+                                        <clr-icon shape="plus"></clr-icon>
+                                    </button>
+                                    <button class = "btn btn-icon">
+                                        <clr-icon shape="minus"></clr-icon>
+                                    </button>
+                                </div>
+                
+                            </div>
                         </div>
                     </div>
                     <!--
@@ -128,8 +140,8 @@
                             </div>
                         </div>
                     </div>
-                    -->  
-                    
+                    -->
+
                     <div class="clr-break-row"></div>
 
                     <div class="clr-col-6">
@@ -145,7 +157,8 @@
                                             class="tooltip tooltip-lg">
                                             <cds-icon shape="exclamation-triangle" status="danger" size="20" solid>
                                             </cds-icon>
-                                            <span class="tooltip-content">On or more intents was detected incorrectly!</span>
+                                            <span class="tooltip-content">On or more intents was detected
+                                                incorrectly!</span>
                                         </a>
                                     </span>
                                 </clr-dg-cell>
@@ -181,7 +194,8 @@
                                                         aria-haspopup="true" class="tooltip tooltip-lg">
                                                         <cds-icon shape="exclamation-triangle" status="danger" size="20"
                                                             solid></cds-icon>
-                                                        <span class="tooltip-content">The following intents was detected instead: {{intentStat.falseIntents | json}}</span>
+                                                        <span class="tooltip-content">The following intents was detected
+                                                            instead: {{intentStat.falseIntents | json}}</span>
                                                     </a>
                                                 </span>
                                             </clr-dg-cell>

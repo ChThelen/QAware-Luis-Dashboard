@@ -11,6 +11,7 @@ export class LuisApp {
   name: string;
   appID: string;
   version: string = '1.0';
+  versionTested?: boolean = false;
   dashboardUrl?: string = 'https://eu.luis.ai';
   description?: string = "";
   status: LuisAppState = LuisAppState.failed;
