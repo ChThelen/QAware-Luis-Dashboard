@@ -206,7 +206,7 @@
                 <clr-dg-column [clrDgField]="'tag'"> <ng-container *clrDgHideableColumn="{hidden: false}">Tag</ng-container></clr-dg-column>
             
                 <clr-dg-action-bar>
-                  <span><p style="float: left; margin: 0 1em 0 0;">by Intent:</p></span>
+                  <span *ngIf="result.length != 0" ><p style="float: left; margin: 0 1em 0 0;">by Intent:</p></span>
                   <div *ngFor="let intent of intents; let i = index" class="btn-group">
                     <div>
                         <button *ngIf="!intentsSelectionTraindata[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelectionTraindata[i]=!intentsSelectionTraindata[i];selectIntents(intent,0)">{{intent}}</button>
