@@ -10,7 +10,7 @@ import { Intent } from 'src/app/models/Intent';
 import { Entity } from 'src/app/models/Entity';
 import { Utterance } from 'src/app/models/Utterance';
 import { PersistentService } from '../../services/persistent.service';
-import { ChartDataSets } from 'chart.js';
+import { ChartDataSets, ChartPoint } from 'chart.js';
 import { CombinedLuisApp } from 'src/app/models/CombinedLuisApp';
 import { BaseChartDirective } from 'ng2-charts';
 
@@ -59,6 +59,7 @@ export class DetailViewComponent implements OnInit {
     responsive: true,
     scales: {
       yAxes: [{
+        type: 'linear',
         scaleLabel: {
           display: true,
           labelString: 'Average (Intent Performance)',
@@ -71,6 +72,7 @@ export class DetailViewComponent implements OnInit {
         }
       }],
       xAxes: [{
+        type: 'linear',
         scaleLabel: {
           display: true,
           labelString: 'App-Version',
@@ -153,22 +155,21 @@ export class DetailViewComponent implements OnInit {
     })
   }
 
-  gotoDynamic()
-  {
-    this.router.navigateByUrl('/deploy', {state: this.luisApp} )
+  gotoDynamic() {
+    this.router.navigateByUrl('/deploy', { state: this.luisApp })
   }
-  
-  removedChartData(): void{
+
+  removedChartData(): void {
 
   }
 
-  addChartData(): void{
+  addChartData(): void {
 
   }
 
   generateChartData() {
     let labels: string[] = [];
-    let datasets: Map<string, ChartDataSets> = new Map<string, ChartDataSets>();
+    let datasets: Map<String, ChartDataSets> = new Map<String, ChartDataSets>();
     this.luisAppStats.forEach(appStat => {
       labels.push(appStat.version);
 
@@ -180,12 +181,17 @@ export class DetailViewComponent implements OnInit {
             data: [],
             fill: false,
             lineTension: 0,
-            steppedLine: true
+            steppedLine: false
           })
         }
 
         let dataset: ChartDataSets = datasets.get(intentStat.intent);
-        dataset.data.push(intentStat.average);
+
+        (dataset.data as ChartPoint[]).push({
+          x: appStat.version,
+          y: intentStat.average
+        } as ChartPoint);
+
         datasets.set(intentStat.intent, dataset);
 
       });
@@ -351,7 +357,7 @@ export class DetailViewComponent implements OnInit {
     );
     this.closeTestWizard();
   }
-  
+
   finishEditWizard(): void {
 
     const name = this.route.snapshot.paramMap.get('name');
@@ -386,7 +392,7 @@ export class DetailViewComponent implements OnInit {
     this.closeEditWizard();
   }
 
-  isEmpty(obj): boolean{
+  isEmpty(obj): boolean {
     return Object.keys(obj).length === 0 && obj.constructor === Object
   }
 }
