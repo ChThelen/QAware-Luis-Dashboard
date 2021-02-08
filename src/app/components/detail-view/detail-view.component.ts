@@ -98,11 +98,11 @@ export class DetailViewComponent implements OnInit {
   notDisplayedAppStats: LuisAppStats[];
 
   chartColors: string[] = [
-    "hsl(93, 100%, 26%)",
-    "hsl(48, 95%, 48%)",
-    "hsl(9, 100%, 43%)",
-    "hsl(198, 100%, 32%)",
-    "hsl(282, 43%, 54%)"
+    "hsl(198, 69%, 69%)",
+    "hsl(282, 45%, 70%)",
+    "hsl(9, 83%, 76%)",
+    "hsl(48, 98%, 72%)",
+    "hsl(93, 77%, 44%)"
   ];
 
   constructor(
