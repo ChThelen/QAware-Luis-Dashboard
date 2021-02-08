@@ -395,6 +395,7 @@ export class DetailViewComponent implements OnInit {
       this.luisAppStats = k;
       this.luisApp.versionTested = true;
       this.isLoading = false;
+      this.notDisplayedAppStats = new Array<LuisAppStats>();
       this.generateChartData();
       this.chart.update();
       this.showNotification("The test was successful. You can find your results under statistics.", null, NotificationType.Info);
