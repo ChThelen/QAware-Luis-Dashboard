@@ -1,116 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.qaware</groupId>
-	<artifactId>luis-dashboard</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>QAware-Luis-Dashboard</name>
-	<description>Dashboard for the Luis-Microservice.</description>
+    <groupId>de.qaware</groupId>
+    <artifactId>luis-dashboard</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>QAware-Luis-Dashboard</name>
+    <description>Dashboard for the Luis-Microservice.</description>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>3.0.0</version>
-        <configuration>
-            <filesets>
-                <fileset>
-                    <directory>${resource.dir}/static/app</directory>
-                </fileset>
-                <fileset>
-                    <directory>${resource.dir}/templates</directory>
-                </fileset>
-            </filesets>
-        </configuration>
-    </plugin>
-    <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.2</version>
-        <executions>
-            <execution>
-                <id>copy-static-content</id>
-                <phase>install</phase>
-                <goals>
-                    <goal>copy-resources</goal>
-                </goals>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.0.0</version>
                 <configuration>
-                    <outputDirectory>${resource.dir}/static/app/</outputDirectory>
-                    <resources>
-                        <resource>
-                            <directory>${basedir}/dist/QAware-Luis-Dashboard</directory>
-                            <excludes>
-                                <exclude>index.html</exclude>
-                            </excludes>
-                            <filtering>true</filtering>
-                        </resource>
-                    </resources>
+                    <filesets>
+                        <fileset>
+                            <directory>../QAware-Luis-Backend/src/main/resources/static/app</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>../QAware-Luis-Backend/src/main/resources/templates</directory>
+                        </fileset>
+                    </filesets>
                 </configuration>
-            </execution>
-            <execution>
-                <id>copy-index-html</id>
-                <phase>install</phase>
-                <goals>
-                    <goal>copy-resources</goal>
-                </goals>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-static-content</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>../QAware-Luis-Backend/src/main/resources/static/app/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/dist/QAware-Luis-Dashboard</directory>
+                                    <excludes>
+                                        <exclude>index.html</exclude>
+                                    </excludes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-index-html</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>../QAware-Luis-Backend/src/main/resources/templates/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/dist/QAware-Luis-Dashboard</directory>
+                                    <includes>
+                                        <include>index.html</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.9.1</version>
                 <configuration>
-                    <outputDirectory>${resource.dir}/templates/</outputDirectory>
-                    <resources>
-                        <resource>
-                            <directory>${basedir}/dist/QAware-Luis-Dashboard</directory>
-                            <includes>
-                                <include>index.html</include>
-                            </includes>
-                            <filtering>true</filtering>
-                        </resource>
-                    </resources>
+                    <nodeVersion>v14.15.1</nodeVersion>
+                    <yarnVersion>v1.22.5</yarnVersion>
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                    <installDirectory>${project.basedir}</installDirectory>
                 </configuration>
-            </execution>
-        </executions>
-    </plugin>
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.9.1</version>
-        <configuration>
-          <nodeVersion>v14.15.1</nodeVersion>
-          <yarnVersion>v1.22.5</yarnVersion>
-          <workingDirectory>${project.basedir}</workingDirectory>
-          <installDirectory>${project.basedir}</installDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <id>install node and yarn</id>
-            <goals>
-              <goal>install-node-and-yarn</goal>
-            </goals>
-            <configuration>
-              <nodeVersion>v14.15.1</nodeVersion>
-              <yarnVersion>v1.22.5</yarnVersion>
-            </configuration>
-          </execution>
-          <execution>
-            <phase>process-resources</phase>
-            <id>yarn install</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
-            <configuration>
-              <arguments>install</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <phase>compile</phase>
-            <id>yarn run build</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <id>install node and yarn</id>
+                        <goals>
+                            <goal>install-node-and-yarn</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v14.15.1</nodeVersion>
+                            <yarnVersion>v1.22.5</yarnVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <id>yarn install</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>compile</phase>
+                        <id>yarn run build</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments> build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

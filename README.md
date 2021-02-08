@@ -106,6 +106,24 @@ mvn clean install
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/Dashboard-Dark-List.png" width="425"/>-->
 
 ### App Deployment
+| Functionality  | Supported |
+| :---         |     :---:      |
+| Select Training and Test Data  | ✅  |
+| Create App  | ✅  |
+| Delete App  | ✅  |
+| Train App  | ✅  |
+| Publish App  | ✅  |
+| Change Publish Settings  | ✅  |
+| Test App   | ✅  |
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Creation-Light.png"/>
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Creation-Dark.png" width="425"/>-->
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Creation-Light-2.png"/>
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Creation-Dark-2.png" width="425"/>-->
+
+<img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Creation-Light-3.png"/>
+<!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Creation-Dark-3.png" width="425"/>-->
 
 ### App Management
 | Functionality  | Supported |
@@ -134,6 +152,7 @@ mvn clean install
 | :---         |     :---:      |
 | View Test History  | ✅  |
 | View Charts  | ✅  |
+| False Intent Warning  | ✅  |
 
 <img align="left" src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Light-Statistics.png"/>
 <!---<img src="https://github.com/latzinger/QAware-Luis-Dashboard/blob/main/images/App-Dark-Statistics.png" width="425"/>-->
