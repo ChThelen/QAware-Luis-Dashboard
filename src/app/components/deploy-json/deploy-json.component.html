@@ -133,6 +133,7 @@
               
                   <clr-dg-action-bar>
                     
+                    <span *ngIf="result.length != 0" ><p style="float: left; margin: 0 1em 0 0;">by Intent:</p></span>
                     <div *ngFor="let intent of intents; let i = index" class="btn-group" >
                       <div>
                           <button *ngIf="!intentsSelectionTestdata[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i];selectIntents(intent,1)">{{intent}}</button>

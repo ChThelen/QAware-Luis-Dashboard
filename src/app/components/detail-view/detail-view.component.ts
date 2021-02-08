@@ -55,11 +55,17 @@ export class DetailViewComponent implements OnInit {
 
   //Chart Data
   chartOptions = {
+    title: {
+      display: true,
+      text: "Test Results by Intent"
+    },
     scaleShowVerticalLines: false,
     responsive: true,
+    legend: {
+      display: true
+    },
     scales: {
       yAxes: [{
-        type: 'linear',
         scaleLabel: {
           display: true,
           labelString: 'Average (Intent Performance)',
@@ -72,18 +78,32 @@ export class DetailViewComponent implements OnInit {
         }
       }],
       xAxes: [{
-        type: 'linear',
         scaleLabel: {
           display: true,
           labelString: 'App-Version',
-          fontStyle: 'bold'
+          fontStyle: 'bold',
+          type: 'linear',
+          position: 'bottom'
+        },
+        ticks: {
+          min: 1,
+          stepSize: 1
         }
       }]
     }
   }
 
-  chartLabels: string[];
   chartDataSets: ChartDataSets[];
+  notDisplayedChartDataSets: ChartDataSets[];
+  notDisplayedAppStats: LuisAppStats[];
+
+  chartColors: string[] = [
+    "hsl(93, 100%, 26%)",
+    "hsl(48, 95%, 48%)",
+    "hsl(9, 100%, 43%)",
+    "hsl(198, 100%, 32%)",
+    "hsl(282, 43%, 54%)"
+  ];
 
   constructor(
     private location: Location,
@@ -94,6 +114,8 @@ export class DetailViewComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit(): void {
+    this.notDisplayedChartDataSets = new Array<ChartDataSets>();
+    this.notDisplayedAppStats = new Array<LuisAppStats>();
     this.getCombinedAppData().then(k => {
       this.luisApp = k.appData;
       this.luisAppStats = k.statData;
@@ -160,47 +182,74 @@ export class DetailViewComponent implements OnInit {
   }
 
   removedChartData(): void {
-
+    if (this.luisAppStats.length != 0) {
+      this.notDisplayedAppStats.push(this.luisAppStats.pop());
+    }
+    this.generateChartData();
   }
 
   addChartData(): void {
-
+    if (this.notDisplayedAppStats.length != 0) {
+      this.luisAppStats.push(this.notDisplayedAppStats.pop());
+    }
+    this.generateChartData();
   }
 
+  /* For removing complete Intents
+  removedChartData(): void {
+      if(this.chartDataSets.length != 0){
+        this.notDisplayedChartDataSets.push(this.chartDataSets.pop());
+      }
+    }
+
+  addChartData(): void {
+    if(this.notDisplayedChartDataSets.length != 0){
+      this.chartDataSets.push(this.notDisplayedChartDataSets.shift());
+    }
+  }
+  */
+
   generateChartData() {
-    let labels: string[] = [];
-    let datasets: Map<String, ChartDataSets> = new Map<String, ChartDataSets>();
+    this.chartDataSets = new Array<ChartDataSets>();
+    let dataByIntent: Map<String, ChartPoint[]> = new Map<String, ChartPoint[]>();
     this.luisAppStats.forEach(appStat => {
-      labels.push(appStat.version);
+      appStat.intents.forEach(intent => {
+        let intentData = dataByIntent.get(intent.intent);
 
-      appStat.intents.forEach(intentStat => {
-
-        if (!datasets.has(intentStat.intent)) {
-          datasets.set(intentStat.intent, {
-            label: intentStat.intent,
-            data: [],
-            fill: false,
-            lineTension: 0,
-            steppedLine: false
-          })
+        if (!intentData) {
+          intentData = new Array<ChartPoint>();
         }
 
-        let dataset: ChartDataSets = datasets.get(intentStat.intent);
-
-        (dataset.data as ChartPoint[]).push({
+        intentData.push({
           x: appStat.version,
-          y: intentStat.average
-        } as ChartPoint);
+          y: intent.average
+        });
 
-        datasets.set(intentStat.intent, dataset);
+        dataByIntent.set(intent.intent, intentData);
 
       });
-
     });
 
-    this.chartLabels = labels;
-    this.chartDataSets = new Array<ChartDataSets>();
-    datasets.forEach(k => this.chartDataSets.push(k));
+    let index = 0;
+    for (const [key, value] of dataByIntent.entries()) {
+      this.chartDataSets.push({
+        label: String(key),
+        data: value,
+        fill: false,
+        lineTension: 0,
+        showLine: true,
+        steppedLine: false,
+        pointStyle: 'rectRot',
+        radius: 5,
+        backgroundColor: this.chartColors[index % (this.chartColors.length - 1)],
+        borderColor: this.chartColors[index % (this.chartColors.length - 1)],
+        pointBorderColor: this.chartColors[index % (this.chartColors.length - 1)],
+        pointBackgroundColor: this.chartColors[index % (this.chartColors.length - 1)],
+        pointHoverBackgroundColor: this.chartColors[index % (this.chartColors.length - 1)],
+        pointHoverBorderColor: this.chartColors[index % (this.chartColors.length - 1)]
+      })
+      index++;
+    }
   }
 
   deleteApp(): void {
