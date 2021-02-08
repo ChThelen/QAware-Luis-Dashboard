@@ -10,7 +10,7 @@ import { Intent } from 'src/app/models/Intent';
 import { Entity } from 'src/app/models/Entity';
 import { Utterance } from 'src/app/models/Utterance';
 import { PersistentService } from '../../services/persistent.service';
-import { ChartDataSets } from 'chart.js';
+import { ChartDataSets, ChartPoint } from 'chart.js';
 import { CombinedLuisApp } from 'src/app/models/CombinedLuisApp';
 import { BaseChartDirective } from 'ng2-charts';
 
@@ -55,8 +55,15 @@ export class DetailViewComponent implements OnInit {
 
   //Chart Data
   chartOptions = {
+    title: {
+      display: true,
+      text: "Test Results by Intent"
+    },
     scaleShowVerticalLines: false,
     responsive: true,
+    legend: {
+      display: true
+    },
     scales: {
       yAxes: [{
         scaleLabel: {
@@ -74,14 +81,29 @@ export class DetailViewComponent implements OnInit {
         scaleLabel: {
           display: true,
           labelString: 'App-Version',
-          fontStyle: 'bold'
+          fontStyle: 'bold',
+          type: 'linear',
+          position: 'bottom'
+        },
+        ticks: {
+          min: 1,
+          stepSize: 1
         }
       }]
     }
   }
 
-  chartLabels: string[];
   chartDataSets: ChartDataSets[];
+  notDisplayedChartDataSets: ChartDataSets[];
+  notDisplayedAppStats: LuisAppStats[];
+
+  chartColors: string[] = [
+    "hsl(198, 69%, 69%)",
+    "hsl(282, 45%, 70%)",
+    "hsl(9, 83%, 76%)",
+    "hsl(48, 98%, 72%)",
+    "hsl(93, 77%, 44%)"
+  ];
 
   constructor(
     private location: Location,
@@ -92,9 +114,12 @@ export class DetailViewComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit(): void {
+    this.notDisplayedChartDataSets = new Array<ChartDataSets>();
+    this.notDisplayedAppStats = new Array<LuisAppStats>();
     this.getCombinedAppData().then(k => {
       this.luisApp = k.appData;
       this.luisAppStats = k.statData;
+      this.luisApp.versionTested = this.luisAppStats.map(appStat => appStat.version).includes(this.luisApp.version);
       this.luisApp.appJson = k.json;
       this.generateChartData();
     });
@@ -152,41 +177,79 @@ export class DetailViewComponent implements OnInit {
     })
   }
 
-  gotoDynamic()
-  {
-    this.router.navigateByUrl('/deploy', {state: this.luisApp} )
+  gotoDynamic() {
+    this.router.navigateByUrl('/deploy', { state: this.luisApp })
   }
-  
+
+  removedChartData(): void {
+    if (this.luisAppStats.length != 0) {
+      this.notDisplayedAppStats.push(this.luisAppStats.pop());
+    }
+    this.generateChartData();
+  }
+
+  addChartData(): void {
+    if (this.notDisplayedAppStats.length != 0) {
+      this.luisAppStats.push(this.notDisplayedAppStats.pop());
+    }
+    this.generateChartData();
+  }
+
+  /* For removing complete Intents
+  removedChartData(): void {
+      if(this.chartDataSets.length != 0){
+        this.notDisplayedChartDataSets.push(this.chartDataSets.pop());
+      }
+    }
+
+  addChartData(): void {
+    if(this.notDisplayedChartDataSets.length != 0){
+      this.chartDataSets.push(this.notDisplayedChartDataSets.shift());
+    }
+  }
+  */
 
   generateChartData() {
-    let labels: string[] = [];
-    let datasets: Map<string, ChartDataSets> = new Map<string, ChartDataSets>();
+    this.chartDataSets = new Array<ChartDataSets>();
+    let dataByIntent: Map<String, ChartPoint[]> = new Map<String, ChartPoint[]>();
     this.luisAppStats.forEach(appStat => {
-      labels.push(appStat.version);
+      appStat.intents.forEach(intent => {
+        let intentData = dataByIntent.get(intent.intent);
 
-      appStat.intents.forEach(intentStat => {
-
-        if (!datasets.has(intentStat.intent)) {
-          datasets.set(intentStat.intent, {
-            label: intentStat.intent,
-            data: [],
-            fill: false,
-            lineTension: 0,
-            steppedLine: true
-          })
+        if (!intentData) {
+          intentData = new Array<ChartPoint>();
         }
 
-        let dataset: ChartDataSets = datasets.get(intentStat.intent);
-        dataset.data.push(intentStat.average);
-        datasets.set(intentStat.intent, dataset);
+        intentData.push({
+          x: appStat.version,
+          y: intent.average
+        });
+
+        dataByIntent.set(intent.intent, intentData);
 
       });
-
     });
 
-    this.chartLabels = labels;
-    this.chartDataSets = new Array<ChartDataSets>();
-    datasets.forEach(k => this.chartDataSets.push(k));
+    let index = 0;
+    for (const [key, value] of dataByIntent.entries()) {
+      this.chartDataSets.push({
+        label: String(key),
+        data: value,
+        fill: false,
+        lineTension: 0,
+        showLine: true,
+        steppedLine: false,
+        pointStyle: 'rectRot',
+        radius: 5,
+        backgroundColor: this.chartColors[index % (this.chartColors.length - 1)],
+        borderColor: this.chartColors[index % (this.chartColors.length - 1)],
+        pointBorderColor: this.chartColors[index % (this.chartColors.length - 1)],
+        pointBackgroundColor: this.chartColors[index % (this.chartColors.length - 1)],
+        pointHoverBackgroundColor: this.chartColors[index % (this.chartColors.length - 1)],
+        pointHoverBorderColor: this.chartColors[index % (this.chartColors.length - 1)]
+      })
+      index++;
+    }
   }
 
   deleteApp(): void {
@@ -330,6 +393,7 @@ export class DetailViewComponent implements OnInit {
     this.isLoading = true;
     this.luisAppService.batchTestApp(name, "all").subscribe(k => {
       this.luisAppStats = k;
+      this.luisApp.versionTested = true;
       this.isLoading = false;
       this.generateChartData();
       this.chart.update();
@@ -342,7 +406,7 @@ export class DetailViewComponent implements OnInit {
     );
     this.closeTestWizard();
   }
-  
+
   finishEditWizard(): void {
 
     const name = this.route.snapshot.paramMap.get('name');
@@ -377,4 +441,7 @@ export class DetailViewComponent implements OnInit {
     this.closeEditWizard();
   }
 
+  isEmpty(obj): boolean {
+    return Object.keys(obj).length === 0 && obj.constructor === Object
+  }
 }

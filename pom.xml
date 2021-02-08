@@ -12,6 +12,64 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+            <filesets>
+                <fileset>
+                    <directory>${resource.dir}/static/app</directory>
+                </fileset>
+                <fileset>
+                    <directory>${resource.dir}/templates</directory>
+                </fileset>
+            </filesets>
+        </configuration>
+    </plugin>
+    <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+            <execution>
+                <id>copy-static-content</id>
+                <phase>install</phase>
+                <goals>
+                    <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>${resource.dir}/static/app/</outputDirectory>
+                    <resources>
+                        <resource>
+                            <directory>${basedir}/dist/QAware-Luis-Dashboard</directory>
+                            <excludes>
+                                <exclude>index.html</exclude>
+                            </excludes>
+                            <filtering>true</filtering>
+                        </resource>
+                    </resources>
+                </configuration>
+            </execution>
+            <execution>
+                <id>copy-index-html</id>
+                <phase>install</phase>
+                <goals>
+                    <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>${resource.dir}/templates/</outputDirectory>
+                    <resources>
+                        <resource>
+                            <directory>${basedir}/dist/QAware-Luis-Dashboard</directory>
+                            <includes>
+                                <include>index.html</include>
+                            </includes>
+                            <filtering>true</filtering>
+                        </resource>
+                    </resources>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+      <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
         <version>1.9.1</version>

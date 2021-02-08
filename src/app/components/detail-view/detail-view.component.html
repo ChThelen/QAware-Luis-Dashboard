@@ -26,7 +26,7 @@
                                     'label-success': luisApp.status === 'published',
                                     'label-warning': luisApp.status === 'trained',
                                     'label-danger': luisApp.status === 'failed' }">{{luisApp.status}}
-                                    
+
                                     </span>
                                     <h2 style="margin-top: 0rem;">{{luisApp.name}}</h2>
                                     <h3 style="margin-top: 0; color: hsl(198, 0%, 70%);">
@@ -42,8 +42,10 @@
                                 <button class="btn btn-sm btn-link" (click)="publishApp()"
                                     [disabled]="luisApp.status === 'published'"
                                     [class.btn-publish]="luisApp.status !== 'published'">Publish</button>
-                                <button class="btn btn-sm btn-link" (click)="trainApp()" [disabled]="luisApp.status === 'trained' || luisApp.status === 'published'">Train</button>
-                                <button class="btn btn-sm btn-link" (click)="openTesWizard()">Test</button>
+                                <button class="btn btn-sm btn-link" (click)="trainApp()"
+                                    [disabled]="luisApp.status === 'trained' || luisApp.status === 'published'">Train</button>
+                                <button class="btn btn-sm btn-link" (click)="openTesWizard()"
+                                    [disabled]="luisApp.versionTested">Test</button>
                                 <div class="dropdown top-left" [class.open]="appDropDown" appClickOutside
                                     (clickOutside)="appDropDown=false">
                                     <button class="dropdown-toggle btn btn-sm btn-link"
@@ -98,10 +100,22 @@
                         <div class="card">
                             <div class="card-block">
                                 <div class="chart-wrapper">
-                                    <canvas baseChart [datasets]="chartDataSets" [labels]="chartLabels"
-                                        [chartType]="'line'" [options]="chartOptions">
-                                    </canvas>
+                                    <canvas baseChart [datasets]="chartDataSets" [chartType]="'scatter'"
+                                        [options]="chartOptions"></canvas>
                                 </div>
+                            </div>
+                            <div class="card-footer" style="padding: 0;">
+                                <p class="p5" style="float: left; margin: 0.6em 0 0 1em;">Show/Hide Entries:</p>
+                                <div class="btn-group btn-link">
+                                    <button style="padding: 0 0.5em 0 0.5em;" class="btn btn-icon" (click)="removedChartData()">
+                                        <clr-icon shape="minus-circle"></clr-icon>
+                                    </button>
+                                    <button style="padding: 0;" class="btn btn-icon"(click)="addChartData()">
+                                        <clr-icon shape="plus-circle"></clr-icon>
+                                    </button>
+                                </div>
+                                <a class="label label-blue p7" style="float: right;  margin: 0.6em 1.0em 0 0;">Hidde<span class="badge">{{notDisplayedAppStats.length}}</span></a>
+
                             </div>
                         </div>
                     </div>
@@ -128,8 +142,8 @@
                             </div>
                         </div>
                     </div>
-                    -->  
-                    
+                    -->
+
                     <div class="clr-break-row"></div>
 
                     <div class="clr-col-6">
@@ -145,7 +159,8 @@
                                             class="tooltip tooltip-lg">
                                             <cds-icon shape="exclamation-triangle" status="danger" size="20" solid>
                                             </cds-icon>
-                                            <span class="tooltip-content">On or more intents was detected incorrectly!</span>
+                                            <span class="tooltip-content">On or more intents was detected
+                                                incorrectly!</span>
                                         </a>
                                     </span>
                                 </clr-dg-cell>
@@ -177,11 +192,12 @@
                                             <clr-dg-cell>
                                                 <span>
                                                     {{intentStat.intent}}
-                                                    <a *ngIf="intentStat.falseIntents" role="tooltip"
+                                                    <a *ngIf="!isEmpty(intentStat.falseIntents)" role="tooltip"
                                                         aria-haspopup="true" class="tooltip tooltip-lg">
                                                         <cds-icon shape="exclamation-triangle" status="danger" size="20"
                                                             solid></cds-icon>
-                                                        <span class="tooltip-content">The following intents was detected instead: {{intentStat.falseIntents | json}}</span>
+                                                        <span class="tooltip-content">The following intents was detected
+                                                            instead: {{intentStat.falseIntents | json}}</span>
                                                     </a>
                                                 </span>
                                             </clr-dg-cell>
