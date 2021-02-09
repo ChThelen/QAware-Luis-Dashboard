@@ -5,13 +5,16 @@ import { GroundTruthComponent } from './components/ground-truth/ground-truth.com
 import { DeployJsonComponent } from './components/deploy-json/deploy-json.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
-
 const routes: Routes = [
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'apps/:name', component: DetailViewComponent },
-  { path: 'groundTruth', component: GroundTruthComponent },
-  { path: 'deploy', component: DeployJsonComponent },
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
+  {
+    path: '',
+    children: [
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'apps/:name', component: DetailViewComponent },
+      { path: 'groundTruth', component: GroundTruthComponent },
+      { path: 'deploy', component: DeployJsonComponent }
+    ]
+  }
 ];
 
 @NgModule({
