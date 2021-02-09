@@ -72,6 +72,8 @@ npm install -g @angular/cli
 
 ### Getting Started
 
+URL: http://localhost:4200/app/
+
 Serve Angular App:
 
 ```
