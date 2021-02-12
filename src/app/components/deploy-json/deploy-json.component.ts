@@ -14,7 +14,11 @@ import { Validators, FormGroup, FormControl, ValidatorFn } from '@angular/forms'
 })
 export class DeployJsonComponent implements OnInit {
 
-  form: FormGroup;
+  form: FormGroup = new FormGroup({
+    appName: new FormControl(),
+    appDesc: new FormControl(),
+    culture: new FormControl()
+ });
 
   appToUpdate: LuisApp = null;
   existingAppNames: string[];
@@ -93,6 +97,7 @@ export class DeployJsonComponent implements OnInit {
         this.getAppInfos();
         this.findTrainingsDataUtterances();
         this.findTestDataUtterances();
+        
       }
       else {
         this.appToUpdate = null;
@@ -106,8 +111,7 @@ export class DeployJsonComponent implements OnInit {
           culture: new FormControl({ value: 'one', disabled: this.luisApp.created == 0 })
         });
       });
-
-    });
+    } );
 
   }
   getAppInfos() {
@@ -150,7 +154,7 @@ export class DeployJsonComponent implements OnInit {
             element.startIndex == currentLine[4] &&
             element.intent == currentLine[6] &&
             element.category == currentLine[2] &&
-            element.literal == currentLine[1]
+            element.literal == currentLine[3]
           );
 
           // Select Utterances                                  
@@ -180,18 +184,18 @@ export class DeployJsonComponent implements OnInit {
             element.startIndex == currentLine[4] &&
             element.intent == currentLine[6] &&
             element.category == currentLine[2] &&
-            element.literal == currentLine[1]
+            element.literal == currentLine[3]
           );
 
           // Select Utterances                                  
           if (foundedUtterance) {
             foundedUtterance.locked = true;
             this.selectedTestdata.push(foundedUtterance);
-
           }
 
         }
       })
+     
   }
   changeToHorizonTal() {
     this.layout = {
