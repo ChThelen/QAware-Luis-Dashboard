@@ -15,7 +15,6 @@ import { Validators, FormGroup, FormControl, ValidatorFn } from '@angular/forms'
 export class DeployJsonComponent implements OnInit {
 
   form: FormGroup;
-
   appToUpdate: LuisApp = null;
   existingAppNames: string[];
   trained = false;

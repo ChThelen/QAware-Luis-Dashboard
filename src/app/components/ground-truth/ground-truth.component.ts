@@ -20,7 +20,7 @@ export class GroundTruthComponent implements OnInit {
   uploadedFile: string = "";
   uploadedUtterances: CsvUtterance[] = [];
   // GT properties
-  selectedUtterances: CsvUtterance[] = []
+  selectedUtterances: CsvUtterance[] = [];
   result: CsvUtterance[] = []; // Array of all Utterances
   delimiter: string = ';';
   intents: string[] = [];
