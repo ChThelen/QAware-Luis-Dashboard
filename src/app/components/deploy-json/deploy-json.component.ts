@@ -14,11 +14,7 @@ import { Validators, FormGroup, FormControl, ValidatorFn } from '@angular/forms'
 })
 export class DeployJsonComponent implements OnInit {
 
-  form: FormGroup = new FormGroup({
-    appName: new FormControl(),
-    appDesc: new FormControl(),
-    culture: new FormControl()
- });
+  form: FormGroup;
 
   appToUpdate: LuisApp = null;
   existingAppNames: string[];
@@ -134,7 +130,9 @@ export class DeployJsonComponent implements OnInit {
     };
 
   }
-
+/**
+ * upload selected training data Utterances 
+ */
   findTrainingsDataUtterances() {
     // Convert to CSV
 
@@ -166,6 +164,9 @@ export class DeployJsonComponent implements OnInit {
 
       });
   }
+  /**
+   * upload selected training data Utterances 
+   */
   findTestDataUtterances() {
 
     this.persistentService.getTestDataCSV(this.luisApp.name)
@@ -239,7 +240,10 @@ export class DeployJsonComponent implements OnInit {
     }
 
   }
-
+/**
+ * 
+ * @param utterances 
+ */
   refreshUtterances(utterances: CsvUtterance[]) {
     let entriesArray = [];
     for (let i = 0; i < utterances.length; i++) {
