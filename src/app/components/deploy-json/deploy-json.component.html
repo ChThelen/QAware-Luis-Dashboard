@@ -100,18 +100,18 @@
         <h3 *ngIf="data.type=='train'"> 
           Add Train data
               <clr-tooltip>
-                <clr-icon shape="info-circle" size="35" style="--color:hsl(282, 43%, 54%)" clrTooltipTrigger></clr-icon>
+                <clr-icon shape="info-circle" size="35" clrTooltipTrigger></clr-icon>
                 <clr-tooltip-content *clrIfOpen>
-                  Select Ground-Truth data or upload a json or csv file
+                  Select Ground-Truth train data for your App
                 </clr-tooltip-content>
               </clr-tooltip>
         </h3>
         <h3 *ngIf="data.type=='test'"> 
           Add Test data
               <clr-tooltip>
-                <clr-icon shape="info-circle" size="30" style="--color:hsl(282, 43%, 54%)" clrTooltipTrigger></clr-icon>
+                <clr-icon shape="info-circle" size="35" clrTooltipTrigger></clr-icon>
                 <clr-tooltip-content *clrIfOpen>
-                  Select Ground-Truth data or upload a json or csv file
+                  Select Ground-Truth test data or upload a  csv file
                 </clr-tooltip-content>
               </clr-tooltip>
         </h3>
