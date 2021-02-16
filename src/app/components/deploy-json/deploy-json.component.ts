@@ -122,7 +122,7 @@ export class DeployJsonComponent implements OnInit {
       culture: 'de-de',
       id: this.appToUpdate.appID,
       url: '',
-      version: String(Number(this.appToUpdate.version) + Number(1.0)).substring(0, 3),  //  increment Version
+      version: String((parseFloat(this.appToUpdate.version) + 1).toFixed(1)),
       created: 1,
       region: '',
       publishedDateTime: '',
