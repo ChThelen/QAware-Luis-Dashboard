@@ -142,8 +142,8 @@
                       
                   </clr-dg-action-bar>
                   <clr-dg-action-bar *ngIf="appToUpdate">
-                    <div *ngFor="let intent of intents; let i = index" class="btn-group">
-                      
+                    <span *ngIf="result.length != 0" ><p style="float: left; margin: 0 1em 0 0;">by Intent:</p></span>
+                    <div *ngFor="let intent of intents; let i = index" class="btn-group">                      
                       <span [class]="colors[i%4]">{{intent}}</span>
                     </div>
                       
@@ -214,6 +214,7 @@
                     
                 </clr-dg-action-bar>
                 <clr-dg-action-bar *ngIf="appToUpdate">
+                  <span *ngIf="result.length != 0" ><p style="float: left; margin: 0 1em 0 0;">by Intent:</p></span>
                   <div *ngFor="let intent of intents; let i = index" class="btn-group">
                     
                     <span [class]="colors[i%4]">{{intent}}</span>
