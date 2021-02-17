@@ -18,7 +18,7 @@ export class DeployJsonComponent implements OnInit {
   appToUpdate: LuisApp = null;
   existingAppNames: string[];
   trained = false;
- 
+  colors = ["label label-info","label label-success","label label-warning","label label-danger"];
  // GT properties
   result: CsvUtterance[] = [];
   groundTruth: string = "";
@@ -144,7 +144,7 @@ export class DeployJsonComponent implements OnInit {
       .subscribe(data => {
         // Convert to Utterances 
         let dataArray: string[] = data.split(/\r\n|\n/);
-
+        console.log(dataArray)
         let i = 1;
         for (i = 1; i < dataArray.length; i++) {
           let currentLine = dataArray[i].split(";");
@@ -161,6 +161,7 @@ export class DeployJsonComponent implements OnInit {
           
           // Select Utterances                                  
           if (foundedUtterance) {
+            
             foundedUtterance.locked = false;
             this.selectedTrainingsdata.push(foundedUtterance);
           }
@@ -278,16 +279,43 @@ export class DeployJsonComponent implements OnInit {
 
     return entriesArray;
   }
+  separate(intent)
+  {
+     
+      
+      if(this.appToUpdate)
+      {
+        let intentsArr = this.result.filter( element => element.intent = intent); 
+        for(let i = 0; i < intentsArr.length; i++ )
+        {
+            if(i%10 == 0)
+            {
+              this.selectedTestdata.push(intentsArr[i]); 
+              let index = this.selectedTrainingsdata.indexOf(intentsArr[i]); 
+              this.selectedTrainingsdata.splice(index,1);
+            }
+        }
+        let intentsLength = this.result.filter(data => data.intent == intent).length; 
+        
+        if(intentsLength == intentsArr.length )
+        this.showNotification(`If you choose all intent ${intent} as training data then you have no test data`, null, NotificationType.Danger);
+
+      }
+
+  }
 /**
  * 
  * Select all @param trainOrTest Intent with name @param intent 
  * 
  */
   selectIntents(intent: string, trainOrTest: number) { // train = 0 , test = else
-    if (trainOrTest == 0) {
+
+    if (trainOrTest == 0) 
+    {
       this.result.forEach(element => { if (element.intent == intent && !this.isTestdata(element)) { this.selectedTrainingsdata.push(element) } });
     }
-    else {
+    else 
+    {
       this.result.forEach(element => { if (element.intent == intent && !this.isTraindata(element)) { this.selectedTestdata.push(element) } });
     }
   }
@@ -343,15 +371,7 @@ export class DeployJsonComponent implements OnInit {
  */
   updateApp() {
 
-    let selectedTestdata : CsvUtterance[];
-    let selectedTrainingsdata : CsvUtterance[];
-    for(let i = 0; i < this.intentsSelectionTraindata.length; i++)
-    {
-      if(this.intentsSelectionTraindata[i] == true)
-      {
-        // 90% parmis les Testdata et 10% pour les Trainingsdata
-      }
-    }
+    
     if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
     {
       let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
@@ -372,24 +392,12 @@ export class DeployJsonComponent implements OnInit {
         });
     }
 
-    /**
-     * diviser les intents selectioné
-     */
     if (this.selectedTestdata.length != 0) // SELECT Test DATA GT
     { 
       let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
       this.persistentService.testData(csv, this.luisApp.name)
         .subscribe(data => {
           this.json = JSON.stringify(data, null, 5);
-        });
-    }
-    else if (this.selectedTestdata.length == 0) // SKIP
-    {
-      let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
-      this.persistentService.autoData(csv, this.luisApp.name, this.luisApp.version, this.luisApp.description, this.luisApp.culture)
-        .subscribe(data => {
-          this.json = JSON.stringify(data, null, 5);
-
         });
     }
 
