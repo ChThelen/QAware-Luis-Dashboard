@@ -141,9 +141,13 @@ export class GroundTruthComponent implements OnInit {
  * Add new records to the GT via a uploaded file
  */
   merge() {
+
     this.persistentService.merge(this.uploadedFile).subscribe(data => {
       this.groundTruth = data; 
+      this.result = [];
       this.createUtterances(this.groundTruth, this.result); 
+      this.intents = []; 
+      this.intents = this.getIntents();
       this.resetFile();
       this.showNotification(`New records have been successfully added.`, '');
     }, 

@@ -63,8 +63,8 @@ export class PersistentService {
   }
 
   public merge(csv: string): Observable<string> {
-    const body = { title: csv }
-    return this.httpClient.put<string>(this.buildUrl("/addRecords"), body, { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
+   
+    return this.httpClient.put<string>(this.buildUrl("/addRecords"), csv, { headers: new HttpHeaders({ "Content-Type": 'text/plain; charset=utf-8' }), responseType: 'text' as 'json' });
   }
 
   public changeGT(csv: string): Observable<string> {

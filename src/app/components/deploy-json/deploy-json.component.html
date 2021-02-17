@@ -120,7 +120,7 @@
               <button clrTabLink (click)="uploadedFile = {exist : false,content : '',name : ''}">Ground-Truth</button>
               <clr-tab-content *clrIfActive>
                 
-                <clr-datagrid [(clrDgSelected)]="selectedTestdata"  >
+                <clr-datagrid [(clrDgSelected)]="selectedTestdata" (clrDgSelectedChange)="selectionChanged($event)">
                   <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
                   <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
                   <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
@@ -138,35 +138,26 @@
                       <div>
                           <button *ngIf="!intentsSelectionTestdata[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i];selectIntents(intent,1)">{{intent}}</button>
                           <button *ngIf="intentsSelectionTestdata[i]" class="btn btn-sm btn-primary" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i]; deselectIntents(intent,1)">{{intent}}</button>
-        
                       </div>
-                      
                     </div>
                       
                   </clr-dg-action-bar>
-                  <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance"  [clrDgSelectable]="!utterance.locked && !isTraindata(utterance)">
-                  
-              
-                  <ng-container >
-                      <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
-                      <clr-dg-cell>{{utterance.transcript}}</clr-dg-cell>
-                      <clr-dg-cell>{{utterance.category}}</clr-dg-cell>
-                      <clr-dg-cell>{{utterance.literal}}</clr-dg-cell>
-                      <clr-dg-cell>{{utterance.startIndex}} </clr-dg-cell>
-                      <clr-dg-cell>{{utterance.endIndex}} </clr-dg-cell>
-                      <clr-dg-cell>{{utterance.intent}} </clr-dg-cell>
-                      <clr-dg-cell>{{utterance.tag}}</clr-dg-cell>
-                  </ng-container>
-              
+                  <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance" [clrDgSelectable]="!utterance.locked && !isTraindata(utterance)">
+                    <ng-container >
+                        <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
+                        <clr-dg-cell>{{utterance.transcript}}</clr-dg-cell>
+                        <clr-dg-cell>{{utterance.category}}</clr-dg-cell>
+                        <clr-dg-cell>{{utterance.literal}}</clr-dg-cell>
+                        <clr-dg-cell>{{utterance.startIndex}} </clr-dg-cell>
+                        <clr-dg-cell>{{utterance.endIndex}} </clr-dg-cell>
+                        <clr-dg-cell>{{utterance.intent}} </clr-dg-cell>
+                        <clr-dg-cell>{{utterance.tag}}</clr-dg-cell>
+                    </ng-container>
                   </clr-dg-row>
-              
                   <clr-dg-footer>
                       <clr-dg-column-toggle>
                           <clr-dg-column-toggle-title>Show Columns</clr-dg-column-toggle-title>
-                          <clr-dg-column-toggle-button>Select All Button</clr-dg-column-toggle-button>
-                          <clr-radio-wrapper>
-              
-                          </clr-radio-wrapper>
+
                       </clr-dg-column-toggle>
                   <clr-dg-pagination #pagination [clrDgPageSize]="10">
                       <clr-dg-page-size [clrPageSizeOptions]="[10,20,50,100]">Utterances per page</clr-dg-page-size>
@@ -216,7 +207,7 @@
                   </div>
                     
                 </clr-dg-action-bar>
-                <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance" [clrDgSelectable]="!isTestdata(utterance)">
+                <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance" [clrDgSelectable]="!utterance.locked && !isTestdata(utterance)">
                   <ng-container >
                       <clr-dg-cell>{{utterance.id}}</clr-dg-cell>
                       <clr-dg-cell>{{utterance.transcript}}</clr-dg-cell>
@@ -276,7 +267,7 @@
                     </clr-input-container>
                     <clr-textarea-container>
                       <label>Description</label>
-                      <textarea formControlName="appDesc" placeholder="Description" clrTextarea [(ngModel)]="luisApp.description" ></textarea>
+                      <textarea formControlName="appDesc"  placeholder="Description" clrTextarea [(ngModel)]="luisApp.description" ></textarea>
                       <clr-control-helper>Optional</clr-control-helper>
                     </clr-textarea-container>
                     <clr-select-container>

@@ -158,9 +158,10 @@ export class DeployJsonComponent implements OnInit {
             element.category == currentLine[2] &&
             element.literal == currentLine[3]
           );
-
+          
           // Select Utterances                                  
           if (foundedUtterance) {
+            foundedUtterance.locked = false;
             this.selectedTrainingsdata.push(foundedUtterance);
           }
 
@@ -168,9 +169,9 @@ export class DeployJsonComponent implements OnInit {
 
       });
   }
-  /**
-   * upload selected training data Utterances 
-   */
+/**
+ * upload selected training data Utterances 
+ */
   findTestDataUtterances() {
 
     this.persistentService.getTestDataCSV(this.luisApp.name)
@@ -248,6 +249,12 @@ export class DeployJsonComponent implements OnInit {
     }
 
   }
+  selectionChanged(event: any) {
+
+    console.log(this.selectedTestdata)
+    console.log(this.selectedTrainingsdata)
+
+  }
 /**
  * browse the GT's utterances and create a new GT csv as string
  * @return Array of GT's Lines
@@ -258,7 +265,6 @@ export class DeployJsonComponent implements OnInit {
     for (let i = 0; i < utterances.length; i++) {
       let entries = [];
       entries[0] = "" + (i + 1);
-
       entries[1] = utterances[i].transcript;
       entries[2] = utterances[i].category;
       entries[3] = utterances[i].literal;
@@ -336,6 +342,16 @@ export class DeployJsonComponent implements OnInit {
  * Update a App
  */
   updateApp() {
+
+    let selectedTestdata : CsvUtterance[];
+    let selectedTrainingsdata : CsvUtterance[];
+    for(let i = 0; i < this.intentsSelectionTraindata.length; i++)
+    {
+      if(this.intentsSelectionTraindata[i] == true)
+      {
+        // 90% parmis les Testdata et 10% pour les Trainingsdata
+      }
+    }
     if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
     {
       let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
@@ -355,8 +371,12 @@ export class DeployJsonComponent implements OnInit {
             });
         });
     }
+
+    /**
+     * diviser les intents selectioné
+     */
     if (this.selectedTestdata.length != 0) // SELECT Test DATA GT
-    {
+    { 
       let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
       this.persistentService.testData(csv, this.luisApp.name)
         .subscribe(data => {
