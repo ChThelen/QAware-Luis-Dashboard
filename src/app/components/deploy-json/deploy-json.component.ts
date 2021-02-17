@@ -15,27 +15,31 @@ import { Validators, FormGroup, FormControl, ValidatorFn } from '@angular/forms'
 export class DeployJsonComponent implements OnInit {
 
   form: FormGroup;
-
   appToUpdate: LuisApp = null;
   existingAppNames: string[];
-
   trained = false;
-  intents: string[] = [];
-  intentsSelectionTestdata: boolean[] = [];
-  intentsSelectionTraindata: boolean[] = [];
-  /** */
+ 
+ // GT properties
   result: CsvUtterance[] = [];
+  groundTruth: string = "";
+  intents: string[] = [];
+// Selected data 
   selectedTestdata: CsvUtterance[] = [];
   selectedTrainingsdata: CsvUtterance[] = [];
+// Selected Buttons properties
+  intentsSelectionTestdata: boolean[] = [];
+  intentsSelectionTraindata: boolean[] = [];
+
   openModalUpdateSettings = false;
-  groundTruth: string = "";
+  
   json: string = "";
+// Layout direction changing
   layout = {
     direction: "vertical",
     block1: "clr-col-lg-3 clr-col-12 ",
     block2: "clr-col-lg-9 clr-col-12 ",
   }
-
+// CSV File for Test data
   uploadedFile = {
     exist: false,
     content: '',
@@ -46,7 +50,7 @@ export class DeployJsonComponent implements OnInit {
     type: 'train',
     uploadedFile: false
   };
-
+  //Timeline 
   timelineStyle = {
     step0: { state: "current", open: true, failed: false },
     step1: { state: "not-started", open: false, failed: false },
@@ -54,7 +58,7 @@ export class DeployJsonComponent implements OnInit {
     step3: { state: "not-started", open: false, failed: false },
     step4: { state: "not-started", open: false, failed: false },
   };
-
+//App Properties 
   luisApp =
     {
       name: '',
@@ -93,6 +97,7 @@ export class DeployJsonComponent implements OnInit {
         this.getAppInfos();
         this.findTrainingsDataUtterances();
         this.findTestDataUtterances();
+        
       }
       else {
         this.appToUpdate = null;
@@ -106,8 +111,7 @@ export class DeployJsonComponent implements OnInit {
           culture: new FormControl({ value: 'one', disabled: this.luisApp.created == 0 })
         });
       });
-
-    });
+    } );
 
   }
   getAppInfos() {
@@ -118,7 +122,7 @@ export class DeployJsonComponent implements OnInit {
       culture: 'de-de',
       id: this.appToUpdate.appID,
       url: '',
-      version: String(Number(this.appToUpdate.version) + Number(1.0)).substring(0, 3),  //  increment Version
+      version: String((parseFloat(this.appToUpdate.version) + 1).toFixed(1)),
       created: 1,
       region: '',
       publishedDateTime: '',
@@ -130,7 +134,9 @@ export class DeployJsonComponent implements OnInit {
     };
 
   }
-
+/**
+ * upload selected training data Utterances 
+ */
   findTrainingsDataUtterances() {
     // Convert to CSV
 
@@ -150,11 +156,12 @@ export class DeployJsonComponent implements OnInit {
             element.startIndex == currentLine[4] &&
             element.intent == currentLine[6] &&
             element.category == currentLine[2] &&
-            element.literal == currentLine[1]
+            element.literal == currentLine[3]
           );
-
+          
           // Select Utterances                                  
           if (foundedUtterance) {
+            foundedUtterance.locked = false;
             this.selectedTrainingsdata.push(foundedUtterance);
           }
 
@@ -162,6 +169,9 @@ export class DeployJsonComponent implements OnInit {
 
       });
   }
+/**
+ * upload selected training data Utterances 
+ */
   findTestDataUtterances() {
 
     this.persistentService.getTestDataCSV(this.luisApp.name)
@@ -180,19 +190,20 @@ export class DeployJsonComponent implements OnInit {
             element.startIndex == currentLine[4] &&
             element.intent == currentLine[6] &&
             element.category == currentLine[2] &&
-            element.literal == currentLine[1]
+            element.literal == currentLine[3]
           );
 
           // Select Utterances                                  
           if (foundedUtterance) {
             foundedUtterance.locked = true;
             this.selectedTestdata.push(foundedUtterance);
-
           }
 
         }
       })
+     
   }
+  // Change to Horizontal Layout
   changeToHorizonTal() {
     this.layout = {
       direction: "horizontal",
@@ -200,7 +211,7 @@ export class DeployJsonComponent implements OnInit {
       block2: "clr-col-lg-12 clr-col-12 container",
     }
   }
-
+// Change to Vertical Layout
   changeToVertical() {
     this.layout = {
       direction: "vertical",
@@ -208,7 +219,10 @@ export class DeployJsonComponent implements OnInit {
       block2: "clr-col-lg-9 clr-col-12 ",
     }
   }
-
+/**
+ * Create Table Line
+ * All Utterances are in @var result
+ */
   createUtterances(): void {
 
     let dataArray: string[] = this.groundTruth.split(/\r\n|\n/);
@@ -235,13 +249,22 @@ export class DeployJsonComponent implements OnInit {
     }
 
   }
+  selectionChanged(event: any) {
 
+    console.log(this.selectedTestdata)
+    console.log(this.selectedTrainingsdata)
+
+  }
+/**
+ * browse the GT's utterances and create a new GT csv as string
+ * @return Array of GT's Lines
+ * @param utterances 
+ */
   refreshUtterances(utterances: CsvUtterance[]) {
     let entriesArray = [];
     for (let i = 0; i < utterances.length; i++) {
       let entries = [];
       entries[0] = "" + (i + 1);
-
       entries[1] = utterances[i].transcript;
       entries[2] = utterances[i].category;
       entries[3] = utterances[i].literal;
@@ -255,7 +278,11 @@ export class DeployJsonComponent implements OnInit {
 
     return entriesArray;
   }
-
+/**
+ * 
+ * Select all @param trainOrTest Intent with name @param intent 
+ * 
+ */
   selectIntents(intent: string, trainOrTest: number) { // train = 0 , test = else
     if (trainOrTest == 0) {
       this.result.forEach(element => { if (element.intent == intent && !this.isTestdata(element)) { this.selectedTrainingsdata.push(element) } });
@@ -264,7 +291,11 @@ export class DeployJsonComponent implements OnInit {
       this.result.forEach(element => { if (element.intent == intent && !this.isTraindata(element)) { this.selectedTestdata.push(element) } });
     }
   }
-
+/**
+ * 
+ * Deselect all @param trainOrTest Intent with name @param intent 
+ * 
+ */
   deselectIntents(intent: string, trainOrTest: number) {
     if (trainOrTest == 0) {
       this.selectedTrainingsdata = this.selectedTrainingsdata.filter(element => element.intent != intent || element.locked);
@@ -273,7 +304,9 @@ export class DeployJsonComponent implements OnInit {
       this.selectedTestdata = this.selectedTestdata.filter(element => element.intent != intent || element.locked);
     }
   }
-
+/**
+ * make all intent buttons as no selected
+ */
   deselectAllIntentButtons() {
     this.intentsSelectionTestdata.forEach(data => data = false);
   }
@@ -284,12 +317,16 @@ export class DeployJsonComponent implements OnInit {
     temp.forEach(element => this.intentsSelectionTestdata.push(false));
     return temp;
   }
-
+/**
+ * Delete actual App
+ */
   deleteApp() {
     this.luisService.deleteApp(this.deleteApp.name, true)
     this.reset();
   }
-
+/**
+ * Change Style 
+ */
   createAppState() {
     this.luisApp.created == 0 ? this.timelineStyle.step1.state = 'success' : this.timelineStyle.step1.failed ? this.timelineStyle.step1.state = 'error' : this.timelineStyle.step1.state = 'not-started'
     return this.timelineStyle.step1.state;
@@ -301,8 +338,20 @@ export class DeployJsonComponent implements OnInit {
     temp.forEach(element => this.intentsSelectionTraindata.push(false));
     return temp;
   }
-
+/**
+ * Update a App
+ */
   updateApp() {
+
+    let selectedTestdata : CsvUtterance[];
+    let selectedTrainingsdata : CsvUtterance[];
+    for(let i = 0; i < this.intentsSelectionTraindata.length; i++)
+    {
+      if(this.intentsSelectionTraindata[i] == true)
+      {
+        // 90% parmis les Testdata et 10% pour les Trainingsdata
+      }
+    }
     if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
     {
       let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
@@ -322,8 +371,12 @@ export class DeployJsonComponent implements OnInit {
             });
         });
     }
+
+    /**
+     * diviser les intents selectioné
+     */
     if (this.selectedTestdata.length != 0) // SELECT Test DATA GT
-    {
+    { 
       let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
       this.persistentService.testData(csv, this.luisApp.name)
         .subscribe(data => {
@@ -342,6 +395,9 @@ export class DeployJsonComponent implements OnInit {
 
     this.timelineStyle.step1.state = this.createAppState();
   }
+  /**
+   * Create new App
+   */
   createApp() {
     if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
     {
@@ -394,7 +450,9 @@ export class DeployJsonComponent implements OnInit {
 
     this.timelineStyle.step1.state = this.createAppState();
   }
-
+/**
+ * Train your App
+ */
   train() {
     this.trained = true;
     this.timelineStyle.step2.state = "processing";
@@ -413,7 +471,9 @@ export class DeployJsonComponent implements OnInit {
     );
 
   }
-
+/**
+ * Publish your App
+ */
   publish() {
     this.luisService.publish(this.luisApp.name, this.luisApp.isStaging).subscribe(
       data => {
@@ -454,7 +514,9 @@ export class DeployJsonComponent implements OnInit {
       );
 
   }
-
+/**
+ * Test your App
+ */
   test() {
     this.timelineStyle.step4.state = 'processing';
     this.luisService.batchTestApp(this.luisApp.name, 'all').subscribe(appStats => {
@@ -467,12 +529,17 @@ export class DeployJsonComponent implements OnInit {
         this.showNotification("Error while testing app. Please contact an administrator or see details for more information.", error.message, NotificationType.Danger);
       });
   }
-
+/**
+ * Change Publish Settings
+ */
   updatePublishSetting() {
     this.luisService.updatePublishSettings(this.luisApp.name, this.luisApp.settings.sentimentAnalysis, this.luisApp.settings.speech, this.luisApp.settings.spellChecker)
       .subscribe(data => { console.log(data) });
   }
-
+/**
+ * Load a csv File for Test data
+ * @param event 
+ */
   readCsvFile(event: any) {
 
     let fileList: FileList = event.target.files;
@@ -544,6 +611,8 @@ export class DeployJsonComponent implements OnInit {
     };
     this.intents = [];
     this.intentsSelectionTestdata = [];
+    this.selectedTrainingsdata = [];
+    this.selectedTestdata = []; 
     this.intentsSelectionTraindata = [];
     this.intents = this.getTestIntents();
     this.intents = this.getTrainIntents();

@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CsvUtterance, HEADERS } from 'src/app/models/CsvUtterance';
 import { LuisAppService } from 'src/app/services/luis-app.service';
-import { ClrLoadingState } from '@clr/angular';
 import { PersistentService } from 'src/app/services/persistent.service';
 import { ConvertService } from 'src/app/services/convert.service';
+import { NotificationType, Notification, NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-ground-truth',
@@ -14,47 +14,58 @@ export class GroundTruthComponent implements OnInit {
 
   @ViewChild('csvReader') csvReader: any;
 
+  // Uploaded file Properties
   file: File = null;
   fileName = "";
   uploadedFile: string = "";
-  selectedUtterances: CsvUtterance[] = []
-  result: CsvUtterance[] = [];
   uploadedUtterances: CsvUtterance[] = [];
+  // GT properties
+  selectedUtterances: CsvUtterance[] = [];
+  result: CsvUtterance[] = []; // Array of all Utterances
   delimiter: string = ';';
+  intents: string[] = [];
+  intentsSelection: boolean[] = [];
+  groundTruth: string = "";
+
+
   modalOpenedforNewLine = false;
   newLine: CsvUtterance = new CsvUtterance();
   newChange: boolean = false;
   confirmSave: boolean = false;
   disabledConfirm: boolean = false;
-  intents: string[] = [];
-  intentsSelection: boolean[] = [];
-
-  groundTruth: string = ""
+ 
+  
 
   constructor(
-    private luisService: LuisAppService,
     private persistentService: PersistentService,
-    private convertService: ConvertService) { this.getGT()}
+    private notificationService: NotificationService
+    ) {}
 
   ngOnInit(): void {
     this.getGT();
   }
-
+/**
+ * Load GT data
+ */
   getGT() {
     this.result = [];
-    this.persistentService.getGT().subscribe(data => {
-      this.groundTruth = data;
-      this.createUtterances(this.groundTruth, this.result);
-   
-      this.intents = this.getIntents();
+    this.persistentService.getGT().subscribe(
+      data => {
+        this.groundTruth = data;
+        this.createUtterances(this.groundTruth, this.result);
+        this.intents = this.getIntents();
+    }, 
+    err => {
+      this.showNotification("Error while reading Ground Truth records. Please contact an administrator or see details for more information.", err.message);
+
     });
     this.newChange = false;
   }
-
+  /** select special intents via intents buttons*/
   selectIntents(intent: string) {
     this.result.forEach(element => { if (element.intent == intent) { this.selectedUtterances.push(element) } });
   }
-
+/** deselect special intents via intents buttons*/
   deselectIntents(intent: string) {
     this.selectedUtterances = this.selectedUtterances.filter(element => element.intent != intent);
   }
@@ -67,14 +78,18 @@ export class GroundTruthComponent implements OnInit {
     temp.forEach(element => this.intentsSelection.push(false));
     return temp;
   }
-
+/**
+ * create Table for GT
+ * @param file 
+ * @param result 
+ */
   createUtterances(file: string, result: CsvUtterance[]): void {
 
     if (result.length != 0)
       result = [];
     let dataArray: string[] = file.split(/\r\n|\n/);
     let headers = dataArray[0].split(this.delimiter);
-    if (arrayEquals(headers, HEADERS)) {
+    
       let i = 1;
       for (i = 1; i < dataArray.length; i++) {
         let currentLine = dataArray[i].split(this.delimiter);
@@ -94,25 +109,19 @@ export class GroundTruthComponent implements OnInit {
         }
 
       }
-    } else {
-      console.log('Error occured while reading file. Found different Headers!');
-      console.log(headers)
-      console.log(HEADERS)
-      this.resetFile();
-    }
+   
   }
-
+/**
+ * To Read a uploaded csv File
+ * @param event 
+ */
   readCsvFile(event: any) {
 
     let fileList: FileList = event.target.files;
     this.file = fileList.item(0);
     this.fileName = fileList.item(0).name;
 
-    if (!((this.file.name.endsWith(".csv")) || (this.file.name.endsWith('.json')))) {
-      this.file = null;
-      console.log('Error occured while reading file. Please import valid .csv or .json file!');
-    }
-    else {
+ 
       let fileReader = new FileReader();
       fileReader.readAsText(this.file);
       if ((this.file.name.endsWith(".csv"))) // Reading csv file
@@ -127,34 +136,45 @@ export class GroundTruthComponent implements OnInit {
           this.resetFile();
         };
       }
-
-    }
   }
-
+/**
+ * Add new records to the GT via a uploaded file
+ */
   merge() {
-    let csvArray1 = this.uploadedFile.split(/\r\n|\n/); 
-    let csvArray2 = this.groundTruth.split(/\r\n|\n/); 
-    csvArray1.shift();
-   
-    this.persistentService.merge(this.uploadedFile).subscribe(data => {console.log(data)})
-    this.getGT();
-    // this.uploadedUtterances.forEach(data => this.result.push(data));
-    // this.resetFile();
-    // this.result.sort((a, b) => { return (parseInt(a.id) < parseInt(b.id)) ? -1 : 1 })
-    // this.groundTruth = this.refreshUtterances(this.result).join('\n');
-    // this.createUtterances(this.groundTruth, this.result);
-    // this.newChange = true;
-   // console.log(this.groundTruth)
+
+    this.persistentService.merge(this.uploadedFile).subscribe(data => {
+      this.groundTruth = data; 
+      this.result = [];
+      this.createUtterances(this.groundTruth, this.result); 
+      this.intents = []; 
+      this.intents = this.getIntents();
+      this.resetFile();
+      this.showNotification(`New records have been successfully added.`, '');
+    }, 
+    err => {
+      this.showNotification("Error while adding new records. Please contact an administrator or see details for more information.", err.message);
+
+    });
   }
-
+  /**
+   * Method to save every Changes on the GT Table 
+   */
   saveChanges() {
+    this.groundTruth = this.refreshUtterances(this.result).join("\n");
     if (this.newChange) {
-      this.persistentService.changeGT(this.groundTruth).subscribe(data => console.log(data));
-      this.persistentService.getGT().subscribe(data => { this.groundTruth = data; this.createUtterances(this.groundTruth, this.result); });
+      this.persistentService.changeGT(this.groundTruth).subscribe(data => 
+        {
+          this.groundTruth = data; 
+          console.log(data)
+          this.createUtterances(this.groundTruth, this.result);
+          this.showNotification(`Ground Truth has been successfully changed.`, '');
+        }, 
+        err => {
+          this.showNotification("Error while saving Ground Truth. Please contact an administrator or see details for more information.", err.message);
+    
+        });
     }
-
     this.newChange = false;
-
   }
 
   resetFile() {
@@ -181,13 +201,19 @@ export class GroundTruthComponent implements OnInit {
       this.intents = this.getIntents();
     }
   }
-
+/**
+ * Delete Many selected Utterances from the GT
+ * @param csvUtterance array of Utterances that will be deleted
+ */
   deleteUtterances(csvUtterance: CsvUtterance[]): void {
     this.result = this.result.filter(element => !(csvUtterance.includes(element)));
     this.newChange = true;
     this.intents = this.getIntents();
   }
-
+/**
+ * 
+ * @param csvUtterance 
+ */
   insertUtterance(csvUtterance: CsvUtterance): void {
     this.result.push(csvUtterance);
     this.result.sort((a, b) => { return (parseInt(a.id) < parseInt(b.id)) ? -1 : 1 })
@@ -206,10 +232,15 @@ export class GroundTruthComponent implements OnInit {
     var hiddenElement = document.createElement('a');
     hiddenElement.href = 'data:text/csv;charset=UTF-8,' + encodeURIComponent(content);
     hiddenElement.target = '_blank';
-    hiddenElement.download = (fileName.endsWith(".csv")) ? fileName.substring(0, fileName.length - 3) + "csv" : fileName.substring(0, fileName.length - 4) + "csv";
+    hiddenElement.download = fileName + ".csv";
     hiddenElement.click();
   }
 
+/**
+ * browse the GT's utterances and create a new GT csv as string
+ * @return Array of GT's Lines
+ * @param utterances 
+ */
   refreshUtterances(utterances: CsvUtterance[]) {
     let entriesArray = [];
     for (let i = 0; i < utterances.length; i++) {
@@ -229,7 +260,11 @@ export class GroundTruthComponent implements OnInit {
 
     return entriesArray;
   }
-
+  /**
+   * @returns the first index of literal in transcript by adding new Line
+   * @param literal 
+   * @param transcript 
+   */
   getFirstIndexOf(literal: string, transcript: string): string {
     let firstIndex = -1;
     if (literal != "" && transcript != "") {
@@ -238,7 +273,11 @@ export class GroundTruthComponent implements OnInit {
     this.newLine.startIndex = firstIndex == -1 ? "" : "" + firstIndex;
     return firstIndex == -1 ? "" : "" + firstIndex;
   }
-
+/**
+   * @returns the last index of literal in transcript by adding new Line
+   * @param literal 
+   * @param transcript 
+   */
   getLastIndexOf(literal: string, transcript: string): string {
     if (this.getFirstIndexOf(literal.trim(), transcript) != "") {
       let firstIndex = transcript.trim().indexOf(literal.trim());
@@ -251,14 +290,28 @@ export class GroundTruthComponent implements OnInit {
       return "";
     }
   }
-
+/**
+ * 
+ */
   cancelInsert() {
     this.newLine = new CsvUtterance();
   }
-
+  /**
+   * editablecell component changes are recovered through this method
+   * @param change 
+   */
   newChanges(change: boolean) {
     this.newChange = change;
-    console.log(change);
+  }
+
+  showNotification(message: string, messageDetails: string) {
+    this.notificationService.add(
+      new Notification(
+        NotificationType.Info,
+        message,
+        messageDetails
+      )
+    )
   }
 
 }
@@ -267,5 +320,5 @@ function arrayEquals(a, b) {
   return Array.isArray(a) &&
     Array.isArray(b) &&
     a.length === b.length
-    && a.every((val, index) => val === b[index]); // '#' != 'number' => error
+   // && a.every((val, index) => val === b[index]); // '#' != 'number' => error
 }
