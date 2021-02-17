@@ -169,9 +169,9 @@ export class DeployJsonComponent implements OnInit {
 
       });
   }
-  /**
-   * upload selected training data Utterances 
-   */
+/**
+ * upload selected training data Utterances 
+ */
   findTestDataUtterances() {
 
     this.persistentService.getTestDataCSV(this.luisApp.name)
@@ -342,6 +342,16 @@ export class DeployJsonComponent implements OnInit {
  * Update a App
  */
   updateApp() {
+
+    let selectedTestdata : CsvUtterance[];
+    let selectedTrainingsdata : CsvUtterance[];
+    for(let i = 0; i < this.intentsSelectionTraindata.length; i++)
+    {
+      if(this.intentsSelectionTraindata[i] == true)
+      {
+        // 90% parmis les Testdata et 10% pour les Trainingsdata
+      }
+    }
     if (this.selectedTrainingsdata.length != 0) // SELECT TRAIN DATA
     {
       let csv = this.refreshUtterances(this.selectedTrainingsdata).join("\n");
@@ -361,8 +371,12 @@ export class DeployJsonComponent implements OnInit {
             });
         });
     }
+
+    /**
+     * diviser les intents selectioné
+     */
     if (this.selectedTestdata.length != 0) // SELECT Test DATA GT
-    {
+    { 
       let csv = this.refreshUtterances(this.selectedTestdata).join("\n");
       this.persistentService.testData(csv, this.luisApp.name)
         .subscribe(data => {
