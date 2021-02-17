@@ -108,9 +108,7 @@
             <div>
                 <button *ngIf="!intentsSelection[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelection[i]=!intentsSelection[i];selectIntents(intent)">{{intent}}</button>
                 <button *ngIf="intentsSelection[i]" class="btn btn-sm btn-primary" (click)="intentsSelection[i]=!intentsSelection[i]; deselectIntents(intent)">{{intent}}</button>
-
-            </div>
-             
+            </div>             
           </div>
             
         </clr-dg-action-bar>

@@ -120,7 +120,7 @@
               <button clrTabLink (click)="uploadedFile = {exist : false,content : '',name : ''}">Ground-Truth</button>
               <clr-tab-content *clrIfActive>
                 
-                <clr-datagrid [(clrDgSelected)]="selectedTestdata"  >
+                <clr-datagrid [(clrDgSelected)]="selectedTestdata" (clrDgSelectedChange)="selectionChanged($event)">
                   <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
                   <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
                   <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
@@ -144,7 +144,7 @@
                     </div>
                       
                   </clr-dg-action-bar>
-                  <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance"  [clrDgSelectable]="!utterance.locked && !isTraindata(utterance)">
+                  <clr-dg-row *clrDgItems="let utterance of result" [clrDgItem]="utterance" [clrDgSelectabl e]="!utterance.locked && !isTraindata(utterance)">
                   
               
                   <ng-container >
@@ -195,7 +195,7 @@
         <clr-tab>
             <button clrTabLink >Ground-Truth</button>
             <clr-tab-content *clrIfActive>
-              <clr-datagrid [(clrDgSelected)]="selectedTrainingsdata">
+              <clr-datagrid [(clrDgSelected)]="selectedTrainingsdata" (clrDgSelectedChange)="selectionChanged($event)">
                 <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
                 <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
                 <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
@@ -276,7 +276,7 @@
                     </clr-input-container>
                     <clr-textarea-container>
                       <label>Description</label>
-                      <textarea formControlName="appDesc" placeholder="Description" clrTextarea [(ngModel)]="luisApp.description" ></textarea>
+                      <textarea formControlName="appDesc"  placeholder="Description" clrTextarea [(ngModel)]="luisApp.description" ></textarea>
                       <clr-control-helper>Optional</clr-control-helper>
                     </clr-textarea-container>
                     <clr-select-container>

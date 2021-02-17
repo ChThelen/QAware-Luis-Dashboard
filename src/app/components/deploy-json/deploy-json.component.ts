@@ -122,7 +122,7 @@ export class DeployJsonComponent implements OnInit {
       culture: 'de-de',
       id: this.appToUpdate.appID,
       url: '',
-      version: String(Number(this.appToUpdate.version) + Number(1.0)).substring(0, 3),  //  increment Version
+      version: String(Number(this.appToUpdate.version) + Number(1)).substring(0, 3)+'.0',  //  increment Version
       created: 1,
       region: '',
       publishedDateTime: '',
@@ -158,9 +158,10 @@ export class DeployJsonComponent implements OnInit {
             element.category == currentLine[2] &&
             element.literal == currentLine[3]
           );
-
+          
           // Select Utterances                                  
           if (foundedUtterance) {
+            foundedUtterance.locked = false;
             this.selectedTrainingsdata.push(foundedUtterance);
           }
 
@@ -248,6 +249,12 @@ export class DeployJsonComponent implements OnInit {
     }
 
   }
+  selectionChanged(event: any) {
+
+    console.log(this.selectedTestdata)
+    console.log(this.selectedTrainingsdata)
+
+  }
 /**
  * browse the GT's utterances and create a new GT csv as string
  * @return Array of GT's Lines
@@ -258,7 +265,6 @@ export class DeployJsonComponent implements OnInit {
     for (let i = 0; i < utterances.length; i++) {
       let entries = [];
       entries[0] = "" + (i + 1);
-
       entries[1] = utterances[i].transcript;
       entries[2] = utterances[i].category;
       entries[3] = utterances[i].literal;
