@@ -183,14 +183,14 @@ export class DetailViewComponent implements OnInit {
 
   removedChartData(): void {
     if (this.luisAppStats.length != 0) {
-      this.notDisplayedAppStats.push(this.luisAppStats.pop());
+      this.notDisplayedAppStats.push(this.luisAppStats.shift());
     }
     this.generateChartData();
   }
 
   addChartData(): void {
     if (this.notDisplayedAppStats.length != 0) {
-      this.luisAppStats.push(this.notDisplayedAppStats.pop());
+      this.luisAppStats.unshift(this.notDisplayedAppStats.pop());
     }
     this.generateChartData();
   }
