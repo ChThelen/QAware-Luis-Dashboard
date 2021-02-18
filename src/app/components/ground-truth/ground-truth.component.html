@@ -34,7 +34,7 @@
   </div>
 
   <div  class="content" >
-          
+  <h3>{{fileName}}</h3>
   <clr-datagrid style="overflow-x: hidden;" *ngIf="file">
     <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
     <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>

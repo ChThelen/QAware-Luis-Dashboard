@@ -68,8 +68,8 @@
             <clr-timeline-step-header>Step 4</clr-timeline-step-header>
             <clr-timeline-step-title>Test your App</clr-timeline-step-title>
             <clr-timeline-step-description>
-              <button class="btn btn-sm btn-success" *ngIf="luisApp.tested == 0 && luisApp.published==0" (click)="test()">Test</button>
-              <button class="btn btn-sm btn-primary" *ngIf="luisApp.tested == 1 && luisApp.published==0" (click)="test()" >Test</button>
+              <button class="btn btn-sm btn-success" [disabled]="intentsSelectionTestdata[i]" *ngIf="luisApp.tested == 0 && luisApp.published==0" (click)="test()">Test</button>
+              <button class="btn btn-sm btn-primary" [disabled]="intentsSelectionTestdata[i]" *ngIf="luisApp.tested == 1 && luisApp.published==0" (click)="test()" >Test</button>
             </clr-timeline-step-description>
           </clr-timeline-step>
         </clr-timeline>
@@ -120,7 +120,7 @@
               <button clrTabLink (click)="uploadedFile = {exist : false,content : '',name : ''}">Ground-Truth</button>
               <clr-tab-content *clrIfActive>
                 
-                <clr-datagrid [(clrDgSelected)]="selectedTestdata" (clrDgSelectedChange)="selectionChanged($event)">
+                <clr-datagrid [(clrDgSelected)]="selectedTestdata" >
                   <clr-dg-placeholder>The Ground-Truth is empty</clr-dg-placeholder>
                   <clr-dg-column > <ng-container *clrDgHideableColumn="{hidden: false}">ID</ng-container></clr-dg-column>
                   <clr-dg-column [clrDgField]="'transcript'"><ng-container *clrDgHideableColumn="{hidden: false}">Transcript</ng-container></clr-dg-column>
@@ -131,14 +131,20 @@
                   <clr-dg-column [clrDgField]="'intent'"><ng-container *clrDgHideableColumn="{hidden: false}">Intent</ng-container> </clr-dg-column>
                   <clr-dg-column [clrDgField]="'tag'"> <ng-container *clrDgHideableColumn="{hidden: false}">Tag</ng-container></clr-dg-column>
               
-                  <clr-dg-action-bar>
-                    
+                  <clr-dg-action-bar *ngIf="!appToUpdate">
                     <span *ngIf="result.length != 0" ><p style="float: left; margin: 0 1em 0 0;">by Intent:</p></span>
-                    <div *ngFor="let intent of intents; let i = index" class="btn-group" >
+                    <div *ngFor="let intent of intents; let i = index" class="btn-group">
                       <div>
-                          <button *ngIf="!intentsSelectionTestdata[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i];selectIntents(intent,1)">{{intent}}</button>
-                          <button *ngIf="intentsSelectionTestdata[i]" class="btn btn-sm btn-primary" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i]; deselectIntents(intent,1)">{{intent}}</button>
+                          <button *ngIf="!intentsSelectionTestdata[i]"  [disabled]="intentsSelectionTraindata[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i];selectIntents(intent,1)">{{intent}}</button>
+                          <button *ngIf="intentsSelectionTestdata[i]" [disabled]="intentsSelectionTraindata[i]" class="btn btn-sm btn-primary" (click)="intentsSelectionTestdata[i]=!intentsSelectionTestdata[i]; deselectIntents(intent,1)">{{intent}}</button>
                       </div>
+                    </div>
+                      
+                  </clr-dg-action-bar>
+                  <clr-dg-action-bar *ngIf="appToUpdate">
+                    <span *ngIf="result.length != 0" ><p style="float: left; margin: 0 1em 0 0;">by Intent:</p></span>
+                    <div *ngFor="let intent of intents; let i = index" class="btn-group">                      
+                      <span [class]="colors[i%4]">{{intent}}</span>
                     </div>
                       
                   </clr-dg-action-bar>
@@ -197,13 +203,21 @@
                 <clr-dg-column [clrDgField]="'intent'"><ng-container *clrDgHideableColumn="{hidden: false}">Intent</ng-container> </clr-dg-column>
                 <clr-dg-column [clrDgField]="'tag'"> <ng-container *clrDgHideableColumn="{hidden: false}">Tag</ng-container></clr-dg-column>
             
-                <clr-dg-action-bar>
+                <clr-dg-action-bar *ngIf="!appToUpdate">
                   <span *ngIf="result.length != 0" ><p style="float: left; margin: 0 1em 0 0;">by Intent:</p></span>
                   <div *ngFor="let intent of intents; let i = index" class="btn-group">
                     <div>
                         <button *ngIf="!intentsSelectionTraindata[i]" class="btn btn-sm btn-primary-outline" (click)="intentsSelectionTraindata[i]=!intentsSelectionTraindata[i];selectIntents(intent,0)">{{intent}}</button>
                         <button *ngIf="intentsSelectionTraindata[i]" class="btn btn-sm btn-primary" (click)="intentsSelectionTraindata[i]=!intentsSelectionTraindata[i]; deselectIntents(intent,0)">{{intent}}</button>
                     </div>
+                  </div>
+                    
+                </clr-dg-action-bar>
+                <clr-dg-action-bar *ngIf="appToUpdate">
+                  <span *ngIf="result.length != 0" ><p style="float: left; margin: 0 1em 0 0;">by Intent:</p></span>
+                  <div *ngFor="let intent of intents; let i = index" class="btn-group">
+                    
+                    <span [class]="colors[i%4]">{{intent}}</span>
                   </div>
                     
                 </clr-dg-action-bar>
@@ -260,19 +274,19 @@
                   <form clrForm [formGroup]="form" class="clr-form clr-form-horizontal">
                     <clr-input-container>
                       <label >App Name</label>
-                      <input clrInput formControlName="appName" placeholder="Name" [(ngModel)]="luisApp.name" minlength="4" maxlength="14"/>
+                      <input clrInput formControlName="appName" placeholder="Name" [disableControl]="luisApp.created == 0 || luisApp.updated == 0" [(ngModel)]="luisApp.name" minlength="4" maxlength="14"/>
                       <clr-control-error *clrIfError="'exists'">An app with the same name already exists!</clr-control-error>
                       <clr-control-error *clrIfError="'required'">Pleas enter an app name!</clr-control-error>
                       <clr-control-error *clrIfError="'minlength'">The app name must have at least 4 characters.</clr-control-error>
                     </clr-input-container>
                     <clr-textarea-container>
                       <label>Description</label>
-                      <textarea formControlName="appDesc"  placeholder="Description" clrTextarea [(ngModel)]="luisApp.description" ></textarea>
+                      <textarea formControlName="appDesc"  [disableControl]="luisApp.created == 0|| luisApp.updated == 0"  placeholder="Description" clrTextarea [(ngModel)]="luisApp.description" ></textarea>
                       <clr-control-helper>Optional</clr-control-helper>
                     </clr-textarea-container>
                     <clr-select-container>
                       <label>Culture</label>
-                      <select clrSelect formControlName="culture">
+                      <select clrSelect formControlName="culture"  [disableControl]="luisApp.created == 1 || luisApp.updated == 1" >
                         <option value="one">de-de</option>
                       </select>
                     </clr-select-container>
