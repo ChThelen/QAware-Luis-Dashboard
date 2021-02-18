@@ -87,8 +87,7 @@ export class PersistentService {
   }
   
   public autoData(csv: string, name: string,version:string,desc:string, culture:string): Observable<string> {
-    return this.httpClient.post<string>(this.buildUrl("/testData"), csv, { headers: new HttpHeaders({ "Content-Type": "application/json" }),
-     params: { "name": name , "version": version,"desc": desc, "culture":culture } });
+    return this.httpClient.post<string>(this.buildUrl("/autoData"), csv, {headers: new HttpHeaders({ "Content-Type": "application/json" }),params: { name:name , version:version, desc:desc, culture:culture } });
   }
 
   private buildUrl(uri: string): string {
