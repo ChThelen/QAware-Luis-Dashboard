@@ -72,6 +72,7 @@ export class DeployJsonComponent implements OnInit {
       publishedDateTime: '',
       trained: 1,
       tested: 1,
+      updated:1,
       published: 1,
       settings: { sentimentAnalysis: false, speech: false, spellChecker: false },
       isStaging: false,
@@ -124,6 +125,7 @@ export class DeployJsonComponent implements OnInit {
       url: '',
       version: String(Number(this.appToUpdate.version) + Number(1)).substring(0, 3)+'.0',  //  increment Version
       created: 1,
+      updated:1,
       region: '',
       publishedDateTime: '',
       trained: 1,
@@ -279,30 +281,6 @@ export class DeployJsonComponent implements OnInit {
 
     return entriesArray;
   }
-  separate(intent)
-  {
-     
-      
-      if(this.appToUpdate)
-      {
-        let intentsArr = this.result.filter( element => element.intent = intent); 
-        for(let i = 0; i < intentsArr.length; i++ )
-        {
-            if(i%10 == 0)
-            {
-              this.selectedTestdata.push(intentsArr[i]); 
-              let index = this.selectedTrainingsdata.indexOf(intentsArr[i]); 
-              this.selectedTrainingsdata.splice(index,1);
-            }
-        }
-        let intentsLength = this.result.filter(data => data.intent == intent).length; 
-        
-        if(intentsLength == intentsArr.length )
-        this.showNotification(`If you choose all intent ${intent} as training data then you have no test data`, null, NotificationType.Danger);
-
-      }
-
-  }
 /**
  * 
  * Select all @param trainOrTest Intent with name @param intent 
@@ -381,6 +359,7 @@ export class DeployJsonComponent implements OnInit {
           this.luisService.updateApp(this.luisApp.name).subscribe(
             data => {
               this.luisApp.created = 0;
+              this.luisApp.updated = 1;
               this.showNotification(`The app ${this.luisApp.name} has been successfully updated.`, null, NotificationType.Info);
             },
             (error) => {
@@ -613,6 +592,7 @@ export class DeployJsonComponent implements OnInit {
       publishedDateTime: '',
       trained: 1,
       tested: 1,
+      updated:1,
       published: 1,
       settings: { sentimentAnalysis: false, speech: false, spellChecker: false },
       isStaging: false,
